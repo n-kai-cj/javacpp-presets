@@ -1,25 +1,25 @@
 /**
- * This file is part of DSO.
- * 
- * Copyright 2016 Technical University of Munich and Intel.
- * Developed by Jakob Engel <engelj at in dot tum dot de>,
- * for more information see <http://vision.in.tum.de/dso>.
- * If you use this code, please cite the respective publications as
- * listed on the above website.
- *
- * DSO is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * DSO is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with DSO. If not, see <http://www.gnu.org/licenses/>.
- */
+* This file is part of DSO.
+* 
+* Copyright 2016 Technical University of Munich and Intel.
+* Developed by Jakob Engel <engelj at in dot tum dot de>,
+* for more information see <http://vision.in.tum.de/dso>.
+* If you use this code, please cite the respective publications as
+* listed on the above website.
+*
+* DSO is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+*
+* DSO is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with DSO. If not, see <http://www.gnu.org/licenses/>.
+*/
 
 
 
@@ -54,7 +54,8 @@
 #include <geometry_msgs/PoseStamped.h>
 #include <pcl_ros/point_cloud.h>
 
-
+#include <Eigen/Core>
+#include <Eigen/Geometry>
 
 std::string calib = "";
 std::string vignetteFile = "";
@@ -63,18 +64,19 @@ bool useSampleOutput=false;
 
 using namespace dso;
 
-// --------------------------------------------------
-// DSO ROS Output Wrapper
+/**************************************************/
+// add 2018/11/15 kai
+// to above
+/**************************************************/
 class ROSOutputWrapper : public dso::IOWrap::Output3DWrapper {
 public:
   ROSOutputWrapper(ros::NodeHandle& nh) {
-    calib_pose_points_pub = nh.advertise<std_msgs::Float32MultiArray>("dso/KF_ID_calib_pose_points", 10);
-    current_cam_pose_pub = nh.advertise<std_msgs::Float64MultiArray>("dso/current_pose", 10);
-    active_pose_pub = nh.advertise<std_msgs::Float64MultiArray>("dso/active_poses", 10);
-    inlier_points_pub = nh.advertise<std_msgs::Float64MultiArray>("dso/inlier_points", 10);
-
     pose_pub = nh.advertise<geometry_msgs::PoseStamped>("dso/vodom", 10);
     points_pub = nh.advertise<sensor_msgs::PointCloud2>("dso/points", 10);
+
+    live_frame_pub = nh.advertise<sensor_msgs::Image>("dso/live_frame", 10);
+    depth_frame_pub = nh.advertise<sensor_msgs::Image>("dso/depth_frame", 10);
+
   }
 
   ~ROSOutputWrapper() {
@@ -82,14 +84,6 @@ public:
   }
 
   void publishCamPose(FrameShell* frame, CalibHessian* HCalib) override {
-    //--------------------------------------------------
-    // current_cam_pose_pub
-    const Eigen::Matrix<Sophus::SE3Group<double>::Scalar, 3, 4> mTwc = frame->camToWorld.matrix3x4();
-    std_msgs::Float64MultiArray dso_current_pose_msg;
-    for (size_t i =0, size = mTwc.size(); i< size; i++) dso_current_pose_msg.data.push_back(*(mTwc.data()+i));
-    current_cam_pose_pub.publish(dso_current_pose_msg);
-
-    //--------------------------------------------------
     // pose_pub
     Eigen::Quaterniond quat(frame->camToWorld.rotationMatrix());
     Eigen::Vector3d trans = frame->camToWorld.translation();
@@ -133,6 +127,12 @@ public:
     	auto const z = depth * (1 + 2*fxi);
     	Eigen::Vector4d camPoint(x, y, z, 1.f);
     	Eigen::Vector3d worldPoint = m * camPoint;
+	Eigen::Matrix3d rm;
+	rm = 
+	  Eigen::AngleAxisd(0.5*M_PI, Eigen::Vector3d::UnitX())
+	  * Eigen::AngleAxisd(0,  Eigen::Vector3d::UnitY())
+	  * Eigen::AngleAxisd(-1*M_PI, Eigen::Vector3d::UnitZ());
+	worldPoint = rm * worldPoint;
     	output_points << worldPoint.transpose() << std::endl;
         pcl::PointXYZ pt;
         pt.getVector3fMap() = worldPoint.cast<float>();
@@ -148,136 +148,181 @@ public:
     cloud->is_dense = false;
     points_pub.publish(cloud);
     
+  }
 
-    // // Open stream to write in file "points.ply"
-    // std::ofstream output_points;
-    // output_points.open("points.ply", std::ios_base::app);
-    // pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>());
-    // for(const auto* frame : frames) {
-    //   double fxi = HCalib->fxli();
-    //   double fyi = HCalib->fyli();
-    //   double cxi = HCalib->cxli();
-    //   double cyi = HCalib->cyli();
-    //   auto const & cam2world=  frame->shell->camToWorld.matrix3x4();
+  void pushLiveFrame(FrameHessian* image) {
+    cv::Mat mat = cv::Mat(dso::hG[0], dso::wG[0], CV_32FC3, image->dI->data()) * (1/254.0f);
+    std::vector<cv::Mat> channels(3);
+    cv::split(mat, channels);
+    mat = channels[0];
+    mat.convertTo(mat, CV_8UC1, 255.0f);
+    sensor_msgs::ImagePtr msg = cv_bridge::CvImage(std_msgs::Header(), "mono8", mat).toImageMsg();
+    live_frame_pub.publish(msg);
+  }
 
-    //   for (auto const* p : frame->pointHessiansMarginalized) {
-    // 	// convert [u, v, depth] to [x, y, z]
-    //     float depth = 1.0f / p->idepth;
-    //     auto const x = (p->u * fxi + cxi) * depth;
-    //     auto const y = (p->v * fyi + cyi) * depth;
-    //     auto const z = depth * (1 + 2*fxi);
+  void pushDepthImage(MinimalImageB3* image) {
+    cv::Mat mat = cv::Mat(image->h, image->w, CV_8UC3, image->data);
+    sensor_msgs::ImagePtr msg = cv_bridge::CvImage(std_msgs::Header(), "rgb8", mat).toImageMsg();
+    depth_frame_pub.publish(msg);
+  }
 
-    //     Eigen::Vector3d world_point = cam2world * Eigen::Vector4d(x, y, z, 1.f);
-
-    //     pcl::PointXYZ pt;
-    //     pt.getVector3fMap() = world_point.cast<float>();
-    //     cloud->push_back(pt);
-    // 	output_points << world_point.transpose() << std::endl;
-    //   }
-    // }
-
-    // output_points.close();
-
-    // cloud->header.frame_id = "world";
-    // cloud->width = cloud->size();
-    // cloud->height = 1;
-    // cloud->is_dense = false;
-    // points_pub.publish(cloud);
-
-    
-
-    
-
-    //--------------------------------------------------
-    // todo current_cam_pose_pub
-    
+  void pushDepthImageFloat(MinimalImageF* image, FrameHessian* KF) {
+    // cv::Mat mat = cv::Mat(image->h, image->w, CV_32FC1, image->data);
+    // mat.convertTo(mat, CV_8UC1, 255.0f);
+    // cv::Mat imverted_img;
+    // cv::bitwise_not(mat, imverted_img);
+    // std_msgs::Header header;
+    // header.frame_id = KF->frameID;
+    // header.seq = KF->shell->incoming_id;
+    // sensor_msgs::ImagePtr msg = cv_bridge::CvImage(header, "mono8", imverted_img).toImageMsg();
+    // depth_frame_pub.publish(msg);
   }
 
 private:
-  ros::Publisher calib_pose_points_pub;
-  ros::Publisher current_cam_pose_pub;
-  ros::Publisher active_pose_pub;
-  ros::Publisher inlier_points_pub;
-
   ros::Publisher pose_pub;
   ros::Publisher points_pub;
+
+  ros::Publisher live_frame_pub;
+  ros::Publisher depth_frame_pub;
+
 };
+/**************************************************/
+// add 2018/11/19 kai
+// to above
+/**************************************************/
 
 void parseArgument(char* arg)
 {
-  int option;
-  char buf[1000];
+	int option;
+	char buf[1000];
 
-  if(1==sscanf(arg,"sampleoutput=%d",&option))
-    {
-      if(option==1)
+	if(1==sscanf(arg,"sampleoutput=%d",&option))
 	{
-	  useSampleOutput = true;
-	  printf("USING SAMPLE OUTPUT WRAPPER!\n");
+		if(option==1)
+		{
+			useSampleOutput = true;
+			printf("USING SAMPLE OUTPUT WRAPPER!\n");
+		}
+		return;
 	}
-      return;
-    }
 
-  if(1==sscanf(arg,"quiet=%d",&option))
-    {
-      if(option==1)
+	if(1==sscanf(arg,"quiet=%d",&option))
 	{
-	  setting_debugout_runquiet = true;
-	  printf("QUIET MODE, I'll shut up!\n");
+		if(option==1)
+		{
+			setting_debugout_runquiet = true;
+			printf("QUIET MODE, I'll shut up!\n");
+		}
+		return;
 	}
-      return;
-    }
 
 
-  if(1==sscanf(arg,"nolog=%d",&option))
-    {
-      if(option==1)
+	if(1==sscanf(arg,"nolog=%d",&option))
 	{
-	  setting_logStuff = false;
-	  printf("DISABLE LOGGING!\n");
+		if(option==1)
+		{
+			setting_logStuff = false;
+			printf("DISABLE LOGGING!\n");
+		}
+		return;
 	}
-      return;
-    }
 
-  if(1==sscanf(arg,"nogui=%d",&option))
-    {
-      if(option==1)
+	if(1==sscanf(arg,"nogui=%d",&option))
 	{
-	  disableAllDisplay = true;
-	  printf("NO GUI!\n");
+		if(option==1)
+		{
+			disableAllDisplay = true;
+			printf("NO GUI!\n");
+		}
+		return;
 	}
-      return;
-    }
-  if(1==sscanf(arg,"nomt=%d",&option))
-    {
-      if(option==1)
+	if(1==sscanf(arg,"nomt=%d",&option))
 	{
-	  multiThreading = false;
-	  printf("NO MultiThreading!\n");
+		if(option==1)
+		{
+			multiThreading = false;
+			printf("NO MultiThreading!\n");
+		}
+		return;
 	}
-      return;
-    }
-  if(1==sscanf(arg,"calib=%s",buf))
-    {
-      calib = buf;
-      printf("loading calibration from %s!\n", calib.c_str());
-      return;
-    }
-  if(1==sscanf(arg,"vignette=%s",buf))
-    {
-      vignetteFile = buf;
-      printf("loading vignette from %s!\n", vignetteFile.c_str());
-      return;
-    }
+	if(1==sscanf(arg,"calib=%s",buf))
+	{
+		calib = buf;
+		printf("loading calibration from %s!\n", calib.c_str());
+		return;
+	}
+	if(1==sscanf(arg,"vignette=%s",buf))
+	{
+		vignetteFile = buf;
+		printf("loading vignette from %s!\n", vignetteFile.c_str());
+		return;
+	}
 
-  if(1==sscanf(arg,"gamma=%s",buf))
-    {
-      gammaFile = buf;
-      printf("loading gammaCalib from %s!\n", gammaFile.c_str());
-      return;
-    }
+	if(1==sscanf(arg,"gamma=%s",buf))
+	{
+		gammaFile = buf;
+		printf("loading gammaCalib from %s!\n", gammaFile.c_str());
+		return;
+	}
 
-  printf("could not parse argument \"%s\"!!\n", arg);
+	/**************************************************/
+	// add 2018/11/15 kai
+	// from here
+	/**************************************************/
+	if(1==sscanf(arg,"activePoints=%f",&setting_desiredPointDensity)) {
+	  printf("active points = %f\n", setting_desiredPointDensity);
+	  return;
+	}
+	if(1==sscanf(arg,"candidates=%f",&setting_desiredImmatureDensity)) {
+	  printf("point candidates = %f\n", setting_desiredImmatureDensity);
+	  return;
+	}
+	if(1==sscanf(arg,"maxFrames=%d",&setting_maxFrames)) {
+	  printf("max frames = %d\n", setting_maxFrames);
+	  return;
+	}
+	
+	if(1==sscanf(arg,"minFrames=%d",&setting_minFrames)) {
+	  printf("min frames = %d\n", setting_minFrames);
+	  return;
+	}
+	if(1==sscanf(arg,"kfFreq=%f",&setting_kfGlobalWeight)) {
+	  printf("key frame frequence, general weight on threshold, the larger the more KF's are taken (e.g., 2 = double the amount of KF's). = %f\n", setting_kfGlobalWeight);
+	  return;
+	}
+	if(1==sscanf(arg,"reTrackTh=%f",&setting_reTrackThreshold)) {
+	  printf("re tracking threshold (larger = re-track more often) = %f\n", setting_reTrackThreshold);
+	  return;
+	}
+	if(1==sscanf(arg,"goStepByStep=%d", &option)) {
+	  if(option==1) {
+	    goStepByStep = true;
+	    printf("go step by step!\n");
+	  }
+	  return;
+	}
+	if(1==sscanf(arg,"traceGNTh=%f",&setting_trace_GNThreshold)) {
+	  printf("trace GN threshold (GN stop after this stepsize.) = %f", setting_trace_GNThreshold);
+	  return;
+	}
+	if(1==sscanf(arg,"maxOptIter=%d", &setting_maxOptIterations)) {
+	  printf("max Opt Iteraions (max GN iterations.) = %d\n", setting_maxOptIterations);
+	  return;
+	}
+	if(1==sscanf(arg,"minOptIter=%d", &setting_minOptIterations)) {
+	  printf("min Opt  Iterations (min GN iterations.) = %d\n", setting_minOptIterations);
+	  return;
+	}
+	if(1==sscanf(arg,"optIterTh=%f", &setting_thOptIterations)) {
+	  printf("Opt Iterations threshold (factor on break threshold for GN iteration (larger = break earlier))= %f\n", setting_thOptIterations);
+	  return;
+	}
+	/**************************************************/
+	// add 2018/11/15 kai
+	// to above
+	/**************************************************/
+	
+	printf("could not parse argument \"%s\"!!\n", arg);
 }
 
 
@@ -289,29 +334,29 @@ int frameID = 0;
 
 void vidCb(const sensor_msgs::ImageConstPtr img)
 {
-  cv_bridge::CvImagePtr cv_ptr = cv_bridge::toCvCopy(img, sensor_msgs::image_encodings::MONO8);
-  assert(cv_ptr->image.type() == CV_8U);
-  assert(cv_ptr->image.channels() == 1);
+	cv_bridge::CvImagePtr cv_ptr = cv_bridge::toCvCopy(img, sensor_msgs::image_encodings::MONO8);
+	assert(cv_ptr->image.type() == CV_8U);
+	assert(cv_ptr->image.channels() == 1);
 
 
-  if(setting_fullResetRequested)
-    {
-      std::vector<IOWrap::Output3DWrapper*> wraps = fullSystem->outputWrapper;
-      delete fullSystem;
-      for(IOWrap::Output3DWrapper* ow : wraps) ow->reset();
-      fullSystem = new FullSystem();
-      fullSystem->linearizeOperation=false;
-      fullSystem->outputWrapper = wraps;
-      if(undistorter->photometricUndist != 0)
-	fullSystem->setGammaFunction(undistorter->photometricUndist->getG());
-      setting_fullResetRequested=false;
-    }
+	if(setting_fullResetRequested)
+	{
+		std::vector<IOWrap::Output3DWrapper*> wraps = fullSystem->outputWrapper;
+		delete fullSystem;
+		for(IOWrap::Output3DWrapper* ow : wraps) ow->reset();
+		fullSystem = new FullSystem();
+		fullSystem->linearizeOperation=false;
+		fullSystem->outputWrapper = wraps;
+	    if(undistorter->photometricUndist != 0)
+	    	fullSystem->setGammaFunction(undistorter->photometricUndist->getG());
+		setting_fullResetRequested=false;
+	}
 
-  MinimalImageB minImg((int)cv_ptr->image.cols, (int)cv_ptr->image.rows,(unsigned char*)cv_ptr->image.data);
-  ImageAndExposure* undistImg = undistorter->undistort<unsigned char>(&minImg, 1,0, 1.0f);
-  fullSystem->addActiveFrame(undistImg, frameID);
-  frameID++;
-  delete undistImg;
+	MinimalImageB minImg((int)cv_ptr->image.cols, (int)cv_ptr->image.rows,(unsigned char*)cv_ptr->image.data);
+	ImageAndExposure* undistImg = undistorter->undistort<unsigned char>(&minImg, 1,0, 1.0f);
+	fullSystem->addActiveFrame(undistImg, frameID);
+	frameID++;
+	delete undistImg;
 
 }
 
@@ -321,72 +366,83 @@ void vidCb(const sensor_msgs::ImageConstPtr img)
 
 int main( int argc, char** argv )
 {
-  ros::init(argc, argv, "dso_live");
+	ros::init(argc, argv, "dso_live");
 
 
 
-  for(int i=1; i<argc;i++) parseArgument(argv[i]);
+	//for(int i=1; i<argc;i++) parseArgument(argv[i]);
 
 
-  setting_desiredImmatureDensity = 1000;
-  setting_desiredPointDensity = 1200;
-  setting_minFrames = 5;
-  setting_maxFrames = 7;
-  setting_maxOptIterations=4;
-  setting_minOptIterations=1;
-  setting_logStuff = false;
-  setting_kfGlobalWeight = 1.3;
+	setting_desiredImmatureDensity = 1000;
+	setting_desiredPointDensity = 1200;
+	setting_minFrames = 5;
+	setting_maxFrames = 7;
+	setting_maxOptIterations=4;
+	setting_minOptIterations=1;
+	setting_logStuff = false;
+	setting_kfGlobalWeight = 1.3;
 
 
-  printf("MODE WITH CALIBRATION, but without exposure times!\n");
-  setting_photometricCalibration = 2;
-  setting_affineOptModeA = 0;
-  setting_affineOptModeB = 0;
+	printf("MODE WITH CALIBRATION, but without exposure times!\n");
+	setting_photometricCalibration = 2;
+	setting_affineOptModeA = 0;
+	setting_affineOptModeB = 0;
+
+	/**************************************************/
+	// add 2018/11/15 kai
+	// from here
+	/**************************************************/
+	for(int i=1; i<argc;i++) parseArgument(argv[i]);
+	/**************************************************/
+	// add 2018/11/15 kai
+	// to above
+	/**************************************************/
 
 
+    undistorter = Undistort::getUndistorterForFile(calib, gammaFile, vignetteFile);
 
-  undistorter = Undistort::getUndistorterForFile(calib, gammaFile, vignetteFile);
-
-  setGlobalCalib(
-		 (int)undistorter->getSize()[0],
-		 (int)undistorter->getSize()[1],
-		 undistorter->getK().cast<float>());
-
-
-  fullSystem = new FullSystem();
-  fullSystem->linearizeOperation=false;
+    setGlobalCalib(
+            (int)undistorter->getSize()[0],
+            (int)undistorter->getSize()[1],
+            undistorter->getK().cast<float>());
 
 
-  if(!disableAllDisplay)
-    fullSystem->outputWrapper.push_back(new IOWrap::PangolinDSOViewer(
-								      (int)undistorter->getSize()[0],
-								      (int)undistorter->getSize()[1]));
+    fullSystem = new FullSystem();
+    fullSystem->linearizeOperation=false;
 
 
-  if(useSampleOutput)
-    fullSystem->outputWrapper.push_back(new IOWrap::SampleOutputWrapper());
+    if(!disableAllDisplay)
+	    fullSystem->outputWrapper.push_back(new IOWrap::PangolinDSOViewer(
+	    		 (int)undistorter->getSize()[0],
+	    		 (int)undistorter->getSize()[1]));
 
 
-  if(undistorter->photometricUndist != 0)
-    fullSystem->setGammaFunction(undistorter->photometricUndist->getG());
+    if(useSampleOutput)
+        fullSystem->outputWrapper.push_back(new IOWrap::SampleOutputWrapper());
 
-  ros::NodeHandle nh;
-  ros::Subscriber imgSub = nh.subscribe("image", 1, &vidCb);
 
-  // register output wrapper
-  fullSystem->outputWrapper.push_back(new ROSOutputWrapper(nh));
+    if(undistorter->photometricUndist != 0)
+    	fullSystem->setGammaFunction(undistorter->photometricUndist->getG());
 
-  ros::spin();
+    ros::NodeHandle nh;
+    ros::Subscriber imgSub = nh.subscribe("image", 1, &vidCb);
 
-  for(IOWrap::Output3DWrapper* ow : fullSystem->outputWrapper)
+    // --------------------------------------------------
+    // register output wrapper
+    fullSystem->outputWrapper.push_back(new ROSOutputWrapper(nh));
+    // --------------------------------------------------
+  
+    ros::spin();
+
+    for(IOWrap::Output3DWrapper* ow : fullSystem->outputWrapper)
     {
-      ow->join();
-      delete ow;
+        ow->join();
+        delete ow;
     }
 
-  delete undistorter;
-  delete fullSystem;
+    delete undistorter;
+    delete fullSystem;
 
-  return 0;
+	return 0;
 }
 
