@@ -24,7 +24,7 @@ Here is a simple example of flandmark ported to Java from this C++ source file a
  * https://github.com/uricamic/flandmark/blob/master/examples/simple_example.cpp
  * https://github.com/uricamic/flandmark/tree/master/data
 
-We can use [Maven 3](http://maven.apache.org/) to download and install automatically all the class files as well as the native binaries. To run this sample code, after creating the `pom.xml` and `src/main/java/SimpleExample.java` source files below, simply execute on the command line:
+We can use [Maven 3](http://maven.apache.org/) to download and install automatically all the class files as well as the native binaries. To run this sample code, after creating the `pom.xml` and `SimpleExample.java` source files below, simply execute on the command line:
 ```bash
  $ mvn compile exec:java -Dexec.args="<path_to_input_image> <face_bbox - 4int> [<path_to_output_image>]"
 ```
@@ -33,23 +33,26 @@ We can use [Maven 3](http://maven.apache.org/) to download and install automatic
 ```xml
 <project>
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.bytedeco.javacpp-presets.flandmark</groupId>
+    <groupId>org.bytedeco.flandmark</groupId>
     <artifactId>simpleexample</artifactId>
-    <version>1.3</version>
+    <version>1.5.3</version>
     <properties>
         <exec.mainClass>SimpleExample</exec.mainClass>
     </properties>
     <dependencies>
         <dependency>
-            <groupId>org.bytedeco.javacpp-presets</groupId>
+            <groupId>org.bytedeco</groupId>
             <artifactId>flandmark-platform</artifactId>
-            <version>1.07-1.3</version>
+            <version>1.07-1.5.3</version>
         </dependency>
     </dependencies>
+    <build>
+        <sourceDirectory>.</sourceDirectory>
+    </build>
 </project>
 ```
 
-### The `src/main/java/SimpleExample.java` source file
+### The `SimpleExample.java` source file
 ```java
 /*
  * This program is free software; you can redistribute it and/or modify
@@ -62,11 +65,15 @@ We can use [Maven 3](http://maven.apache.org/) to download and install automatic
  */
 
 import org.bytedeco.javacpp.*;
-import static org.bytedeco.javacpp.flandmark.*;
-import static org.bytedeco.javacpp.opencv_core.*;
-import static org.bytedeco.javacpp.opencv_highgui.*;
-import static org.bytedeco.javacpp.opencv_imgcodecs.*;
-import static org.bytedeco.javacpp.opencv_imgproc.*;
+import org.bytedeco.flandmark.*;
+import org.bytedeco.opencv.opencv_core.*;
+import org.bytedeco.opencv.opencv_highgui.*;
+import org.bytedeco.opencv.opencv_imgproc.*;
+import static org.bytedeco.flandmark.global.flandmark.*;
+import static org.bytedeco.opencv.global.opencv_core.*;
+import static org.bytedeco.opencv.global.opencv_highgui.*;
+import static org.bytedeco.opencv.global.opencv_imgcodecs.*;
+import static org.bytedeco.opencv.global.opencv_imgproc.*;
 
 public class SimpleExample {
     public static void main(String[] args) {

@@ -5,7 +5,7 @@ Introduction
 ------------
 This directory contains the JavaCPP Presets module for:
 
- * TensorFlow 1.4.0  http://www.tensorflow.org/
+ * TensorFlow 1.15.3  http://www.tensorflow.org/
 
 Please refer to the parent README.md file for more detailed information about the JavaCPP Presets.
 
@@ -16,6 +16,9 @@ Java API documentation is available here:
 
  * http://bytedeco.org/javacpp-presets/tensorflow/apidocs/
 
+&lowast; Call `Loader.load(org.bytedeco.tensorflow.presets.tensorflow.class)` before using the API in the `org.tensorflow` package.  
+&lowast; Call `Py_AddPath(cachePackages())` before calling `Py_Initialize()`.
+
 
 Sample Usage
 ------------
@@ -23,7 +26,7 @@ Here is a simple example of TensorFlow ported to Java from this C++ source file:
 
  * https://github.com/tensorflow/tensorflow/blob/r1.0/tensorflow/cc/tutorials/example_trainer.cc
 
-We can use [Maven 3](http://maven.apache.org/) to download and install automatically all the class files as well as the native binaries. To run this sample code, after creating the `pom.xml` and `src/main/java/ExampleTrainer.java` source files below, simply execute on the command line:
+We can use [Maven 3](http://maven.apache.org/) to download and install automatically all the class files as well as the native binaries. To run this sample code, after creating the `pom.xml` and `ExampleTrainer.java` source files below, simply execute on the command line:
 ```bash
  $ mvn compile exec:java
 ```
@@ -32,23 +35,53 @@ We can use [Maven 3](http://maven.apache.org/) to download and install automatic
 ```xml
 <project>
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.bytedeco.javacpp-presets.tensorflow</groupId>
+    <groupId>org.bytedeco.tensorflow</groupId>
     <artifactId>exampletrainer</artifactId>
-    <version>1.3.4-SNAPSHOT</version>
+    <version>1.5.4-SNAPSHOT</version>
     <properties>
         <exec.mainClass>ExampleTrainer</exec.mainClass>
     </properties>
     <dependencies>
         <dependency>
-            <groupId>org.bytedeco.javacpp-presets</groupId>
+            <groupId>org.bytedeco</groupId>
             <artifactId>tensorflow-platform</artifactId>
-            <version>1.4.0-1.3.4-SNAPSHOT</version>
+            <version>1.15.3-1.5.4-SNAPSHOT</version>
         </dependency>
+
+        <!-- Additional dependencies required to use CUDA, cuDNN, NCCL, and TensorRT -->
+        <dependency>
+            <groupId>org.bytedeco</groupId>
+            <artifactId>tensorflow-platform-gpu</artifactId>
+            <version>1.15.3-1.5.4-SNAPSHOT</version>
+        </dependency>
+
+        <!-- Additional dependencies to use bundled CUDA, cuDNN, NCCL, and TensorRT -->
+        <dependency>
+            <groupId>org.bytedeco</groupId>
+            <artifactId>cuda-platform-redist</artifactId>
+            <version>11.0-8.0-1.5.4-SNAPSHOT</version>
+        </dependency>
+
+        <!-- Optional dependencies to load Python-enabled builds -->
+        <dependency>
+            <groupId>org.bytedeco</groupId>
+            <artifactId>tensorflow-platform-python</artifactId>
+            <version>1.15.3-1.5.4-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.bytedeco</groupId>
+            <artifactId>tensorflow-platform-python-gpu</artifactId>
+            <version>1.15.3-1.5.4-SNAPSHOT</version>
+        </dependency>
+
     </dependencies>
+    <build>
+        <sourceDirectory>.</sourceDirectory>
+    </build>
 </project>
 ```
 
-### The `src/main/java/ExampleTrainer.java` source file
+### The `ExampleTrainer.java` source file
 ```java
 /* Copyright 2015 The TensorFlow Authors. All Rights Reserved.
 
@@ -70,7 +103,8 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import static org.bytedeco.javacpp.tensorflow.*;
+import org.bytedeco.tensorflow.*;
+import static org.bytedeco.tensorflow.global.tensorflow.*;
 
 public class ExampleTrainer {
 

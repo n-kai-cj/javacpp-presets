@@ -1,50 +1,53 @@
 JavaCPP Presets
 ===============
 
-[![Join the chat at https://gitter.im/bytedeco/javacpp](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/bytedeco/javacpp?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.bytedeco/javacpp-presets/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.bytedeco/javacpp-presets) [![Travis CI](https://travis-ci.org/bytedeco/javacpp-presets.svg?branch=master)](https://travis-ci.org/bytedeco/javacpp-presets) [![AppVeyor](https://ci.appveyor.com/api/projects/status/github/bytedeco/javacpp-presets?branch=master&svg=true)](https://ci.appveyor.com/project/bytedeco/javacpp-presets)
+[![Gitter](https://badges.gitter.im/bytedeco/javacpp.svg)](https://gitter.im/bytedeco/javacpp) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.bytedeco/javacpp-presets/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.bytedeco/javacpp-presets) [![Sonatype Nexus (Snapshots)](https://img.shields.io/nexus/s/https/oss.sonatype.org/org.bytedeco/javacpp-presets.svg)](http://bytedeco.org/builds/) <sup>Android, iOS, Linux, Mac OS X:</sup> [![Travis CI](https://travis-ci.org/bytedeco/javacpp-presets.svg?branch=master)](https://travis-ci.org/bytedeco/javacpp-presets) <sup>Windows:</sup> [![AppVeyor](https://ci.appveyor.com/api/projects/status/github/bytedeco/javacpp-presets?branch=master&svg=true)](https://ci.appveyor.com/project/bytedeco/javacpp-presets)
 
 
 Introduction
 ------------
-The JavaCPP Presets module contains Java configuration and interface classes for widely used C/C++ libraries. The configuration files in the `org.bytedeco.javacpp.presets` package are used by the `Parser` to create from C/C++ header files the Java interface files targeting the `org.bytedeco.javacpp` package, which is turn are used by the `Generator` and the native C++ compiler to produce the required JNI libraries. Moreover, helper classes make their functionality easier to use on the Java platform, including Android.
+The JavaCPP Presets modules contain Java configuration and interface classes for widely used C/C++ libraries. The configuration files in the `org.bytedeco.<moduleName>.presets` packages are used by the `Parser` to create from C/C++ header files the Java interface files targeting the `org.bytedeco.<moduleName>` packages, which is turn are used by the `Generator` and the native C++ compiler to produce the required JNI libraries. Moreover, helper classes make their functionality easier to use on the Java platform, including Android.
 
 Please refer to the wiki page for more information about how to [create new presets](https://github.com/bytedeco/javacpp-presets/wiki/Create-New-Presets). Since additional documentation is currently lacking, please also feel free to ask questions on [the mailing list](http://groups.google.com/group/javacpp-project).
 
 
 Downloads
 ---------
-To install manually the JAR files, obtain the following archives and follow the instructions in the [Manual Installation](#manual-installation) section below.
+JAR files containing binaries for all child modules and builds for all supported platforms (Android, iOS, Linux, Mac OS X, and Windows) can be obtained from the [Maven Central Repository](http://search.maven.org/#search|ga|1|bytedeco). Archives containing these JAR files are also available as [releases](https://github.com/bytedeco/javacpp-presets/releases).
 
- * JavaCPP Presets 1.3 binary archive  [javacpp-presets-platform-1.3-bin.zip](http://search.maven.org/remotecontent?filepath=org/bytedeco/javacpp-presets-platform/1.3/javacpp-presets-platform-1.3-bin.zip) (516 MB)
- * JavaCPP Presets 1.3 source archive  [javacpp-presets-platform-1.3-src.zip](http://search.maven.org/remotecontent?filepath=org/bytedeco/javacpp-presets-platform/1.3/javacpp-presets-platform-1.3-src.zip) (2.8 MB)
-
-The binary archive contains builds for Android, Linux, Mac OS X, and Windows. The JAR files for specific child modules or platforms can also be obtained individually from the [Maven Central Repository](http://search.maven.org/#search|ga|1|bytedeco).
-
+To install manually the JAR files, follow the instructions in the [Manual Installation](#manual-installation) section below.
 
 We can also have everything downloaded and installed automatically with:
 
  * Maven (inside the `pom.xml` file)
 ```xml
   <dependency>
-    <groupId>org.bytedeco.javacpp-presets</groupId>
+    <groupId>org.bytedeco</groupId>
     <artifactId>${moduleName}-platform</artifactId>
-    <version>${moduleVersion}-1.3</version>
+    <version>${moduleVersion}-1.5.3</version>
   </dependency>
 ```
 
  * Gradle (inside the `build.gradle` file)
 ```groovy
   dependencies {
-    compile group: 'org.bytedeco.javacpp-presets', name: moduleName + '-platform', version: moduleVersion + '-1.3'
+    compile group: 'org.bytedeco', name: moduleName + '-platform', version: moduleVersion + '-1.5.3'
   }
+```
+
+ * Leiningen (inside the `project.clj` file)
+```clojure
+  :dependencies [
+    [~(symbol (str "org.bytedeco/" moduleName "-platform")) ~(str moduleVersion "-1.5.3")]
+  ]
 ```
 
  * sbt (inside the `build.sbt` file)
 ```scala
-  libraryDependencies += "org.bytedeco.javacpp-presets" % moduleName + "-platform" % moduleVersion + "-1.3"
+  libraryDependencies += "org.bytedeco" % moduleName + "-platform" % moduleVersion + "-1.5.3"
 ```
 
-where the `moduleName` and `moduleVersion` variables correspond to the desired module. This downloads binaries for all platforms, but to get binaries for only one platform we can set the `javacpp.platform` system property (via the `-D` command line option) to something like `android-arm`, `linux-x86_64`, `macosx-x86_64`, `windows-x86_64`, etc. Another option available for Scala users is [sbt-javacpp](https://github.com/bytedeco/sbt-javacpp).
+where the `moduleName` and `moduleVersion` variables correspond to the desired module. This downloads binaries for all platforms, but to get binaries for only one platform we can set the `javacpp.platform` system property (via the `-D` command line option) to something like `android-arm`, `linux-x86_64`, `macosx-x86_64`, `windows-x86_64`, etc. We can also specify more than one platform, see the examples at [Reducing the Number of Dependencies](https://github.com/bytedeco/javacpp-presets/wiki/Reducing-the-Number-of-Dependencies). Another option available to Gradle users is [Gradle JavaCPP](https://github.com/bytedeco/gradle-javacpp), and similarly for Scala users there is [SBT-JavaCPP](https://github.com/bytedeco/sbt-javacpp).
 
 
 Required Software
@@ -53,12 +56,12 @@ To use the JavaCPP Presets, you will need to download and install the following 
 
  * An implementation of Java SE 7 or newer:
    * OpenJDK  http://openjdk.java.net/install/  or
-   * Sun JDK  http://www.oracle.com/technetwork/java/javase/downloads/  or
+   * Oracle JDK  http://www.oracle.com/technetwork/java/javase/downloads/  or
    * IBM JDK  http://www.ibm.com/developerworks/java/jdk/
 
 Further, in the case of Android, the JavaCPP Presets also rely on:
 
- * Android SDK API 14 or newer  http://developer.android.com/sdk/
+ * Android SDK API 21 or newer  http://developer.android.com/sdk/
 
 
 Manual Installation
@@ -75,14 +78,14 @@ Eclipse (Java SE 7 or newer):
  1. Navigate to Project > Properties > Java Build Path > Libraries and click "Add External JARs...".
  2. Locate the JAR files, select them, and click OK.
 
-IntelliJ IDEA (Android 4.0 or newer):
+IntelliJ IDEA (Android 5.0 or newer):
 
  1. Follow the instructions on this page: http://developer.android.com/training/basics/firstapp/
  2. Copy all the JAR files into the `app/libs` subdirectory.
  3. Navigate to File > Project Structure > app > Dependencies, click `+`, and select "2 File dependency".
  4. Select all the JAR files from the `libs` subdirectory.
 
-After that, we can access almost transparently the corresponding C/C++ APIs through the interface classes found in the `org.bytedeco.javacpp` package. Indeed, the `Parser` translates the code comments from the C/C++ header files into the Java interface files, (almost) ready to be consumed by Javadoc. However, since their translation still leaves to be desired, one may wish to refer to the original documentation pages. For instance, the ones for OpenCV and FFmpeg can be found online at:
+After that, we can access almost transparently the corresponding C/C++ APIs through the interface classes found in the `org.bytedeco.<moduleName>` packages. Indeed, the `Parser` translates the code comments from the C/C++ header files into the Java interface files, (almost) ready to be consumed by Javadoc. However, since their translation still leaves to be desired, one may wish to refer to the original documentation pages. For instance, the ones for OpenCV and FFmpeg can be found online at:
 
  * [OpenCV documentation](http://docs.opencv.org/master/)
  * [FFmpeg documentation](http://ffmpeg.org/doxygen/trunk/)
@@ -90,7 +93,7 @@ After that, we can access almost transparently the corresponding C/C++ APIs thro
 
 Build Instructions
 ------------------
-If the binary files available above are not enough for your needs, you might need to rebuild them from the source code. To this end, project files on the Java side were created as [Maven modules](#the-maven-modules). Before running the Maven build, however, we recommend to install the native libraries on the native C/C++ side with the [`cppbuild.sh` scripts](#the-cppbuildsh-scripts), but they can also be installed by other means.
+If the binary files available above are not enough for your needs, you might need to rebuild them from the source code. To this end, project files on the Java side were created as [Maven modules](#the-maven-modules). By default, the Maven build also installs the native libraries on the native C/C++ side with the [`cppbuild.sh` scripts](#the-cppbuildsh-scripts), but they can also be installed by other means.
 
 Additionally, one can find on the wiki page additional information about the recommended [build environments](https://github.com/bytedeco/javacpp-presets/wiki/Build-Environments) for the major platforms.
 
@@ -99,42 +102,68 @@ Additionally, one can find on the wiki page additional information about the rec
 The JavaCPP Presets depend on Maven, a powerful build system for Java, so before attempting a build, be sure to install and read up on:
 
  * Maven 3.x  http://maven.apache.org/download.html
- * JavaCPP 1.3  https://github.com/bytedeco/javacpp
+ * JavaCPP 1.5.3  https://github.com/bytedeco/javacpp
 
-Each child module in turn relies on its corresponding native libraries being already installed in the `cppbuild` subdirectory created by a prior execution of the included [`cppbuild.sh` scripts](#the-cppbuildsh-scripts), explained below. To use native libraries already installed somewhere else on the system, other installation directories than `cppbuild` can also be specified either in the `pom.xml` files or in the `.java` configuration files. The following versions are supported:
+Each child module in turn relies by default on the included [`cppbuild.sh` scripts](#the-cppbuildsh-scripts), explained below, to install its corresponding native libraries in the `cppbuild` subdirectory. To use native libraries already installed somewhere else on the system, other installation directories than `cppbuild` can also be specified either in the `pom.xml` files or in the `.java` configuration files. The following versions are supported:
 
- * OpenCV 3.3.0  http://opencv.org/downloads.html
- * FFmpeg 3.4.x  http://ffmpeg.org/download.html
- * FlyCapture 2.11.x  http://www.ptgrey.com/flycapture-sdk
- * libdc1394 2.1.x or 2.2.x  http://sourceforge.net/projects/libdc1394/files/
- * libfreenect 0.5.3  https://github.com/OpenKinect/libfreenect
+ * OpenCV 4.3.0  https://opencv.org/releases.html
+ * FFmpeg 4.3.x  http://ffmpeg.org/download.html
+ * FlyCapture 2.13.x  https://www.flir.com/products/flycapture-sdk
+ * Spinnaker 1.27.x https://www.flir.com/products/spinnaker-sdk
+ * libdc1394 2.2.6  http://sourceforge.net/projects/libdc1394/files/
+ * libfreenect 0.5.7  https://github.com/OpenKinect/libfreenect
  * libfreenect2 0.2.0  https://github.com/OpenKinect/libfreenect2
- * librealsense 1.9.6  https://github.com/IntelRealSense/librealsense
+ * librealsense 1.12.x  https://github.com/IntelRealSense/librealsense
+ * librealsense2 2.29.x  https://github.com/IntelRealSense/librealsense
  * videoInput 0.200  https://github.com/ofTheo/videoInput/
  * ARToolKitPlus 2.3.1  https://launchpad.net/artoolkitplus
  * Chilitags  https://github.com/chili-epfl/chilitags
  * flandmark 1.07  http://cmp.felk.cvut.cz/~uricamic/flandmark/#download
- * HDF5 1.10.1  https://support.hdfgroup.org/HDF5/
- * MKL 2018.0  https://software.intel.com/intel-mkl
- * OpenBLAS 0.2.20  http://www.openblas.net/
- * FFTW 3.3.7  http://www.fftw.org/download.html
- * GSL 2.4  http://www.gnu.org/software/gsl/#downloading
- * LLVM 5.0.0  http://llvm.org/releases/download.html
- * Leptonica 1.74.4  http://www.leptonica.org/download.html
- * Tesseract 3.05.01  https://github.com/tesseract-ocr/tesseract
+ * Arrow 0.17.x  https://arrow.apache.org/install/
+ * HDF5 1.12.0  https://www.hdfgroup.org/downloads/
+ * Hyperscan 5.3.x  https://github.com/intel/hyperscan
+ * MKL 2020.x  https://software.intel.com/intel-mkl
+ * MKL-DNN 0.21.x  https://github.com/oneapi-src/oneDNN
+ * DNNL 1.5.x  https://github.com/oneapi-src/oneDNN
+ * OpenBLAS 0.3.10  http://www.openblas.net/
+ * ARPACK-NG 3.7.0  https://github.com/opencollab/arpack-ng
+ * CMINPACK 1.3.6  https://github.com/devernay/cminpack
+ * FFTW 3.3.8  http://www.fftw.org/download.html
+ * GSL 2.6  http://www.gnu.org/software/gsl/#downloading
+ * CPython 3.7.8  https://www.python.org/downloads/
+ * NumPy 1.19.x  https://github.com/numpy/numpy
+ * SciPy 1.5.x  https://github.com/scipy/scipy
+ * Gym 0.17.x  https://github.com/openai/gym
+ * LLVM 10.0.x  http://llvm.org/releases/download.html
+ * libpostal 1.1-alpha  https://github.com/openvenues/libpostal
+ * Leptonica 1.79.0  http://www.leptonica.org/download.html
+ * Tesseract 4.1.1  https://github.com/tesseract-ocr/tesseract
  * Caffe 1.0  https://github.com/BVLC/caffe
- * CUDA 9.0  https://developer.nvidia.com/cuda-downloads
- * MXnet 0.12.0  https://github.com/dmlc/mxnet
- * TensorFlow 1.4.0  https://github.com/tensorflow/tensorflow
- * The Arcade Learning Environment  https://github.com/mgbellemare/Arcade-Learning-Environment
+ * OpenPose 1.6.0  https://github.com/CMU-Perceptual-Computing-Lab/openpose
+ * CUDA 11.0.x  https://developer.nvidia.com/cuda-downloads
+   * cuDNN 8.0.x  https://developer.nvidia.com/cudnn
+   * NCCL 2.7.x  https://developer.nvidia.com/nccl
+ * MXNet 1.7.0  https://github.com/apache/incubator-mxnet
+ * TensorFlow 1.15.x  https://github.com/tensorflow/tensorflow
+ * TensorRT 7.x  https://developer.nvidia.com/tensorrt
+ * The Arcade Learning Environment 0.6.x  https://github.com/mgbellemare/Arcade-Learning-Environment
+ * ONNX 1.7.0  https://github.com/onnx/onnx
+ * nGraph 0.26.0  https://github.com/NervanaSystems/ngraph
+ * ONNX Runtime 1.3.x  https://github.com/microsoft/onnxruntime
  * LiquidFun  http://google.github.io/liquidfun/
- * Skia  https://skia.org
+ * Qt 5.15.x  https://download.qt.io/archive/qt/
+ * Mono/Skia 2.80.x  https://github.com/mono/skia
+ * cpu_features 0.4.1  https://github.com/google/cpu_features
+ * System APIs of the build environments:
+   * Linux (glibc)  https://www.gnu.org/software/libc/
+   * Mac OS X (XNU libc)  https://opensource.apple.com/
+   * Windows (Win32)  https://developer.microsoft.com/en-us/windows/
 
 Once everything installed and configured, simply execute
 ```bash
-$ mvn install --projects .,opencv,ffmpeg,flycapture,libdc1394,libfreenect,videoinput,artoolkitplus,etc.
+$ mvn install --projects .,opencv,ffmpeg,etc. -Djavacpp.platform.root=/path/to/android-ndk/
 ```
-inside the directory containing the parent `pom.xml` file, by specifying only the desired child modules in the command, but **without the leading period "." in the comma-separated list of projects, the parent `poml.xml` file itself might not get installed.** Please refer to the comments inside the `pom.xml` file for further details. From the "platform" subdirectory, we can also install the "platform" artifacts with a similar command:
+inside the directory containing the parent `pom.xml` file, by specifying only the desired child modules in the command, but **without the leading period "." in the comma-separated list of projects, the parent `pom.xml` file itself might not get installed.** (The `-Djavacpp.platform.root=...` option is required only for Android builds.) Also specify `-Djavacpp.cppbuild.skip` as option to skip the execution of the `cppbuild.sh` scripts. In addition to `-Djavacpp.platform=...`, some of the presets can also be built against CUDA with `-Djavacpp.platform.extension=-gpu` or CPython with `-Djavacpp.platform.extension=-python`. Please refer to the comments inside the `pom.xml` file for further details. From the "platform" subdirectory, we can also install the "platform" artifacts with a similar command:
 
 ```bash
 $ cd platform
@@ -146,13 +175,13 @@ $ mvn install --projects ../opencv/platform,../ffmpeg/platform,etc. -Djavacpp.pl
 Running the scripts allows us to install easily the native libraries on multiple platforms, but additional software is required:
 
  * A recent version of Linux, Mac OS X, or Windows with MSYS and Visual Studio
- * Android NDK r7 or newer  http://developer.android.com/ndk/downloads/  (required only for Android builds)
+ * Android NDK r18 or newer  http://developer.android.com/ndk/downloads/  (required only for Android builds)
 
-With the above in working order, simply execute
+With the above in working order, the scripts get launched automatically as part of the Maven build lifecycle, but we can also manually execute
 ```bash
-$ ANDROID_NDK=/path/to/android-ndk/ bash cppbuild.sh [-platform <name>] <install | clean> [projects]
+$ ANDROID_NDK=/path/to/android-ndk/ bash cppbuild.sh [-platform <name>] [-extension <name>] <install | clean> [projects]
 ```
-where possible platform names are: `android-arm`, `android-x86`, `linux-x86`, `linux-x86_64`, `linux-armhf`, `macosx-x86_64`, `windows-x86`, `windows-x86_64`, etc. (The `ANDROID_NDK` variable is required only for Android builds.) Please note that the scripts download source archives from appropriate sites as necessary.
+where possible platform names are: `android-arm`, `android-x86`, `linux-x86`, `linux-x86_64`, `linux-armhf`, `linux-ppc64le`, `linux-mips64el`, `macosx-x86_64`, `windows-x86`, `windows-x86_64`, etc. The `-gpu` extension as supported by some builds also require CUDA to be installed. (The `ANDROID_NDK` variable is required only for Android builds.) Please note that the scripts download source archives from appropriate sites as necessary.
 
 To compile binaries for an Android device with no FPU, first make sure this is what you want. Without FPU, the performance of either OpenCV or FFmpeg is bound to be unacceptable. If you still wish to continue down that road, then replace "armeabi-v7a" by "armeabi" and "-march=armv7-a -mfloat-abi=softfp -mfpu=vfpv3-d16" with "-march=armv5te -mtune=xscale -msoft-float", inside various files.
 
@@ -173,18 +202,18 @@ Thanks to Jose Gómez for testing this out!
 
 How Can I Help?
 ---------------
-Contributions of any kind are highly welcome! At the moment, the `Parser` has limited capabilities, so I plan to improve it gradually to the point where it can successfully parse large C++ header files that are even more convoluted than the ones from OpenCV or Caffe, but the build system could also be improved. Consequently, I am looking for help especially with the five following tasks, in no particular order:
+Contributions of any kind are highly welcome! At the moment, the `Parser` has limited capabilities, so I plan to improve it gradually to the point where it can successfully parse large C++ header files that are even more convoluted than the ones from OpenCV, Caffe, or TensorFlow, but the build system could also be improved. Consequently, I am looking for help especially with the five following tasks, in no particular order:
 
  * Setting up continuous integration, preferably free on the cloud ([Travis CI](https://travis-ci.org/)?)
  * Improving the `Parser` (by using the [presets for Clang](llvm/src/main/java/org/bytedeco/javacpp/clang.java)?)
  * Providing builds for more platforms, as with `linux-armhf` for [Raspberry Pi](https://www.raspberrypi.org/), etc.
  * Replacing the Bash/Maven build combo by something easier to use ([Gradle](http://gradle.org/)?)
- * Adding new presets as child modules for other C/C++ libraries (OpenNI, OpenMesh, PCL, etc.)
+ * Adding new presets as child modules for other C/C++ libraries (Caffe2, OpenNI, OpenMesh, PCL, etc.)
 
 To contribute, please fork and create pull requests, or post your suggestions [as a new "issue"](https://github.com/bytedeco/javacpp-presets/issues). Thank you very much in advance for your contribution!
 
 
 ----
-Project lead: Samuel Audet [samuel.audet `at` gmail.com](mailto:samuel.audet at gmail.com)  
+Project lead: Samuel Audet [samuel.audet `at` gmail.com](mailto:samuel.audet&nbsp;at&nbsp;gmail.com)  
 Developer site: https://github.com/bytedeco/javacpp-presets  
 Discussion group: http://groups.google.com/group/javacpp-project

@@ -5,7 +5,7 @@ Introduction
 ------------
 This directory contains the JavaCPP Presets module for:
 
- * libfreenect 0.5.3  http://openkinect.org/
+ * libfreenect 0.5.7  http://openkinect.org/
 
 Please refer to the parent README.md file for more detailed information about the JavaCPP Presets.
 
@@ -23,7 +23,7 @@ Here is a simple example of libfreenect ported to Java from this C source file:
 
  * https://github.com/OpenKinect/libfreenect/blob/v0.5.3/examples/glpclview.c
 
-We can use [Maven 3](http://maven.apache.org/) to download and install automatically all the class files as well as the native binaries. To run this sample code, after creating the `pom.xml` and `src/main/java/GLPCLView.java` source files below, simply execute on the command line:
+We can use [Maven 3](http://maven.apache.org/) to download and install automatically all the class files as well as the native binaries. To run this sample code, after creating the `pom.xml` and `GLPCLView.java` source files below, simply execute on the command line:
 ```bash
  $ mvn compile exec:java
 ```
@@ -32,35 +32,38 @@ We can use [Maven 3](http://maven.apache.org/) to download and install automatic
 ```xml
 <project>
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.bytedeco.javacpp-presets.libfreenect</groupId>
+    <groupId>org.bytedeco.libfreenect</groupId>
     <artifactId>glpclview</artifactId>
-    <version>1.3</version>
+    <version>1.5.3</version>
     <properties>
         <exec.mainClass>GLPCLView</exec.mainClass>
     </properties>
     <dependencies>
         <dependency>
-            <groupId>org.bytedeco.javacpp-presets</groupId>
+            <groupId>org.bytedeco</groupId>
             <artifactId>libfreenect-platform</artifactId>
-            <version>0.5.3-1.3</version>
+            <version>0.5.7-1.5.3</version>
         </dependency>
         <dependency>
-          <groupId>org.jogamp.gluegen</groupId>
-          <artifactId>gluegen-rt-main</artifactId>
-          <version>2.3.1</version>
-          <optional>true</optional>
+            <groupId>org.jogamp.gluegen</groupId>
+            <artifactId>gluegen-rt-main</artifactId>
+            <version>2.3.2</version>
+            <optional>true</optional>
         </dependency>
         <dependency>
-          <groupId>org.jogamp.jogl</groupId>
-          <artifactId>jogl-all-main</artifactId>
-          <version>2.3.1</version>
-          <optional>true</optional>
+            <groupId>org.jogamp.jogl</groupId>
+            <artifactId>jogl-all-main</artifactId>
+            <version>2.3.2</version>
+            <optional>true</optional>
         </dependency>
     </dependencies>
+    <build>
+        <sourceDirectory>.</sourceDirectory>
+    </build>
 </project>
 ```
 
-### The `src/main/java/GLPCLView.java` source file
+### The `GLPCLView.java` source file
 ```java
 /*
  * This file is part of the OpenKinect Project. http://www.openkinect.org
@@ -99,8 +102,9 @@ import java.awt.event.*;
 import java.nio.*;
 import javax.swing.*;
 import org.bytedeco.javacpp.*;
+import org.bytedeco.libfreenect.*;
 import static java.lang.Math.*;
-import static org.bytedeco.javacpp.freenect.*;
+import static org.bytedeco.libfreenect.global.freenect.*;
 
 public class GLPCLView {
     static GLU glu = new GLU();
@@ -271,7 +275,7 @@ public class GLPCLView {
     }
 
     public static void main(String[] args) {
-        Loader.load(freenect.class);
+        Loader.load(org.bytedeco.libfreenect.global.freenect.class);
 
         canvas = new GLCanvas();
         canvas.addGLEventListener(new GLEventListener() {

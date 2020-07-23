@@ -5,7 +5,7 @@ Introduction
 ------------
 This directory contains the JavaCPP Presets module for:
 
- * The Arcade Learning Environment  https://github.com/mgbellemare/Arcade-Learning-Environment
+ * The Arcade Learning Environment 0.6.1  https://github.com/mgbellemare/Arcade-Learning-Environment
 
 Please refer to the parent README.md file for more detailed information about the JavaCPP Presets.
 
@@ -23,7 +23,7 @@ Here is a simple example of ALE ported to Java from this C++ source file:
 
  * https://github.com/mgbellemare/Arcade-Learning-Environment/blob/master/doc/examples/sharedLibraryInterfaceExample.cpp
 
-We can use [Maven 3](http://maven.apache.org/) to download and install automatically all the class files as well as the native binaries. To run this sample code, after creating the `pom.xml` and `src/main/java/SharedLibraryInterfaceExample.java` source files below, simply execute on the command line:
+We can use [Maven 3](http://maven.apache.org/) to download and install automatically all the class files as well as the native binaries. To run this sample code, after creating the `pom.xml` and `SharedLibraryInterfaceExample.java` source files below, simply execute on the command line:
 ```bash
  $ mvn compile exec:java -Dexec.args="rom_file"
 ```
@@ -32,23 +32,26 @@ We can use [Maven 3](http://maven.apache.org/) to download and install automatic
 ```xml
 <project>
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.bytedeco.javacpp-presets.ale</groupId>
+    <groupId>org.bytedeco.ale</groupId>
     <artifactId>sharedlibraryinterfaceexample</artifactId>
-    <version>1.3.4-SNAPSHOT</version>
+    <version>1.5.3</version>
     <properties>
         <exec.mainClass>SharedLibraryInterfaceExample</exec.mainClass>
     </properties>
     <dependencies>
         <dependency>
-            <groupId>org.bytedeco.javacpp-presets</groupId>
+            <groupId>org.bytedeco</groupId>
             <artifactId>ale-platform</artifactId>
-            <version>20170911-6eddb8d-1.3.4-SNAPSHOT</version>
+            <version>0.6.1-1.5.3</version>
         </dependency>
     </dependencies>
+    <build>
+        <sourceDirectory>.</sourceDirectory>
+    </build>
 </project>
 ```
 
-### The `src/main/java/SharedLibraryInterfaceExample.java` source file
+### The `SharedLibraryInterfaceExample.java` source file
 ```java
 /* *****************************************************************************
  * A.L.E (Arcade Learning Environment)
@@ -66,9 +69,11 @@ We can use [Maven 3](http://maven.apache.org/) to download and install automatic
  *  Sample code for running an agent with the shared library interface. 
  **************************************************************************** */
 
+import java.lang.System;
 import java.util.Random;
 import org.bytedeco.javacpp.*;
-import static org.bytedeco.javacpp.ale.*;
+import org.bytedeco.ale.*;
+import static org.bytedeco.ale.global.ale.*;
 
 public class SharedLibraryInterfaceExample {
     public static void main(String[] args) {

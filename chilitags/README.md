@@ -23,7 +23,7 @@ Here is the live detection sample of Chilitags ported to Java from this C++ sour
 
  * https://github.com/chili-epfl/chilitags/blob/master/samples/detection/detect-live.cpp
 
-We can use [Maven 3](http://maven.apache.org/) to download and install automatically all the class files as well as the native binaries. To run this sample code, after creating the `pom.xml` and `src/main/java/DetectLive.java` source files below, simply execute on the command line:
+We can use [Maven 3](http://maven.apache.org/) to download and install automatically all the class files as well as the native binaries. To run this sample code, after creating the `pom.xml` and `DetectLive.java` source files below, simply execute on the command line:
 ```bash
  $ mvn compile exec:java -Dexec.args="[xRes] [yRes] [cameraIndex]"
 ```
@@ -32,23 +32,26 @@ We can use [Maven 3](http://maven.apache.org/) to download and install automatic
 ```xml
 <project>
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.bytedeco.javacpp-presets.chilitags</groupId>
+    <groupId>org.bytedeco.chilitags</groupId>
     <artifactId>detectlive</artifactId>
-    <version>1.3</version>
+    <version>1.5.3</version>
     <properties>
         <exec.mainClass>DetectLive</exec.mainClass>
     </properties>
     <dependencies>
         <dependency>
-            <groupId>org.bytedeco.javacpp-presets</groupId>
+            <groupId>org.bytedeco</groupId>
             <artifactId>chilitags-platform</artifactId>
-            <version>master-1.3</version>
+            <version>master-1.5.3</version>
         </dependency>
     </dependencies>
+    <build>
+        <sourceDirectory>.</sourceDirectory>
+    </build>
 </project>
 ```
 
-### The `src/main/java/DetectLive.java` source file
+### The `DetectLive.java` source file
 ```java
 /*******************************************************************************
 *   Copyright 2013-2014 EPFL                                                   *
@@ -76,15 +79,20 @@ import org.bytedeco.javacpp.*;
 import org.bytedeco.javacpp.indexer.*;
 
 // The Chilitags header
-import static org.bytedeco.javacpp.chilitags.*;
+import org.bytedeco.chilitags.*;
+import static org.bytedeco.chilitags.global.chilitags.*;
 
-import static org.bytedeco.javacpp.opencv_imgproc.*; // getTickCount...
+import org.bytedeco.opencv.opencv_imgproc.*;
+import static org.bytedeco.opencv.global.opencv_imgproc.*; // getTickCount...
 
-import static org.bytedeco.javacpp.opencv_core.*; // CV_AA
+import org.bytedeco.opencv.opencv_core.*;
+import static org.bytedeco.opencv.global.opencv_core.*; // CV_AA
 
 // OpenCV goodness for I/O
-import static org.bytedeco.javacpp.opencv_highgui.*;
-import static org.bytedeco.javacpp.opencv_videoio.*;
+import org.bytedeco.opencv.opencv_highgui.*;
+import org.bytedeco.opencv.opencv_videoio.*;
+import static org.bytedeco.opencv.global.opencv_highgui.*;
+import static org.bytedeco.opencv.global.opencv_videoio.*;
 
 public class DetectLive {
     public static void main(String[] args) {

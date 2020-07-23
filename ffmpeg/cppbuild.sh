@@ -8,114 +8,189 @@ if [[ -z "$PLATFORM" ]]; then
 fi
 
 DISABLE="--disable-iconv --disable-opencl --disable-sdl2 --disable-bzlib --disable-lzma --disable-linux-perf"
-ENABLE="--enable-w32threads --enable-shared --enable-gpl --enable-version3 --enable-nonfree --enable-runtime-cpudetect --enable-zlib --enable-libmp3lame --enable-libspeex --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-openssl --enable-libopenh264 --enable-libx264 --enable-libx265 --enable-libvpx --enable-libfreetype --enable-libopus --enable-libmfx"
+ENABLE="--enable-shared --enable-gpl --enable-version3 --enable-nonfree --enable-runtime-cpudetect --enable-zlib --enable-libmp3lame --enable-libspeex --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libvo-amrwbenc --enable-openssl --enable-libopenh264 --enable-libx264 --enable-libx265 --enable-libvpx --enable-libfreetype --enable-libopus"
 
 # minimal configuration to support MPEG-4 streams with H.264 and AAC as well as Motion JPEG
 # DISABLE="--disable-iconv --disable-libxcb --disable-opencl --disable-sdl2 --disable-bzlib --disable-lzma --disable-linux-perf --disable-everything"
-# ENABLE="--enable-w32threads --enable-shared --enable-runtime-cpudetect --enable-libopenh264 --enable-encoder=libopenh264 --enable-encoder=aac --enable-encoder=mjpeg --enable-decoder=h264 --enable-decoder=aac --enable-decoder=mjpeg --enable-parser=h264 --enable-parser=aac --enable-parser=mjpeg --enable-muxer=mp4 --enable-muxer=rtsp --enable-muxer=mjpeg --enable-demuxer=mov --enable-demuxer=rtsp --enable-demuxer=mjpeg --enable-protocol=file --enable-protocol=http --enable-protocol=rtp --enable-protocol=rtmp"
+# ENABLE="--enable-shared --enable-runtime-cpudetect --enable-libopenh264 --enable-encoder=libopenh264 --enable-encoder=aac --enable-encoder=mjpeg --enable-decoder=h264 --enable-decoder=aac --enable-decoder=mjpeg --enable-parser=h264 --enable-parser=aac --enable-parser=mjpeg --enable-muxer=mp4 --enable-muxer=rtsp --enable-muxer=mjpeg --enable-demuxer=mov --enable-demuxer=rtsp --enable-demuxer=mjpeg --enable-protocol=file --enable-protocol=http --enable-protocol=rtp --enable-protocol=rtmp"
 
+NASM_VERSION=2.14
 ZLIB=zlib-1.2.11
 LAME=lame-3.100
 SPEEX=speex-1.2.0
-OPUS=opus-1.2.1
+OPUS=opus-1.3.1
 OPENCORE_AMR=opencore-amr-0.1.5
-OPENSSL=openssl-1.1.0f # openssl-1.1.0g doesn't work on Windows
-OPENH264_VERSION=1.7.0
-X265=2.4 # x265-2.5 doesn't work on Windows
-VPX_VERSION=1.6.1
-ALSA_VERSION=1.1.4.1
-FFMPEG_VERSION=3.4
-FREETYPE_VERSION=2.8.1
-MFX_VERSION=1.23
+VO_AMRWBENC=vo-amrwbenc-0.1.3
+OPENSSL=openssl-1.1.1g
+OPENH264_VERSION=2.1.1
+X264=x264-stable
+X265=3.4
+VPX_VERSION=1.8.2
+ALSA_VERSION=1.2.3
+FREETYPE_VERSION=2.10.2
+MFX_VERSION=1.25
+NVCODEC_VERSION=10.0.26.0
+FFMPEG_VERSION=4.3.1
+download https://download.videolan.org/contrib/nasm/nasm-$NASM_VERSION.tar.gz nasm-$NASM_VERSION.tar.gz
 download http://zlib.net/$ZLIB.tar.gz $ZLIB.tar.gz
 download http://downloads.sourceforge.net/project/lame/lame/3.100/$LAME.tar.gz $LAME.tar.gz
-download http://downloads.xiph.org/releases/speex/$SPEEX.tar.gz $SPEEX.tar.gz
+download https://ftp.osuosl.org/pub/xiph/releases/speex/$SPEEX.tar.gz $SPEEX.tar.gz
 download https://archive.mozilla.org/pub/opus/$OPUS.tar.gz $OPUS.tar.gz
 download http://sourceforge.net/projects/opencore-amr/files/opencore-amr/$OPENCORE_AMR.tar.gz/download $OPENCORE_AMR.tar.gz
+download http://sourceforge.net/projects/opencore-amr/files/vo-amrwbenc/$VO_AMRWBENC.tar.gz/download $VO_AMRWBENC.tar.gz
 download https://www.openssl.org/source/$OPENSSL.tar.gz $OPENSSL.tar.gz
 download https://github.com/cisco/openh264/archive/v$OPENH264_VERSION.tar.gz openh264-$OPENH264_VERSION.tar.gz
-download ftp://ftp.videolan.org/pub/videolan/x264/snapshots/last_stable_x264.tar.bz2 last_stable_x264.tar.bz2
+download https://code.videolan.org/videolan/x264/-/archive/stable/$X264.tar.gz $X264.tar.gz
 download https://github.com/videolan/x265/archive/$X265.tar.gz x265-$X265.tar.gz
 download https://github.com/webmproject/libvpx/archive/v$VPX_VERSION.tar.gz libvpx-$VPX_VERSION.tar.gz
-download ftp://ftp.alsa-project.org/pub/lib/alsa-lib-$ALSA_VERSION.tar.bz2 alsa-lib-$ALSA_VERSION.tar.bz2
-download http://download.savannah.gnu.org/releases/freetype/freetype-$FREETYPE_VERSION.tar.bz2 freetype-$FREETYPE_VERSION.tar.bz2
+download https://ftp.osuosl.org/pub/blfs/conglomeration/alsa-lib/alsa-lib-$ALSA_VERSION.tar.bz2 alsa-lib-$ALSA_VERSION.tar.bz2
+download https://ftp.osuosl.org/pub/blfs/conglomeration/freetype/freetype-$FREETYPE_VERSION.tar.xz freetype-$FREETYPE_VERSION.tar.xz
 download https://github.com/lu-zero/mfx_dispatch/archive/$MFX_VERSION.tar.gz mfx_dispatch-$MFX_VERSION.tar.gz
+download https://github.com/FFmpeg/nv-codec-headers/archive/n$NVCODEC_VERSION.tar.gz nv-codec-headers-$NVCODEC_VERSION.tar.gz
 download http://ffmpeg.org/releases/ffmpeg-$FFMPEG_VERSION.tar.bz2 ffmpeg-$FFMPEG_VERSION.tar.bz2
 
 mkdir -p $PLATFORM
 cd $PLATFORM
 INSTALL_PATH=`pwd`
 echo "Decompressing archives..."
+tar --totals -xzf ../nasm-$NASM_VERSION.tar.gz
 tar --totals -xzf ../$ZLIB.tar.gz
 tar --totals -xzf ../$LAME.tar.gz
 tar --totals -xzf ../$SPEEX.tar.gz
 tar --totals -xzf ../$OPUS.tar.gz
 tar --totals -xzf ../$OPENCORE_AMR.tar.gz
+tar --totals -xzf ../$VO_AMRWBENC.tar.gz
 tar --totals -xzf ../$OPENSSL.tar.gz
 tar --totals -xzf ../openh264-$OPENH264_VERSION.tar.gz
-tar --totals -xjf ../last_stable_x264.tar.bz2
+tar --totals -xzf ../$X264.tar.gz
 tar --totals -xzf ../x265-$X265.tar.gz
 tar --totals -xzf ../libvpx-$VPX_VERSION.tar.gz
-tar --totals -xjf ../freetype-$FREETYPE_VERSION.tar.bz2
+tar --totals -xJf ../freetype-$FREETYPE_VERSION.tar.xz
 tar --totals -xzf ../mfx_dispatch-$MFX_VERSION.tar.gz
+tar --totals -xzf ../nv-codec-headers-$NVCODEC_VERSION.tar.gz
 tar --totals -xjf ../ffmpeg-$FFMPEG_VERSION.tar.bz2
-X264=`echo x264-snapshot-*`
 
-patch -p0 < ../../lame.patch
+if [[ "${ACLOCAL_PATH:-}" == C:\\msys64\\* ]]; then
+    export ACLOCAL_PATH=/mingw64/share/aclocal:/usr/share/aclocal
+fi
+
+cd nasm-$NASM_VERSION
+# fix for build with GCC 8.x
+sedinplace 's/void pure_func/void/g' include/nasmlib.h
+./configure --prefix=$INSTALL_PATH
+make -j $MAKEJ V=0
+make install
+export PATH=$INSTALL_PATH/bin:$PATH
+cd ..
+
+patch -Np1 -d $LAME < ../../lame.patch
+patch -Np1 -d $OPENSSL < ../../openssl-android.patch
+patch -Np1 -d ffmpeg-$FFMPEG_VERSION < ../../ffmpeg.patch
+sedinplace 's/bool bEnableavx512/bool bEnableavx512 = false/g' x265-*/source/common/param.h
+sedinplace 's/detect512()/false/g' x265-*/source/common/quant.cpp
 
 case $PLATFORM in
     android-arm)
-        export AR="$ANDROID_BIN-ar"
-        export CPP="$ANDROID_BIN-cpp"
-        export CC="$ANDROID_BIN-gcc"
-        export CXX="$ANDROID_BIN-g++"
-        export RANLIB="$ANDROID_BIN-ranlib"
-        export STRIP="$ANDROID_BIN-strip"
-        export CPPFLAGS="--sysroot=$ANDROID_ROOT -DANDROID"
-        export CFLAGS="$CPPFLAGS -fPIC -ffunction-sections -funwind-tables -fstack-protector -march=armv7-a -mfloat-abi=softfp -mfpu=vfpv3-d16 -fomit-frame-pointer -fstrict-aliasing -funswitch-loops -finline-limit=300"
-        export CXXFLAGS="$CFLAGS"
-        export LDFLAGS="-nostdlib -Wl,--fix-cortex-a8 -z text"
-        export LIBS="-lgcc -ldl -lz -lm -lc"
+        export AR="$ANDROID_PREFIX-ar"
+        export RANLIB="$ANDROID_PREFIX-ranlib"
+        export CC="$ANDROID_CC $ANDROID_FLAGS"
+        export CXX="$ANDROID_CC++ $ANDROID_FLAGS"
+        export STRIP="$ANDROID_PREFIX-strip"
+        echo ""
+        echo "--------------------"
+        echo "Building zlib"
+        echo "--------------------"
+        echo ""
         cd $ZLIB
         ./configure --prefix=$INSTALL_PATH --static --uname=arm-linux
-        make -j $MAKEJ
+        make -j $MAKEJ V=0
         make install
+        echo ""
+        echo "--------------------"
+        echo "Building LAME"
+        echo "--------------------"
+        echo ""
         cd ../$LAME
         ./configure --prefix=$INSTALL_PATH --disable-shared --with-pic --host=arm-linux
-        make -j $MAKEJ
+        make -j $MAKEJ V=0
         make install
+        echo ""
+        echo "--------------------"
+        echo "Building speex"
+        echo "--------------------"
+        echo ""
         cd ../$SPEEX
         ./configure --prefix=$INSTALL_PATH --disable-shared --with-pic --host=arm-linux
         cd libspeex
-        make -j $MAKEJ
+        make -j $MAKEJ V=0
         make install
         cd ../include
         make install
         cd ../../$OPUS
         ./configure --prefix=$INSTALL_PATH --disable-shared --with-pic --host=arm-linux
-        make -j $MAKEJ
+        make -j $MAKEJ V=0
         make install
         cd ../$OPENCORE_AMR
         ./configure --prefix=$INSTALL_PATH --disable-shared --with-pic --host=arm-linux
-        make -j $MAKEJ
+        make -j $MAKEJ V=0
+        make install
+        cd ../$VO_AMRWBENC
+        ./configure --prefix=$INSTALL_PATH --disable-shared --with-pic --host=arm-linux
+        make -j $MAKEJ V=0
         make install
         cd ../$OPENSSL
-        ./Configure --prefix=$INSTALL_PATH android-armeabi $CFLAGS no-shared
-        ANDROID_DEV="$ANDROID_ROOT/usr" make # fails with -j > 1
-        make install_sw
+        PATH="${ANDROID_CC%/*}:$ANDROID_BIN/bin:$PATH" ./Configure --prefix=$INSTALL_PATH android-arm no-shared no-tests -D__ANDROID_API__=21
+        ANDROID_DEV="$ANDROID_ROOT/usr" make -s -j $MAKEJ
+        make install_dev
         cd ../openh264-$OPENH264_VERSION
-        LDFLAGS= make -j $MAKEJ PREFIX=$INSTALL_PATH OS=android ARCH=arm USE_ASM=No NDKROOT="$ANDROID_NDK" TARGET="$ANDROID_ROOT" libraries install-static
+        sedinplace 's/stlport_shared/system/g' codec/build/android/dec/jni/Application.mk build/platform-android.mk
+        sedinplace 's/12/21/g' codec/build/android/dec/jni/Application.mk build/platform-android.mk
+        CFLAGS="$ANDROID_FLAGS" LDFLAGS="$ANDROID_FLAGS" make -j $MAKEJ PREFIX=$INSTALL_PATH OS=android ARCH=arm USE_ASM=No NDKROOT="$ANDROID_NDK" TARGET="$ANDROID_ROOT" install-static
         cd ../$X264
-        ./configure --prefix=$INSTALL_PATH --enable-static --enable-pic --disable-cli --cross-prefix="$ANDROID_BIN-" --sysroot="$ANDROID_ROOT" --host=arm-linux --extra-cflags="$CFLAGS" --extra-ldflags="$LDFLAGS $LIBS"
-        make -j $MAKEJ
+        patch -Np1 < ../../../x264-android.patch || true
+        ./configure --prefix=$INSTALL_PATH --enable-static --enable-pic --disable-cli --cross-prefix="$ANDROID_PREFIX-" --sysroot="$ANDROID_ROOT" --host=arm-linux
+        make -j $MAKEJ V=0
         make install
         cd ../x265-$X265
         patch -Np1 < ../../../x265-android.patch || true
-        $CMAKE -DENABLE_CLI=OFF -DENABLE_SHARED=OFF -DENABLE_LIBNUMA=OFF -DCMAKE_TOOLCHAIN_FILE=android-arm.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=.. source
-        make -j $MAKEJ x265-static
+        cd build/linux
+        # from x265 multilib.sh
+        mkdir -p 8bit 10bit 12bit
+
+        cd 12bit
+        $CMAKE ../../../source -DCMAKE_TOOLCHAIN_FILE=../../../android-arm.cmake -DHIGH_BIT_DEPTH=ON -DEXPORT_C_API=OFF -DENABLE_SHARED=OFF -DENABLE_CLI=OFF -DENABLE_ASSEMBLY=OFF -DMAIN12=ON -DENABLE_LIBNUMA=OFF -DCMAKE_BUILD_TYPE=Release
+        make -j $MAKEJ
+
+        cd ../10bit
+        $CMAKE ../../../source -DCMAKE_TOOLCHAIN_FILE=../../../android-arm.cmake -DHIGH_BIT_DEPTH=ON -DEXPORT_C_API=OFF -DENABLE_SHARED=OFF -DENABLE_CLI=OFF -DENABLE_ASSEMBLY=OFF -DENABLE_LIBNUMA=OFF -DCMAKE_BUILD_TYPE=Release
+        make -j $MAKEJ
+
+        cd ../8bit
+        ln -sf ../10bit/libx265.a libx265_main10.a
+        ln -sf ../12bit/libx265.a libx265_main12.a
+        $CMAKE ../../../source -DCMAKE_TOOLCHAIN_FILE=../../../android-arm.cmake -DEXTRA_LIB="x265_main10.a;x265_main12.a" -DEXTRA_LINK_FLAGS=-L. -DLINKED_10BIT=ON -DLINKED_12BIT=ON -DCMAKE_INSTALL_PREFIX=$INSTALL_PATH -DENABLE_SHARED:BOOL=OFF -DENABLE_LIBNUMA=OFF -DCMAKE_BUILD_TYPE=Release -DENABLE_CLI=OFF -DENABLE_ASSEMBLY=OFF
+        make -j $MAKEJ
+
+        # rename the 8bit library, then combine all three into libx265.a
+        mv libx265.a libx265_main.a
+ar -M <<EOF
+CREATE libx265.a
+ADDLIB libx265_main.a
+ADDLIB libx265_main10.a
+ADDLIB libx265_main12.a
+SAVE
+END
+EOF
         make install
+        # ----
+        cd ../../../
         cd ../libvpx-$VPX_VERSION
-        LDFLAGS= ./configure --prefix=$INSTALL_PATH --enable-static --enable-pic --disable-examples --disable-unit-tests --sdk-path=$ANDROID_NDK --disable-tools --target=armv7-android-gcc --disable-runtime-cpu-detect --disable-neon --disable-neon-asm
+        patch -Np1 < ../../../libvpx-android.patch
+        CFLAGS="$ANDROID_FLAGS" CXXFLAGS="$ANDROID_FLAGS" LDFLAGS="$ANDROID_FLAGS" ./configure --prefix=$INSTALL_PATH --enable-static --enable-pic --disable-examples --disable-unit-tests --disable-tools --target=armv7-android-gcc --disable-runtime-cpu-detect --disable-neon --disable-neon-asm
+        make -j $MAKEJ || true
+        sedinplace 's/_neon/_c/g' vpx_dsp_rtcd.h vpx_scale_rtcd.h vp8_rtcd.h vp9_rtcd.h
+        sedinplace 's/vp8_loop_filter_mbhs_c/vp8_loop_filter_simple_horizontal_edge_c/g' vp8_rtcd.h
+        sedinplace 's/vp8_loop_filter_mbvs_c/vp8_loop_filter_simple_vertical_edge_c/g' vp8_rtcd.h
         make -j $MAKEJ
         make install
         cd ../freetype-$FREETYPE_VERSION
@@ -123,64 +198,222 @@ case $PLATFORM in
         make -j $MAKEJ
         make install
         cd ../ffmpeg-$FFMPEG_VERSION
-        patch -Np1 < ../../../ffmpeg-android.patch
-        ./configure --prefix=.. $DISABLE $ENABLE --enable-cross-compile --cross-prefix="$ANDROID_BIN-" --ranlib="$ANDROID_BIN-ranlib" --sysroot="$ANDROID_ROOT" --target-os=linux --arch=arm --extra-cflags="-I../include/ $CFLAGS" --extra-ldflags="$ANDROID_ROOT/usr/lib/crtbegin_so.o -L../lib/ -L$ANDROID_CPP/libs/armeabi/ $LDFLAGS" --extra-libs="-lgnustl_static $LIBS" --disable-symver --disable-programs
+        sedinplace 's/unsigned long int/unsigned int/g' libavdevice/v4l2.c
+        LDEXEFLAGS='-Wl,-rpath,\$$ORIGIN/' ./configure --prefix=.. $DISABLE $ENABLE --enable-jni --enable-mediacodec --enable-pthreads --enable-cross-compile --cross-prefix="$ANDROID_PREFIX-" --ar="$AR" --ranlib="$RANLIB" --cc="$CC" --strip="$STRIP" --sysroot="$ANDROID_ROOT" --target-os=android --arch=arm --extra-cflags="-I../include/ $ANDROID_FLAGS" --extra-ldflags="-L../lib/ $ANDROID_FLAGS" --extra-libs="$ANDROID_LIBS -lz" --disable-symver
+        make -j $MAKEJ
+        make install
+        ;;
+
+    android-arm64)
+        export AR="$ANDROID_PREFIX-ar"
+        export RANLIB="$ANDROID_PREFIX-ranlib"
+        export CC="$ANDROID_CC $ANDROID_FLAGS"
+        export CXX="$ANDROID_CC++ $ANDROID_FLAGS"
+        export STRIP="$ANDROID_PREFIX-strip"
+        echo ""
+        echo "--------------------"
+        echo "Building zlib"
+        echo "--------------------"
+        echo ""
+        cd $ZLIB
+        ./configure --prefix=$INSTALL_PATH --static --uname=aarch64-linux
+        make -j $MAKEJ V=0
+        make install
+        echo ""
+        echo "--------------------"
+        echo "Building LAME"
+        echo "--------------------"
+        echo ""
+        cd ../$LAME
+        ./configure --prefix=$INSTALL_PATH --disable-shared --with-pic --host=aarch64-linux
+        make -j $MAKEJ V=0
+        make install
+        echo ""
+        echo "--------------------"
+        echo "Building speex"
+        echo "--------------------"
+        echo ""
+        cd ../$SPEEX
+        ./configure --prefix=$INSTALL_PATH --disable-shared --with-pic --host=aarch64-linux
+        cd libspeex
+        make -j $MAKEJ V=0
+        make install
+        cd ../include
+        make install
+        cd ../../$OPUS
+        ./configure --prefix=$INSTALL_PATH --disable-shared --with-pic --host=aarch64-linux
+        make -j $MAKEJ V=0
+        make install
+        cd ../$OPENCORE_AMR
+        ./configure --prefix=$INSTALL_PATH --disable-shared --with-pic --host=aarch64-linux
+        make -j $MAKEJ V=0
+        make install
+        cd ../$VO_AMRWBENC
+        ./configure --prefix=$INSTALL_PATH --disable-shared --with-pic --host=aarch64-linux
+        make -j $MAKEJ V=0
+        make install
+        cd ../$OPENSSL
+        PATH="${ANDROID_CC%/*}:$ANDROID_BIN/bin:$PATH" ./Configure --prefix=$INSTALL_PATH android-arm64 no-shared no-tests -D__ANDROID_API__=21
+        ANDROID_DEV="$ANDROID_ROOT/usr" make -s -j $MAKEJ
+        make install_dev
+        cd ../openh264-$OPENH264_VERSION
+        sedinplace 's/stlport_shared/system/g' codec/build/android/dec/jni/Application.mk build/platform-android.mk
+        sedinplace 's/12/21/g' codec/build/android/dec/jni/Application.mk build/platform-android.mk
+        CFLAGS="$ANDROID_FLAGS" LDFLAGS="$ANDROID_FLAGS" make -j $MAKEJ PREFIX=$INSTALL_PATH OS=android ARCH=arm64 USE_ASM=No NDKROOT="$ANDROID_NDK" TARGET="$ANDROID_ROOT" install-static
+        cd ../$X264
+        ./configure --prefix=$INSTALL_PATH --enable-static --enable-pic --disable-cli --cross-prefix="$ANDROID_PREFIX-" --sysroot="$ANDROID_ROOT" --host=aarch64-linux
+        make -j $MAKEJ V=0
+        make install
+        cd ../x265-$X265
+        patch -Np1 < ../../../x265-android.patch || true
+        cd build/linux
+        # from x265 multilib.sh
+        mkdir -p 8bit 10bit 12bit
+
+        cd 12bit
+        $CMAKE ../../../source -DCMAKE_TOOLCHAIN_FILE=../../../android-arm64.cmake -DHIGH_BIT_DEPTH=ON -DEXPORT_C_API=OFF -DENABLE_SHARED=OFF -DENABLE_CLI=OFF -DENABLE_ASSEMBLY=OFF -DMAIN12=ON -DENABLE_LIBNUMA=OFF -DCMAKE_BUILD_TYPE=Release
+        make -j $MAKEJ
+
+        cd ../10bit
+        $CMAKE ../../../source -DCMAKE_TOOLCHAIN_FILE=../../../android-arm64.cmake -DHIGH_BIT_DEPTH=ON -DEXPORT_C_API=OFF -DENABLE_SHARED=OFF -DENABLE_CLI=OFF -DENABLE_ASSEMBLY=OFF -DENABLE_LIBNUMA=OFF -DCMAKE_BUILD_TYPE=Release
+        make -j $MAKEJ
+
+        cd ../8bit
+        ln -sf ../10bit/libx265.a libx265_main10.a
+        ln -sf ../12bit/libx265.a libx265_main12.a
+        $CMAKE ../../../source -DCMAKE_TOOLCHAIN_FILE=../../../android-arm64.cmake -DEXTRA_LIB="x265_main10.a;x265_main12.a" -DEXTRA_LINK_FLAGS=-L. -DLINKED_10BIT=ON -DLINKED_12BIT=ON -DCMAKE_INSTALL_PREFIX=$INSTALL_PATH -DENABLE_SHARED:BOOL=OFF -DENABLE_LIBNUMA=OFF -DCMAKE_BUILD_TYPE=Release -DENABLE_CLI=OFF -DENABLE_ASSEMBLY=OFF
+        make -j $MAKEJ
+
+        # rename the 8bit library, then combine all three into libx265.a
+        mv libx265.a libx265_main.a
+ar -M <<EOF
+CREATE libx265.a
+ADDLIB libx265_main.a
+ADDLIB libx265_main10.a
+ADDLIB libx265_main12.a
+SAVE
+END
+EOF
+        make install
+        # ----
+        cd ../../../
+        cd ../libvpx-$VPX_VERSION
+        patch -Np1 < ../../../libvpx-android.patch
+        CFLAGS="$ANDROID_FLAGS" CXXFLAGS="$ANDROID_FLAGS" LDFLAGS="$ANDROID_FLAGS" ./configure --prefix=$INSTALL_PATH --enable-static --enable-pic --disable-examples --disable-unit-tests --disable-tools --target=arm64-android-gcc --disable-runtime-cpu-detect --disable-neon --disable-neon-asm
+        make -j $MAKEJ || true
+        sedinplace 's/_neon/_c/g' vpx_dsp_rtcd.h vpx_scale_rtcd.h vp8_rtcd.h vp9_rtcd.h
+        sedinplace 's/vp8_loop_filter_mbhs_c/vp8_loop_filter_simple_horizontal_edge_c/g' vp8_rtcd.h
+        sedinplace 's/vp8_loop_filter_mbvs_c/vp8_loop_filter_simple_vertical_edge_c/g' vp8_rtcd.h
+        make -j $MAKEJ
+        make install
+        cd ../freetype-$FREETYPE_VERSION
+        ./configure --prefix=$INSTALL_PATH --with-bzip2=no --with-harfbuzz=no --with-png=no --enable-static --disable-shared --with-pic --host=aarch64-linux
+        make -j $MAKEJ
+        make install
+        cd ../ffmpeg-$FFMPEG_VERSION
+        sedinplace 's/unsigned long int/unsigned int/g' libavdevice/v4l2.c
+        LDEXEFLAGS='-Wl,-rpath,\$$ORIGIN/' ./configure --prefix=.. $DISABLE $ENABLE --enable-jni --enable-mediacodec --enable-pthreads --enable-cross-compile --cross-prefix="$ANDROID_PREFIX-" --ar="$AR" --ranlib="$RANLIB" --cc="$CC" --strip="$STRIP" --sysroot="$ANDROID_ROOT" --target-os=android --arch=aarch64 --extra-cflags="-I../include/ $ANDROID_FLAGS" --extra-ldflags="-L../lib/ $ANDROID_FLAGS" --extra-libs="$ANDROID_LIBS -lz" --disable-symver
         make -j $MAKEJ
         make install
         ;;
 
      android-x86)
-        export AR="$ANDROID_BIN-ar"
-        export CPP="$ANDROID_BIN-cpp"
-        export CC="$ANDROID_BIN-gcc"
-        export CXX="$ANDROID_BIN-g++"
-        export RANLIB="$ANDROID_BIN-ranlib"
-        export STRIP="$ANDROID_BIN-strip"
-        export CPPFLAGS="--sysroot=$ANDROID_ROOT -DANDROID"
-        export CFLAGS="$CPPFLAGS -fPIC -ffunction-sections -funwind-tables -mssse3 -mfpmath=sse -fomit-frame-pointer -fstrict-aliasing -funswitch-loops -finline-limit=300"
-        export CXXFLAGS="$CFLAGS"
-        export LDFLAGS="-nostdlib -z text"
-        export LIBS="-lgcc -ldl -lz -lm -lc"
+        export AR="$ANDROID_PREFIX-ar"
+        export RANLIB="$ANDROID_PREFIX-ranlib"
+        export CC="$ANDROID_CC $ANDROID_FLAGS"
+        export CXX="$ANDROID_CC++ $ANDROID_FLAGS"
+        export STRIP="$ANDROID_PREFIX-strip"
+        echo ""
+        echo "--------------------"
+        echo "Building zlib"
+        echo "--------------------"
+        echo ""
         cd $ZLIB
         ./configure --prefix=$INSTALL_PATH --static --uname=i686-linux
-        make -j $MAKEJ
+        make -j $MAKEJ V=0
         make install
+        echo ""
+        echo "--------------------"
+        echo "Building LAME"
+        echo "--------------------"
+        echo ""
         cd ../$LAME
         ./configure --prefix=$INSTALL_PATH --disable-shared --with-pic --host=i686-linux
-        make -j $MAKEJ
+        make -j $MAKEJ V=0
         make install
+        echo ""
+        echo "--------------------"
+        echo "Building speex"
+        echo "--------------------"
+        echo ""
         cd ../$SPEEX
         ./configure --prefix=$INSTALL_PATH --disable-shared --with-pic --host=i686-linux
         cd libspeex
-        make -j $MAKEJ
+        make -j $MAKEJ V=0
         make install
         cd ../include
         make install
         cd ../../$OPUS
         ./configure --prefix=$INSTALL_PATH --disable-shared --with-pic --host=i686-linux
-        make -j $MAKEJ
+        make -j $MAKEJ V=0
         make install
         cd ../$OPENCORE_AMR
         ./configure --prefix=$INSTALL_PATH --disable-shared --with-pic --host=i686-linux
-        make -j $MAKEJ
+        make -j $MAKEJ V=0
+        make install
+        cd ../$VO_AMRWBENC
+        ./configure --prefix=$INSTALL_PATH --disable-shared --with-pic --host=i686-linux
+        make -j $MAKEJ V=0
         make install
         cd ../$OPENSSL
-        ./Configure --prefix=$INSTALL_PATH android-x86 $CFLAGS no-shared
-        ANDROID_DEV="$ANDROID_ROOT/usr" make # fails with -j > 1
-        make install_sw
+        PATH="${ANDROID_CC%/*}:$ANDROID_BIN/bin:$PATH" ./Configure --prefix=$INSTALL_PATH android-x86 no-shared no-tests -D__ANDROID_API__=21
+        ANDROID_DEV="$ANDROID_ROOT/usr" make -s -j $MAKEJ
+        make install_dev
         cd ../openh264-$OPENH264_VERSION
-        LDFLAGS= make -j $MAKEJ PREFIX=$INSTALL_PATH OS=android ARCH=x86 USE_ASM=No NDKROOT="$ANDROID_NDK" TARGET="$ANDROID_ROOT" libraries install-static
+        sedinplace 's/stlport_shared/system/g' codec/build/android/dec/jni/Application.mk build/platform-android.mk
+        sedinplace 's/12/21/g' codec/build/android/dec/jni/Application.mk build/platform-android.mk
+        CFLAGS="$ANDROID_FLAGS" LDFLAGS="$ANDROID_FLAGS" make -j $MAKEJ PREFIX=$INSTALL_PATH OS=android ARCH=x86 USE_ASM=No NDKROOT="$ANDROID_NDK" TARGET="$ANDROID_ROOT" install-static
         cd ../$X264
-        ./configure --prefix=$INSTALL_PATH --enable-static --enable-pic --disable-cli --cross-prefix="$ANDROID_BIN-" --sysroot="$ANDROID_ROOT" --host=i686-linux --disable-asm --extra-cflags="$CFLAGS" --extra-ldflags="$LDFLAGS $LIBS"
-        make -j $MAKEJ
+        patch -Np1 < ../../../x264-android.patch || true
+        ./configure --prefix=$INSTALL_PATH --enable-static --enable-pic --disable-cli --cross-prefix="$ANDROID_PREFIX-" --sysroot="$ANDROID_ROOT" --host=i686-linux --disable-asm
+        make -j $MAKEJ V=0
         make install
         cd ../x265-$X265
         patch -Np1 < ../../../x265-android.patch || true
-        $CMAKE -DENABLE_CLI=OFF -DENABLE_SHARED=OFF -DENABLE_LIBNUMA=OFF -DCMAKE_TOOLCHAIN_FILE=android-x86.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=.. source
-        make -j $MAKEJ x265-static
+        cd build/linux
+        # from x265 multilib.sh
+        mkdir -p 8bit 10bit 12bit
+
+        cd 12bit
+        $CMAKE ../../../source -DCMAKE_TOOLCHAIN_FILE=../../../android-x86.cmake -DHIGH_BIT_DEPTH=ON -DEXPORT_C_API=OFF -DENABLE_SHARED=OFF -DENABLE_CLI=OFF -DENABLE_ASSEMBLY=OFF -DMAIN12=ON -DENABLE_LIBNUMA=OFF -DCMAKE_BUILD_TYPE=Release -DNASM_EXECUTABLE:FILEPATH=$INSTALL_PATH/bin/nasm
+        make -j $MAKEJ
+
+        cd ../10bit
+        $CMAKE ../../../source -DCMAKE_TOOLCHAIN_FILE=../../../android-x86.cmake -DHIGH_BIT_DEPTH=ON -DEXPORT_C_API=OFF -DENABLE_SHARED=OFF -DENABLE_CLI=OFF -DENABLE_ASSEMBLY=OFF -DENABLE_LIBNUMA=OFF -DCMAKE_BUILD_TYPE=Release -DNASM_EXECUTABLE:FILEPATH=$INSTALL_PATH/bin/nasm
+        make -j $MAKEJ
+
+        cd ../8bit
+        ln -sf ../10bit/libx265.a libx265_main10.a
+        ln -sf ../12bit/libx265.a libx265_main12.a
+        $CMAKE ../../../source -DCMAKE_TOOLCHAIN_FILE=../../../android-x86.cmake -DEXTRA_LIB="x265_main10.a;x265_main12.a" -DEXTRA_LINK_FLAGS=-L. -DLINKED_10BIT=ON -DLINKED_12BIT=ON -DCMAKE_INSTALL_PREFIX=$INSTALL_PATH -DENABLE_SHARED:BOOL=OFF -DENABLE_LIBNUMA=OFF -DCMAKE_BUILD_TYPE=Release -DNASM_EXECUTABLE:FILEPATH=$INSTALL_PATH/bin/nasm -DENABLE_CLI=OFF
+        make -j $MAKEJ
+
+        # rename the 8bit library, then combine all three into libx265.a
+        mv libx265.a libx265_main.a
+ar -M <<EOF
+CREATE libx265.a
+ADDLIB libx265_main.a
+ADDLIB libx265_main10.a
+ADDLIB libx265_main12.a
+SAVE
+END
+EOF
         make install
+        # ----
+        cd ../../../
         cd ../libvpx-$VPX_VERSION
-        ASFLAGS="-D__ANDROID__" ./configure --prefix=$INSTALL_PATH --enable-static --enable-pic --disable-examples --disable-unit-tests --disable-tools --target=x86-android-gcc
+        patch -Np1 < ../../../libvpx-android.patch
+        CFLAGS="$ANDROID_FLAGS" CXXFLAGS="$ANDROID_FLAGS" LDFLAGS="$ANDROID_FLAGS" ./configure --prefix=$INSTALL_PATH --enable-static --enable-pic --disable-examples --disable-unit-tests --disable-tools --target=x86-android-gcc --as=nasm
         make -j $MAKEJ
         make install
         cd ../freetype-$FREETYPE_VERSION
@@ -188,108 +421,333 @@ case $PLATFORM in
         make -j $MAKEJ
         make install
         cd ../ffmpeg-$FFMPEG_VERSION
-        patch -Np1 < ../../../ffmpeg-android.patch
-        ./configure --prefix=.. $DISABLE $ENABLE --enable-cross-compile --cross-prefix="$ANDROID_BIN-" --ranlib="$ANDROID_BIN-ranlib" --sysroot="$ANDROID_ROOT" --target-os=linux --arch=atom --extra-cflags="-I../include/ $CFLAGS" --extra-ldflags="$ANDROID_ROOT/usr/lib/crtbegin_so.o -L../lib/ -L$ANDROID_CPP/libs/x86/ $LDFLAGS" --extra-libs="-lgnustl_static $LIBS" --disable-symver --disable-programs
+        sedinplace 's/unsigned long int/unsigned int/g' libavdevice/v4l2.c
+        LDEXEFLAGS='-Wl,-rpath,\$$ORIGIN/' ./configure --prefix=.. $DISABLE $ENABLE --enable-jni --enable-mediacodec --enable-pthreads --enable-cross-compile --cross-prefix="$ANDROID_PREFIX-" --ar="$AR" --ranlib="$RANLIB" --cc="$CC" --strip="$STRIP" --sysroot="$ANDROID_ROOT" --target-os=android --arch=atom --extra-cflags="-I../include/ $ANDROID_FLAGS" --extra-ldflags="-L../lib/ $ANDROID_FLAGS" --extra-libs="$ANDROID_LIBS -lz" --disable-symver
+        make -j $MAKEJ
+        make install
+        ;;
+
+     android-x86_64)
+        export AR="$ANDROID_PREFIX-ar"
+        export RANLIB="$ANDROID_PREFIX-ranlib"
+        export CC="$ANDROID_CC $ANDROID_FLAGS"
+        export CXX="$ANDROID_CC++ $ANDROID_FLAGS"
+        export STRIP="$ANDROID_PREFIX-strip"
+        echo ""
+        echo "--------------------"
+        echo "Building zlib"
+        echo "--------------------"
+        echo ""
+        cd $ZLIB
+        ./configure --prefix=$INSTALL_PATH --static --uname=x86_64-linux
+        make -j $MAKEJ V=0
+        make install
+        echo ""
+        echo "--------------------"
+        echo "Building LAME"
+        echo "--------------------"
+        echo ""
+        cd ../$LAME
+        ./configure --prefix=$INSTALL_PATH --disable-shared --with-pic --host=x86_64-linux
+        make -j $MAKEJ V=0
+        make install
+        echo ""
+        echo "--------------------"
+        echo "Building speex"
+        echo "--------------------"
+        echo ""
+        cd ../$SPEEX
+        ./configure --prefix=$INSTALL_PATH --disable-shared --with-pic --host=x86_64-linux
+        cd libspeex
+        make -j $MAKEJ V=0
+        make install
+        cd ../include
+        make install
+        cd ../../$OPUS
+        ./configure --prefix=$INSTALL_PATH --disable-shared --with-pic --host=x86_64-linux
+        make -j $MAKEJ V=0
+        make install
+        cd ../$OPENCORE_AMR
+        ./configure --prefix=$INSTALL_PATH --disable-shared --with-pic --host=x86_64-linux
+        make -j $MAKEJ V=0
+        make install
+        cd ../$VO_AMRWBENC
+        ./configure --prefix=$INSTALL_PATH --disable-shared --with-pic --host=x86_64-linux
+        make -j $MAKEJ V=0
+        make install
+        cd ../$OPENSSL
+        PATH="${ANDROID_CC%/*}:$ANDROID_BIN/bin:$PATH" ./Configure --prefix=$INSTALL_PATH android-x86_64 no-shared no-tests -D__ANDROID_API__=21
+        ANDROID_DEV="$ANDROID_ROOT/usr" make -s -j $MAKEJ
+        make install_dev
+        cd ../openh264-$OPENH264_VERSION
+        sedinplace 's/stlport_shared/system/g' codec/build/android/dec/jni/Application.mk build/platform-android.mk
+        sedinplace 's/12/21/g' codec/build/android/dec/jni/Application.mk build/platform-android.mk
+        CFLAGS="$ANDROID_FLAGS" LDFLAGS="$ANDROID_FLAGS" make -j $MAKEJ PREFIX=$INSTALL_PATH OS=android ARCH=x86_64 USE_ASM=No NDKROOT="$ANDROID_NDK" TARGET="$ANDROID_ROOT" install-static
+        cd ../$X264
+        ./configure --prefix=$INSTALL_PATH --enable-static --enable-pic --disable-cli --cross-prefix="$ANDROID_PREFIX-" --sysroot="$ANDROID_ROOT" --host=x86_64-linux
+        make -j $MAKEJ V=0
+        make install
+        cd ../x265-$X265
+        patch -Np1 < ../../../x265-android.patch || true
+        cd build/linux
+        # from x265 multilib.sh
+        mkdir -p 8bit 10bit 12bit
+
+        cd 12bit
+        $CMAKE ../../../source -DCMAKE_TOOLCHAIN_FILE=../../../android-x86_64.cmake -DHIGH_BIT_DEPTH=ON -DEXPORT_C_API=OFF -DENABLE_SHARED=OFF -DENABLE_CLI=OFF -DMAIN12=ON -DENABLE_LIBNUMA=OFF -DCMAKE_BUILD_TYPE=Release -DNASM_EXECUTABLE:FILEPATH=$INSTALL_PATH/bin/nasm
+        make -j $MAKEJ
+
+        cd ../10bit
+        $CMAKE ../../../source -DCMAKE_TOOLCHAIN_FILE=../../../android-x86_64.cmake -DHIGH_BIT_DEPTH=ON -DEXPORT_C_API=OFF -DENABLE_SHARED=OFF -DENABLE_CLI=OFF -DENABLE_LIBNUMA=OFF -DCMAKE_BUILD_TYPE=Release -DNASM_EXECUTABLE:FILEPATH=$INSTALL_PATH/bin/nasm
+        make -j $MAKEJ
+
+        cd ../8bit
+        ln -sf ../10bit/libx265.a libx265_main10.a
+        ln -sf ../12bit/libx265.a libx265_main12.a
+        $CMAKE ../../../source -DCMAKE_TOOLCHAIN_FILE=../../../android-x86_64.cmake -DEXTRA_LIB="x265_main10.a;x265_main12.a" -DEXTRA_LINK_FLAGS=-L. -DLINKED_10BIT=ON -DLINKED_12BIT=ON -DCMAKE_INSTALL_PREFIX=$INSTALL_PATH -DENABLE_SHARED:BOOL=OFF -DENABLE_LIBNUMA=OFF -DCMAKE_BUILD_TYPE=Release -DNASM_EXECUTABLE:FILEPATH=$INSTALL_PATH/bin/nasm -DENABLE_CLI=OFF
+        make -j $MAKEJ
+
+        # rename the 8bit library, then combine all three into libx265.a
+        mv libx265.a libx265_main.a
+ar -M <<EOF
+CREATE libx265.a
+ADDLIB libx265_main.a
+ADDLIB libx265_main10.a
+ADDLIB libx265_main12.a
+SAVE
+END
+EOF
+        make install
+        # ----
+        cd ../../../
+        cd ../libvpx-$VPX_VERSION
+        patch -Np1 < ../../../libvpx-android.patch
+        CFLAGS="$ANDROID_FLAGS" CXXFLAGS="$ANDROID_FLAGS" LDFLAGS="$ANDROID_FLAGS" ./configure --prefix=$INSTALL_PATH --enable-static --enable-pic --disable-examples --disable-unit-tests --disable-tools --target=x86_64-android-gcc --as=nasm
+        make -j $MAKEJ
+        make install
+        cd ../freetype-$FREETYPE_VERSION
+        ./configure --prefix=$INSTALL_PATH --with-bzip2=no --with-harfbuzz=no --with-png=no --enable-static --disable-shared --with-pic --host=x86_64-linux
+        make -j $MAKEJ
+        make install
+        cd ../ffmpeg-$FFMPEG_VERSION
+        sedinplace 's/unsigned long int/unsigned int/g' libavdevice/v4l2.c
+        LDEXEFLAGS='-Wl,-rpath,\$$ORIGIN/' ./configure --prefix=.. $DISABLE $ENABLE --enable-jni --enable-mediacodec --enable-pthreads --enable-cross-compile --cross-prefix="$ANDROID_PREFIX-" --ar="$AR" --ranlib="$RANLIB" --cc="$CC" --strip="$STRIP" --sysroot="$ANDROID_ROOT" --target-os=android --arch=atom --extra-cflags="-I../include/ $ANDROID_FLAGS" --extra-ldflags="-L../lib/ $ANDROID_FLAGS" --extra-libs="$ANDROID_LIBS -lz" --disable-symver
         make -j $MAKEJ
         make install
         ;;
 
     linux-x86)
+        export AS="nasm"
+        echo ""
+        echo "--------------------"
+        echo "Building zlib"
+        echo "--------------------"
+        echo ""
         cd $ZLIB
         CC="gcc -m32 -fPIC" ./configure --prefix=$INSTALL_PATH --static
-        make -j $MAKEJ
+        make -j $MAKEJ V=0
         make install
+        echo ""
+        echo "--------------------"
+        echo "Building LAME"
+        echo "--------------------"
+        echo ""
         cd ../$LAME
         ./configure --prefix=$INSTALL_PATH --disable-shared --with-pic --host=i686-linux CFLAGS="-m32 -msse2"
-        make -j $MAKEJ
+        make -j $MAKEJ V=0
         make install
+        echo ""
+        echo "--------------------"
+        echo "Building speex"
+        echo "--------------------"
+        echo ""
         cd ../$SPEEX
         ./configure --prefix=$INSTALL_PATH --disable-shared --with-pic --host=i686-linux CFLAGS="-m32"
-        make -j $MAKEJ
+        make -j $MAKEJ V=0
         make install
         cd ../$OPUS
         ./configure --prefix=$INSTALL_PATH --disable-shared --with-pic --host=i686-linux CFLAGS="-m32"
-        make -j $MAKEJ
+        make -j $MAKEJ V=0
         make install
         cd ../$OPENCORE_AMR
         ./configure --prefix=$INSTALL_PATH --disable-shared --with-pic --host=i686-linux CFLAGS="-m32" CXXFLAGS="-m32"
-        make -j $MAKEJ
+        make -j $MAKEJ V=0
+        make install
+        cd ../$VO_AMRWBENC
+        ./configure --prefix=$INSTALL_PATH --disable-shared --with-pic --host=i686-linux CFLAGS="-m32" CXXFLAGS="-m32"
+        make -j $MAKEJ V=0
         make install
         cd ../$OPENSSL
         ./Configure linux-elf -m32 -fPIC no-shared --prefix=$INSTALL_PATH
-        make # fails with -j > 1
+        make -s -j $MAKEJ
         make install_sw
         cd ../openh264-$OPENH264_VERSION
-        make -j $MAKEJ DESTDIR=./ PREFIX=.. AR=ar ARCH=x86 USE_ASM=No libraries install-static
+        make -j $MAKEJ DESTDIR=./ PREFIX=.. AR=ar ARCH=x86 USE_ASM=No install-static
         cd ../$X264
         ./configure --prefix=$INSTALL_PATH --enable-static --enable-pic --disable-opencl --host=i686-linux
-        make -j $MAKEJ
+        make -j $MAKEJ V=0
         make install
-        cd ../x265-$X265
-        CC="gcc -m32" CXX="g++ -m32" $CMAKE -DENABLE_SHARED=OFF -DENABLE_LIBNUMA=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=.. source
+        cd ../x265-$X265/build/linux
+        # from x265 multilib.sh
+        mkdir -p 8bit 10bit 12bit
+
+        cd 12bit
+        CC="gcc -m32" CXX="g++ -m32" $CMAKE ../../../source -DHIGH_BIT_DEPTH=ON -DEXPORT_C_API=OFF -DENABLE_SHARED=OFF -DENABLE_CLI=OFF -DENABLE_ASSEMBLY=OFF -DMAIN12=ON -DENABLE_LIBNUMA=OFF -DCMAKE_BUILD_TYPE=Release -DNASM_EXECUTABLE:FILEPATH=$INSTALL_PATH/bin/nasm
         make -j $MAKEJ
+
+        cd ../10bit
+        CC="gcc -m32" CXX="g++ -m32" $CMAKE ../../../source -DHIGH_BIT_DEPTH=ON -DEXPORT_C_API=OFF -DENABLE_SHARED=OFF -DENABLE_CLI=OFF -DENABLE_ASSEMBLY=OFF -DENABLE_LIBNUMA=OFF -DCMAKE_BUILD_TYPE=Release -DNASM_EXECUTABLE:FILEPATH=$INSTALL_PATH/bin/nasm
+        make -j $MAKEJ
+
+        cd ../8bit
+        ln -sf ../10bit/libx265.a libx265_main10.a
+        ln -sf ../12bit/libx265.a libx265_main12.a
+        CC="gcc -m32" CXX="g++ -m32" $CMAKE ../../../source -DEXTRA_LIB="x265_main10.a;x265_main12.a" -DEXTRA_LINK_FLAGS=-L. -DLINKED_10BIT=ON -DLINKED_12BIT=ON -DCMAKE_INSTALL_PREFIX=$INSTALL_PATH -DENABLE_SHARED:BOOL=OFF -DENABLE_LIBNUMA=OFF -DCMAKE_BUILD_TYPE=Release -DNASM_EXECUTABLE:FILEPATH=$INSTALL_PATH/bin/nasm -DENABLE_CLI=OFF
+        make -j $MAKEJ
+
+        # rename the 8bit library, then combine all three into libx265.a
+        mv libx265.a libx265_main.a
+ar -M <<EOF
+CREATE libx265.a
+ADDLIB libx265_main.a
+ADDLIB libx265_main10.a
+ADDLIB libx265_main12.a
+SAVE
+END
+EOF
         make install
+        # ----
+        cd ../../../
         cd ../libvpx-$VPX_VERSION
-        ./configure --prefix=$INSTALL_PATH --enable-static --enable-pic --disable-examples --disable-unit-tests --target=x86-linux-gcc --as=yasm
+        ./configure --prefix=$INSTALL_PATH --enable-static --enable-pic --disable-examples --disable-unit-tests --target=x86-linux-gcc --as=nasm
         make -j $MAKEJ
         make install
         cd ../freetype-$FREETYPE_VERSION
-        ./configure --prefix=$INSTALL_PATH --with-bzip2=no --with-harfbuzz=no --with-png=no --enable-static --disable-shared --with-pic --host=i686-linux
+        ./configure --prefix=$INSTALL_PATH --with-bzip2=no --with-harfbuzz=no --with-png=no --enable-static --disable-shared --with-pic --host=i686-linux CFLAGS="-m32"
         make -j $MAKEJ
         make install
+        LIBS=
+        if [[ ! -z $(ldconfig -p | grep libva-drm) ]]; then
+            cd ../mfx_dispatch-$MFX_VERSION
+            autoreconf -fiv
+            PKG_CONFIG_PATH="../lib/pkgconfig" ./configure --prefix=$INSTALL_PATH --disable-shared --enable-static --enable-fast-install --with-pic --host=i686-linux CFLAGS="-m32" CXXFLAGS="-m32"
+            make -j $MAKEJ
+            make install
+            ENABLE="$ENABLE --enable-libmfx"
+            LIBS="-lva-drm -lva-x11 -lva"
+        fi
+        cd ../nv-codec-headers-n$NVCODEC_VERSION
+        make install PREFIX=$INSTALL_PATH
         cd ../ffmpeg-$FFMPEG_VERSION
-        patch -Np1 < ../../../ffmpeg-linux.patch
-        PKG_CONFIG_PATH=../lib/pkgconfig/ ./configure --prefix=.. $DISABLE $ENABLE --enable-libxcb --cc="gcc -m32" --extra-cflags="-I../include/" --extra-ldflags="-L../lib/" --extra-libs="-lstdc++ -ldl"
+        LDEXEFLAGS='-Wl,-rpath,\$$ORIGIN/' PKG_CONFIG_PATH=../lib/pkgconfig/ ./configure --prefix=.. $DISABLE $ENABLE --enable-cuda --enable-cuvid --enable-nvenc --enable-pthreads --enable-libxcb --cc="gcc -m32" --extra-cflags="-I../include/" --extra-ldflags="-L../lib/" --extra-libs="-lstdc++ -lpthread -ldl -lz -lm $LIBS"
         make -j $MAKEJ
         make install
         ;;
 
     linux-x86_64)
+        export AS="nasm"
+        echo ""
+        echo "--------------------"
+        echo "Building zlib"
+        echo "--------------------"
+        echo ""
         cd $ZLIB
         CC="gcc -m64 -fPIC" ./configure --prefix=$INSTALL_PATH --static
-        make -j $MAKEJ
+        make -j $MAKEJ V=0
         make install
+        echo ""
+        echo "--------------------"
+        echo "Building LAME"
+        echo "--------------------"
+        echo ""
         cd ../$LAME
         ./configure --prefix=$INSTALL_PATH --disable-shared --with-pic --host=x86_64-linux CFLAGS="-m64"
-        make -j $MAKEJ
+        make -j $MAKEJ V=0
         make install
+        echo ""
+        echo "--------------------"
+        echo "Building speex"
+        echo "--------------------"
+        echo ""
         cd ../$SPEEX
         ./configure --prefix=$INSTALL_PATH --disable-shared --with-pic --host=x86_64-linux CFLAGS="-m64"
-        make -j $MAKEJ
+        make -j $MAKEJ V=0
         make install
         cd ../$OPUS
         ./configure --prefix=$INSTALL_PATH --disable-shared --with-pic --host=x86_64-linux CFLAGS="-m64"
-        make -j $MAKEJ
+        make -j $MAKEJ V=0
         make install
         cd ../$OPENCORE_AMR
         ./configure --prefix=$INSTALL_PATH --disable-shared --with-pic --host=x86_64-linux CFLAGS="-m64" CXXFLAGS="-m64"
-        make -j $MAKEJ
+        make -j $MAKEJ V=0
+        make install
+        cd ../$VO_AMRWBENC
+        ./configure --prefix=$INSTALL_PATH --disable-shared --with-pic --host=x86_64-linux CFLAGS="-m64" CXXFLAGS="-m64"
+        make -j $MAKEJ V=0
         make install
         cd ../$OPENSSL
         ./Configure linux-x86_64 -fPIC no-shared --prefix=$INSTALL_PATH
-        make # fails with -j > 1
+        make -s -j $MAKEJ
         make install_sw
         cd ../openh264-$OPENH264_VERSION
-        make -j $MAKEJ DESTDIR=./ PREFIX=.. AR=ar ARCH=x86_64 USE_ASM=No libraries install-static
+        make -j $MAKEJ DESTDIR=./ PREFIX=.. AR=ar ARCH=x86_64 USE_ASM=No install-static
         cd ../$X264
         ./configure --prefix=$INSTALL_PATH --enable-static --enable-pic --disable-opencl --host=x86_64-linux
-        make -j $MAKEJ
+        make -j $MAKEJ V=0
         make install
-        cd ../x265-$X265
-        CC="gcc -m64" CXX="g++ -m64" $CMAKE -DENABLE_SHARED=OFF -DENABLE_LIBNUMA=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=.. source
+        cd ../x265-$X265/build/linux
+        # from x265 multilib.sh
+        mkdir -p 8bit 10bit 12bit
+
+        cd 12bit
+        $CMAKE ../../../source -DHIGH_BIT_DEPTH=ON -DEXPORT_C_API=OFF -DENABLE_SHARED=OFF -DENABLE_CLI=OFF -DMAIN12=ON -DENABLE_LIBNUMA=OFF -DCMAKE_BUILD_TYPE=Release -DNASM_EXECUTABLE:FILEPATH=$INSTALL_PATH/bin/nasm
         make -j $MAKEJ
+
+        cd ../10bit
+        $CMAKE ../../../source -DHIGH_BIT_DEPTH=ON -DEXPORT_C_API=OFF -DENABLE_SHARED=OFF -DENABLE_CLI=OFF -DENABLE_LIBNUMA=OFF -DCMAKE_BUILD_TYPE=Release -DNASM_EXECUTABLE:FILEPATH=$INSTALL_PATH/bin/nasm
+        make -j $MAKEJ
+
+        cd ../8bit
+        ln -sf ../10bit/libx265.a libx265_main10.a
+        ln -sf ../12bit/libx265.a libx265_main12.a
+        $CMAKE ../../../source -DEXTRA_LIB="x265_main10.a;x265_main12.a" -DEXTRA_LINK_FLAGS=-L. -DLINKED_10BIT=ON -DLINKED_12BIT=ON -DCMAKE_INSTALL_PREFIX=$INSTALL_PATH -DENABLE_SHARED:BOOL=OFF -DENABLE_LIBNUMA=OFF -DCMAKE_BUILD_TYPE=Release -DNASM_EXECUTABLE:FILEPATH=$INSTALL_PATH/bin/nasm -DENABLE_CLI=OFF
+        make -j $MAKEJ
+
+        # rename the 8bit library, then combine all three into libx265.a
+        mv libx265.a libx265_main.a
+ar -M <<EOF
+CREATE libx265.a
+ADDLIB libx265_main.a
+ADDLIB libx265_main10.a
+ADDLIB libx265_main12.a
+SAVE
+END
+EOF
         make install
+        # ----
+        cd ../../../
         cd ../libvpx-$VPX_VERSION
-        ./configure --prefix=$INSTALL_PATH --enable-static --enable-pic --disable-examples --disable-unit-tests --target=x86_64-linux-gcc --as=yasm
+        ./configure --prefix=$INSTALL_PATH --enable-static --enable-pic --disable-examples --disable-unit-tests --target=x86_64-linux-gcc --as=nasm
         make -j $MAKEJ
         make install
         cd ../freetype-$FREETYPE_VERSION
         ./configure --prefix=$INSTALL_PATH --with-bzip2=no --with-harfbuzz=no --with-png=no --enable-static --disable-shared --with-pic --host=x86_64-linux CFLAGS="-m64"
         make -j $MAKEJ
         make install
+        LIBS=
+        if [[ ! -z $(ldconfig -p | grep libva-drm) ]]; then
+            cd ../mfx_dispatch-$MFX_VERSION
+            autoreconf -fiv
+            PKG_CONFIG_PATH="../lib/pkgconfig" ./configure --prefix=$INSTALL_PATH --disable-shared --enable-static --enable-fast-install --with-pic --host=x86_64-linux CFLAGS="-m64" CXXFLAGS="-m64"
+            make -j $MAKEJ
+            make install
+            ENABLE="$ENABLE --enable-libmfx"
+            LIBS="-lva-drm -lva-x11 -lva"
+        fi
+        cd ../nv-codec-headers-n$NVCODEC_VERSION
+        make install PREFIX=$INSTALL_PATH
         cd ../ffmpeg-$FFMPEG_VERSION
-        patch -Np1 < ../../../ffmpeg-linux.patch
-        PKG_CONFIG_PATH=../lib/pkgconfig/ ./configure --prefix=.. $DISABLE $ENABLE --enable-libxcb --cc="gcc -m64" --extra-cflags="-I../include/" --extra-ldflags="-L../lib/" --extra-libs="-lstdc++ -ldl"
+        LDEXEFLAGS='-Wl,-rpath,\$$ORIGIN/' PKG_CONFIG_PATH=../lib/pkgconfig/ ./configure --prefix=.. $DISABLE $ENABLE --enable-cuda --enable-cuvid --enable-nvenc --enable-pthreads --enable-libxcb --cc="gcc -m64" --extra-cflags="-I../include/" --extra-ldflags="-L../lib/" --extra-libs="-lstdc++ -lpthread -ldl -lz -lm $LIBS"
         make -j $MAKEJ
         make install
         ;;
@@ -297,7 +755,7 @@ case $PLATFORM in
     linux-armhf)
         tar --totals -xjf ../alsa-lib-$ALSA_VERSION.tar.bz2
 
-        export CFLAGS="-march=armv6 -marm -mfpu=vfp -mfloat-abi=hard"
+        export CFLAGS="-march=armv6 -marm -mfpu=vfp -mfloat-abi=hard -I$INSTALL_PATH/include -L$INSTALL_PATH/lib"
         export CXXFLAGS="$CFLAGS"
         export CPPFLAGS="$CFLAGS"
         HOST_ARCH="$(uname -m)"
@@ -310,25 +768,44 @@ case $PLATFORM in
           echo "Detected non arm arch so cross compiling";
         fi
 
+        echo ""
+        echo "--------------------"
+        echo "Building zlib"
+        echo "--------------------"
+        echo ""
         cd $ZLIB
         CC="arm-linux-gnueabihf-gcc -fPIC" ./configure --prefix=$INSTALL_PATH --static
-        make -j $MAKEJ
+        make -j $MAKEJ V=0
         make install
+        echo ""
+        echo "--------------------"
+        echo "Building LAME"
+        echo "--------------------"
+        echo ""
         cd ../$LAME
         ./configure --prefix=$INSTALL_PATH --disable-shared --with-pic --host=arm-linux-gnueabihf
-        make -j $MAKEJ
+        make -j $MAKEJ V=0
         make install
+        echo ""
+        echo "--------------------"
+        echo "Building speex"
+        echo "--------------------"
+        echo ""
         cd ../$SPEEX
         ./configure --prefix=$INSTALL_PATH --disable-shared --with-pic --host=arm-linux-gnueabihf
-        make -j $MAKEJ
+        make -j $MAKEJ V=0
         make install
         cd ../$OPUS
         ./configure --prefix=$INSTALL_PATH --disable-shared --with-pic --host=arm-linux-gnueabihf
-        make -j $MAKEJ
+        make -j $MAKEJ V=0
         make install
         cd ../$OPENCORE_AMR
         ./configure --prefix=$INSTALL_PATH --disable-shared --with-pic --host=arm-linux-gnueabihf
-        make -j $MAKEJ
+        make -j $MAKEJ V=0
+        make install
+        cd ../$VO_AMRWBENC
+        ./configure --prefix=$INSTALL_PATH --disable-shared --with-pic --host=arm-linux-gnueabihf
+        make -j $MAKEJ V=0
         make install
         cd ../$OPENSSL
         if [ $CROSSCOMPILE -eq 1 ]
@@ -337,10 +814,10 @@ case $PLATFORM in
         else
           ./Configure linux-generic32 -fPIC no-shared --prefix=$INSTALL_PATH
         fi
-        make # fails with -j > 1
+        make -s -j $MAKEJ
         make install_sw
         cd ../openh264-$OPENH264_VERSION
-        make -j $MAKEJ DESTDIR=./ PREFIX=.. AR=arm-linux-gnueabihf-ar ARCH=armhf USE_ASM=No libraries install-static CC=arm-linux-gnueabihf-gcc CXX=arm-linux-gnueabihf-g++
+        make -j $MAKEJ DESTDIR=./ PREFIX=.. AR=arm-linux-gnueabihf-ar ARCH=armhf USE_ASM=No install-static CC=arm-linux-gnueabihf-gcc CXX=arm-linux-gnueabihf-g++
         cd ../$X264
         if [ $CROSSCOMPILE -eq 1 ]
         then
@@ -348,18 +825,56 @@ case $PLATFORM in
         else
           ./configure --prefix=$INSTALL_PATH --enable-static --enable-pic --disable-opencl --disable-cli --disable-asm
         fi
-        make -j $MAKEJ
+        make -j $MAKEJ V=0
         make install
-        cd ../x265-$X265
+        cd ../x265-$X265/build/linux
+        # from x265 multilib.sh
+        mkdir -p 8bit 10bit 12bit
+
+        cd 12bit
         if [ $CROSSCOMPILE -eq 1 ]
         then
-          $CMAKE -DENABLE_CLI=OFF -DENABLE_SHARED=OFF -DENABLE_LIBNUMA=OFF -DCMAKE_SYSTEM_NAME=Linux -DCMAKE_SYSTEM_VERSION=1 -DCMAKE_SYSTEM_PROCESSOR=armv6 -DCMAKE_CXX_FLAGS="$CXXFLAGS" -DCMAKE_C_FLAGS="$CFLAGS" -DCMAKE_C_COMPILER=arm-linux-gnueabihf-gcc -DCMAKE_CXX_COMPILER=arm-linux-gnueabihf-g++ -DCMAKE_CXX_FLAGS=-fPIC -DCMAKE_STRIP=arm-linux-gnueabihf-strip -DCMAKE_FIND_ROOT_PATH=arm-linux-gnueabihf -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=.. source
+          $CMAKE ../../../source -DHIGH_BIT_DEPTH=ON -DEXPORT_C_API=OFF -DENABLE_SHARED=OFF -DENABLE_CLI=OFF -DMAIN12=ON -DENABLE_LIBNUMA=OFF -DCMAKE_SYSTEM_NAME=Linux -DCMAKE_SYSTEM_VERSION=1 -DCMAKE_SYSTEM_PROCESSOR=armv6 -DCMAKE_CXX_FLAGS="$CXXFLAGS" -DCMAKE_C_FLAGS="$CFLAGS" -DCMAKE_C_COMPILER=arm-linux-gnueabihf-gcc -DCMAKE_CXX_COMPILER=arm-linux-gnueabihf-g++ -DCMAKE_CXX_FLAGS=-fPIC -DCMAKE_STRIP=arm-linux-gnueabihf-strip -DCMAKE_FIND_ROOT_PATH=arm-linux-gnueabihf -DCMAKE_BUILD_TYPE=Release -DENABLE_ASSEMBLY=OFF
+          make -j $MAKEJ
+
+          cd ../10bit
+          $CMAKE ../../../source -DHIGH_BIT_DEPTH=ON -DEXPORT_C_API=OFF -DENABLE_SHARED=OFF -DENABLE_CLI=OFF -DENABLE_LIBNUMA=OFF -DCMAKE_SYSTEM_NAME=Linux -DCMAKE_SYSTEM_VERSION=1 -DCMAKE_SYSTEM_PROCESSOR=armv6 -DCMAKE_CXX_FLAGS="$CXXFLAGS" -DCMAKE_C_FLAGS="$CFLAGS" -DCMAKE_C_COMPILER=arm-linux-gnueabihf-gcc -DCMAKE_CXX_COMPILER=arm-linux-gnueabihf-g++ -DCMAKE_CXX_FLAGS=-fPIC -DCMAKE_STRIP=arm-linux-gnueabihf-strip -DCMAKE_FIND_ROOT_PATH=arm-linux-gnueabihf -DCMAKE_BUILD_TYPE=Release -DENABLE_ASSEMBLY=OFF
+          make -j $MAKEJ
+
+          cd ../8bit
+          ln -sf ../10bit/libx265.a libx265_main10.a
+          ln -sf ../12bit/libx265.a libx265_main12.a
+          $CMAKE ../../../source -DEXTRA_LIB="x265_main10.a;x265_main12.a" -DEXTRA_LINK_FLAGS=-L. -DLINKED_10BIT=ON -DLINKED_12BIT=ON -DCMAKE_INSTALL_PREFIX=$INSTALL_PATH -DENABLE_SHARED:BOOL=OFF -DENABLE_LIBNUMA=OFF -DCMAKE_SYSTEM_NAME=Linux -DCMAKE_SYSTEM_VERSION=1 -DCMAKE_SYSTEM_PROCESSOR=armv6 -DCMAKE_CXX_FLAGS="$CXXFLAGS" -DCMAKE_C_FLAGS="$CFLAGS" -DCMAKE_C_COMPILER=arm-linux-gnueabihf-gcc -DCMAKE_CXX_COMPILER=arm-linux-gnueabihf-g++ -DCMAKE_CXX_FLAGS=-fPIC -DCMAKE_STRIP=arm-linux-gnueabihf-strip -DCMAKE_FIND_ROOT_PATH=arm-linux-gnueabihf -DCMAKE_BUILD_TYPE=Release -DENABLE_ASSEMBLY=OFF -DENABLE_CLI=OFF
         else
-          $CMAKE -DENABLE_CLI=OFF -DENABLE_SHARED=OFF -DENABLE_LIBNUMA=OFF -DCMAKE_SYSTEM_NAME=Linux -DCMAKE_SYSTEM_VERSION=1 -DCMAKE_SYSTEM_PROCESSOR=armv6 -DCMAKE_CXX_FLAGS="$CXXFLAGS" -DCMAKE_C_FLAGS="$CFLAGS" -DCMAKE_CXX_FLAGS=-fPIC -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=.. source
+          $CMAKE ../../../source -DHIGH_BIT_DEPTH=ON -DEXPORT_C_API=OFF -DENABLE_SHARED=OFF -DENABLE_CLI=OFF -DMAIN12=ON -DENABLE_LIBNUMA=OFF -DCMAKE_SYSTEM_NAME=Linux -DCMAKE_SYSTEM_VERSION=1 -DCMAKE_SYSTEM_PROCESSOR=armv6 -DCMAKE_CXX_FLAGS="$CXXFLAGS" -DCMAKE_C_FLAGS="$CFLAGS" -DCMAKE_CXX_FLAGS=-fPIC -DCMAKE_BUILD_TYPE=Release -DENABLE_ASSEMBLY=OFF
+          make -j $MAKEJ
+
+          cd ../10bit
+          $CMAKE ../../../source -DHIGH_BIT_DEPTH=ON -DEXPORT_C_API=OFF -DENABLE_SHARED=OFF -DENABLE_CLI=OFF -DENABLE_LIBNUMA=OFF -DCMAKE_SYSTEM_NAME=Linux -DCMAKE_SYSTEM_VERSION=1 -DCMAKE_SYSTEM_PROCESSOR=armv6 -DCMAKE_CXX_FLAGS="$CXXFLAGS" -DCMAKE_C_FLAGS="$CFLAGS" -DCMAKE_CXX_FLAGS=-fPIC -DCMAKE_BUILD_TYPE=Release -DENABLE_ASSEMBLY=OFF
+          make -j $MAKEJ
+
+          cd ../8bit
+          ln -sf ../10bit/libx265.a libx265_main10.a
+          ln -sf ../12bit/libx265.a libx265_main12.a
+          $CMAKE ../../../source -DEXTRA_LIB="x265_main10.a;x265_main12.a" -DEXTRA_LINK_FLAGS=-L. -DLINKED_10BIT=ON -DLINKED_12BIT=ON -DCMAKE_INSTALL_PREFIX=$INSTALL_PATH -DENABLE_SHARED:BOOL=OFF -DENABLE_LIBNUMA=OFF -DCMAKE_SYSTEM_NAME=Linux -DCMAKE_SYSTEM_VERSION=1 -DCMAKE_SYSTEM_PROCESSOR=armv6 -DCMAKE_CXX_FLAGS="$CXXFLAGS" -DCMAKE_C_FLAGS="$CFLAGS" -DCMAKE_CXX_FLAGS=-fPIC -DCMAKE_BUILD_TYPE=Release -DENABLE_ASSEMBLY=OFF -DENABLE_CLI=OFF
         fi
         make -j $MAKEJ
+
+        # rename the 8bit library, then combine all three into libx265.a
+        mv libx265.a libx265_main.a
+ar -M <<EOF
+CREATE libx265.a
+ADDLIB libx265_main.a
+ADDLIB libx265_main10.a
+ADDLIB libx265_main12.a
+SAVE
+END
+EOF
         make install
+        # ----
+        cd ../../../
         cd ../libvpx-$VPX_VERSION
+        patch -Np1 < ../../../libvpx-linux-arm.patch
         if [ $CROSSCOMPILE -eq 1 ]
         then
           CROSS=arm-linux-gnueabihf- ./configure --prefix=$INSTALL_PATH --enable-static --enable-pic --disable-examples --disable-unit-tests --target=armv7-linux-gcc
@@ -370,49 +885,172 @@ case $PLATFORM in
         make install
         cd ../alsa-lib-$ALSA_VERSION/
         ./configure --host=arm-linux-gnueabihf --prefix=$INSTALL_PATH --disable-python
-        make -j $MAKEJ
+        make -j $MAKEJ V=0
         make install
         cd ../freetype-$FREETYPE_VERSION
         ./configure --prefix=$INSTALL_PATH --with-bzip2=no --with-harfbuzz=no --with-png=no --enable-static --disable-shared --with-pic --host=arm-linux-gnueabihf
         make -j $MAKEJ
         make install
         cd ../ffmpeg-$FFMPEG_VERSION
-        patch -Np1 < ../../../ffmpeg-linux.patch
         if [ $CROSSCOMPILE -eq 1 ]
         then
-          PKG_CONFIG_PATH=../lib/pkgconfig/ ./configure --prefix=.. $DISABLE $ENABLE --cc="arm-linux-gnueabihf-gcc" --extra-cflags="-I/opt/additionalInclude/ -I../include/" --extra-ldflags="-L../lib/ -L/opt/additionalLib" --extra-libs="-lstdc++ -ldl -lasound" --enable-cross-compile --arch=armhf --target-os=linux --cross-prefix="arm-linux-gnueabihf-" --pkg-config-flags="--static" --pkg-config="pkg-config --static" --disable-doc --disable-programs
+          USERLAND_PATH="$(which arm-linux-gnueabihf-gcc | grep -o '.*/tools/')../userland"
+          mkdir -p ../lib
+          cp $USERLAND_PATH/build/lib/* ../lib
+          LDEXEFLAGS='-Wl,-rpath,\$$ORIGIN/' PKG_CONFIG_PATH=../lib/pkgconfig/ ./configure --prefix=.. $DISABLE $ENABLE --enable-omx --enable-mmal --enable-omx-rpi --enable-pthreads --cc="arm-linux-gnueabihf-gcc" --extra-cflags="-I$USERLAND_PATH/ -I$USERLAND_PATH/interface/vmcs_host/khronos/IL/ -I$USERLAND_PATH/host_applications/linux/libs/bcm_host/include/ -I../include/" --extra-ldflags="-L$USERLAND_PATH/build/lib/ -L../lib/" --extra-libs="-lstdc++ -lasound -lvchiq_arm -lvcsm -lvcos -lpthread -ldl -lz -lm" --enable-cross-compile --arch=armhf --target-os=linux --cross-prefix="arm-linux-gnueabihf-"
         else
-          PKG_CONFIG_PATH=../lib/pkgconfig/ ./configure --prefix=.. $DISABLE $ENABLE --extra-cflags="-I../include/" --extra-ldflags="-L../lib/" --extra-libs="-lstdc++ -ldl -lasound" --pkg-config-flags="--static" --pkg-config="pkg-config --static"
+          LDEXEFLAGS='-Wl,-rpath,\$$ORIGIN/' PKG_CONFIG_PATH=../lib/pkgconfig/ ./configure --prefix=.. $DISABLE $ENABLE --enable-omx --enable-mmal --enable-omx-rpi --enable-pthreads --extra-cflags="-I../include/" --extra-ldflags="-L../lib/ -L/opt/vc/lib" --extra-libs="-lstdc++ -lasound -lvchiq_arm -lvcsm -lvcos -lpthread -ldl -lz -lm"
         fi
+        make -j $MAKEJ
+        make install
+        ;;
+
+    linux-arm64)
+        tar --totals -xjf ../alsa-lib-$ALSA_VERSION.tar.bz2
+
+        export CFLAGS="-march=armv8-a+crypto -mcpu=cortex-a57+crypto -I$INSTALL_PATH/include -L$INSTALL_PATH/lib"
+        export CXXFLAGS="$CFLAGS"
+        export CPPFLAGS="$CFLAGS"
+        HOST_ARCH="$(uname -m)"
+        echo ""
+        echo "--------------------"
+        echo "Building zlib"
+        echo "--------------------"
+        echo ""
+        cd $ZLIB
+        CC="aarch64-linux-gnu-gcc -fPIC" ./configure --prefix=$INSTALL_PATH --static
+        make -j $MAKEJ V=0
+        make install
+        echo ""
+        echo "--------------------"
+        echo "Building LAME"
+        echo "--------------------"
+        echo ""
+        cd ../$LAME
+        ./configure --prefix=$INSTALL_PATH --disable-shared --with-pic --host=aarch64-linux-gnu
+        make -j $MAKEJ V=0
+        make install
+        echo ""
+        echo "--------------------"
+        echo "Building speex"
+        echo "--------------------"
+        echo ""
+        cd ../$SPEEX
+        ./configure --prefix=$INSTALL_PATH --disable-shared --with-pic --host=aarch64-linux-gnu
+        make -j $MAKEJ V=0
+        make install
+        cd ../$OPUS
+        ./configure --prefix=$INSTALL_PATH --disable-shared --with-pic --host=aarch64-linux-gnu
+        make -j $MAKEJ V=0
+        make install
+        cd ../$OPENCORE_AMR
+        ./configure --prefix=$INSTALL_PATH --disable-shared --with-pic --host=aarch64-linux-gnu
+        make -j $MAKEJ V=0
+        make install
+        cd ../$VO_AMRWBENC
+        ./configure --prefix=$INSTALL_PATH --disable-shared --with-pic --host=aarch64-linux-gnu
+        make -j $MAKEJ V=0
+        make install
+        cd ../$OPENSSL
+        ./Configure linux-aarch64 -fPIC --prefix=$INSTALL_PATH --cross-compile-prefix=aarch64-linux-gnu- "$CFLAGS" no-shared
+        make -s -j $MAKEJ
+        make install_sw
+        cd ../openh264-$OPENH264_VERSION
+        make -j $MAKEJ DESTDIR=./ PREFIX=.. OS=linux ARCH=arm64 USE_ASM=No install-static CC=aarch64-linux-gnu-gcc CXX=aarch64-linux-gnu-g++
+        cd ../$X264
+        LDFLAGS="-Wl,-z,relro" ./configure --prefix=$INSTALL_PATH --enable-pic --enable-static --disable-shared --disable-opencl --disable-cli --enable-asm --host=aarch64-linux-gnu --extra-cflags="$CFLAGS -fno-aggressive-loop-optimizations" --cross-prefix="aarch64-linux-gnu-"
+        make -j $MAKEJ V=0
+        make install
+        cd ../x265-$X265/build/linux
+        # from x265 multilib.sh
+        mkdir -p 8bit 10bit 12bit
+
+        cd 12bit
+        $CMAKE ../../../source -DHIGH_BIT_DEPTH=ON -DEXPORT_C_API=OFF -DENABLE_SHARED=OFF -DENABLE_CLI=OFF -DMAIN12=ON -DENABLE_LIBNUMA=OFF -DCMAKE_SYSTEM_NAME=Linux -DCMAKE_SYSTEM_VERSION=1 -DCMAKE_SYSTEM_PROCESSOR=armv8 -DCMAKE_CXX_FLAGS="$CXXFLAGS" -DCMAKE_C_FLAGS="$CFLAGS" -DCMAKE_C_COMPILER=aarch64-linux-gnu-gcc -DCMAKE_CXX_COMPILER=aarch64-linux-gnu-g++ -DCMAKE_CXX_FLAGS=-fPIC -DCMAKE_BUILD_TYPE=Release -DENABLE_ASSEMBLY=OFF
+        make -j $MAKEJ
+
+        cd ../10bit
+        $CMAKE ../../../source -DHIGH_BIT_DEPTH=ON -DEXPORT_C_API=OFF -DENABLE_SHARED=OFF -DENABLE_CLI=OFF -DENABLE_LIBNUMA=OFF -DCMAKE_SYSTEM_NAME=Linux -DCMAKE_SYSTEM_VERSION=1 -DCMAKE_SYSTEM_PROCESSOR=armv8 -DCMAKE_CXX_FLAGS="$CXXFLAGS" -DCMAKE_C_FLAGS="$CFLAGS" -DCMAKE_C_COMPILER=aarch64-linux-gnu-gcc -DCMAKE_CXX_COMPILER=aarch64-linux-gnu-g++ -DCMAKE_CXX_FLAGS=-fPIC -DCMAKE_BUILD_TYPE=Release -DENABLE_ASSEMBLY=OFF
+        make -j $MAKEJ
+
+        cd ../8bit
+        ln -sf ../10bit/libx265.a libx265_main10.a
+        ln -sf ../12bit/libx265.a libx265_main12.a
+        $CMAKE ../../../source -DEXTRA_LIB="x265_main10.a;x265_main12.a" -DEXTRA_LINK_FLAGS=-L. -DLINKED_10BIT=ON -DLINKED_12BIT=ON -DCMAKE_INSTALL_PREFIX=$INSTALL_PATH -DENABLE_SHARED:BOOL=OFF -DENABLE_LIBNUMA=OFF -DCMAKE_SYSTEM_NAME=Linux -DCMAKE_SYSTEM_VERSION=1 -DCMAKE_SYSTEM_PROCESSOR=armv8 -DCMAKE_CXX_FLAGS="$CXXFLAGS" -DCMAKE_C_FLAGS="$CFLAGS" -DCMAKE_C_COMPILER=aarch64-linux-gnu-gcc -DCMAKE_CXX_COMPILER=aarch64-linux-gnu-g++ -DCMAKE_CXX_FLAGS=-fPIC -DCMAKE_BUILD_TYPE=Release -DENABLE_ASSEMBLY=OFF -DENABLE_CLI=OFF
+        make -j $MAKEJ
+
+        # rename the 8bit library, then combine all three into libx265.a
+        mv libx265.a libx265_main.a
+ar -M <<EOF
+CREATE libx265.a
+ADDLIB libx265_main.a
+ADDLIB libx265_main10.a
+ADDLIB libx265_main12.a
+SAVE
+END
+EOF
+        make install
+        # ----
+        cd ../../../
+        cd ../libvpx-$VPX_VERSION
+        patch -Np1 < ../../../libvpx-linux-arm.patch
+        CROSS=aarch64-linux-gnu- ./configure --prefix=$INSTALL_PATH --enable-static --enable-pic --disable-examples --disable-unit-tests --target=armv8-linux-gcc
+        make -j $MAKEJ
+        make install
+        cd ../alsa-lib-$ALSA_VERSION/
+        ./configure --host=aarch64-linux-gnu --prefix=$INSTALL_PATH --disable-python
+        make -j $MAKEJ V=0
+        make install
+        cd ../freetype-$FREETYPE_VERSION
+        ./configure --prefix=$INSTALL_PATH --with-bzip2=no --with-harfbuzz=no --with-png=no --enable-static --disable-shared --with-pic --host=aarch64-linux-gnu
+        make -j $MAKEJ
+        make install
+        cd ../ffmpeg-$FFMPEG_VERSION
+        LDEXEFLAGS='-Wl,-rpath,\$$ORIGIN/' PKG_CONFIG_PATH=../lib/pkgconfig/ ./configure --prefix=.. $DISABLE $ENABLE --extra-cflags="$CFLAGS -fno-aggressive-loop-optimizations" --enable-pthreads --cc="aarch64-linux-gnu-gcc" --extra-cflags="-I../include/" --extra-ldflags="-Wl,-z,relro -L../lib/" --extra-libs="-lstdc++ -lpthread -ldl -lz -lm" --enable-cross-compile --arch=arm64 --target-os=linux --cross-prefix="aarch64-linux-gnu-"
         make -j $MAKEJ
         make install
         ;;
 
     linux-ppc64le)
         MACHINE_TYPE=$( uname -m )
+        echo ""
+        echo "--------------------"
+        echo "Building zlib"
+        echo "--------------------"
+        echo ""
         cd $ZLIB
         if [[ "$MACHINE_TYPE" =~ ppc64 ]]; then
           CC="gcc -m64 -fPIC" ./configure --prefix=$INSTALL_PATH --static
         else
           CC="powerpc64le-linux-gnu-gcc -m64 -fPIC" ./configure --prefix=$INSTALL_PATH --static
         fi
-        make -j $MAKEJ
+        make -j $MAKEJ V=0
         make install
+        echo ""
+        echo "--------------------"
+        echo "Building LAME"
+        echo "--------------------"
+        echo ""
         cd ../$LAME
         if [[ "$MACHINE_TYPE" =~ ppc64 ]]; then
           ./configure --prefix=$INSTALL_PATH --disable-shared --with-pic --build=ppc64le-linux CFLAGS="-m64"
         else
           CC="powerpc64le-linux-gnu-gcc -m64" CXX="powerpc64le-linux-gnu-g++ -m64" ./configure --host=powerpc64le-linux-gnu --prefix=$INSTALL_PATH --disable-shared --with-pic --build=ppc64le-linux CFLAGS="-m64"
         fi
-        make -j $MAKEJ
+        make -j $MAKEJ V=0
         make install
+        echo ""
+        echo "--------------------"
+        echo "Building speex"
+        echo "--------------------"
+        echo ""
         cd ../$SPEEX
         if [[ "$MACHINE_TYPE" =~ ppc64 ]]; then
           ./configure --prefix=$INSTALL_PATH --disable-shared --with-pic --build=ppc64le-linux CFLAGS="-m64"
         else
           ./configure --prefix=$INSTALL_PATH --disable-shared --with-pic --host=powerpc64le-linux-gnu --build=ppc64le-linux CFLAGS="-m64"
         fi
-        make -j $MAKEJ
+        make -j $MAKEJ V=0
         make install
         cd ../$OPUS
         if [[ "$MACHINE_TYPE" =~ ppc64 ]]; then
@@ -420,7 +1058,7 @@ case $PLATFORM in
         else
           ./configure --prefix=$INSTALL_PATH --disable-shared --with-pic --host=powerpc64le-linux-gnu --build=ppc64le-linux CFLAGS="-m64"
         fi
-        make -j $MAKEJ
+        make -j $MAKEJ V=0
         make install
         cd ../$OPENCORE_AMR
         if [[ "$MACHINE_TYPE" =~ ppc64 ]]; then
@@ -428,7 +1066,15 @@ case $PLATFORM in
         else
           ./configure --prefix=$INSTALL_PATH --disable-shared --with-pic --host=powerpc64le-linux-gnu --build=ppc64le-linux CFLAGS="-m64"
         fi
-        make -j $MAKEJ
+        make -j $MAKEJ V=0
+        make install
+        cd ../$VO_AMRWBENC
+        if [[ "$MACHINE_TYPE" =~ ppc64 ]]; then
+          ./configure --prefix=$INSTALL_PATH --disable-shared --with-pic --build=ppc64le-linux CFLAGS="-m64" CXXFLAGS="-m64"
+        else
+          ./configure --prefix=$INSTALL_PATH --disable-shared --with-pic --host=powerpc64le-linux-gnu --build=ppc64le-linux CFLAGS="-m64"
+        fi
+        make -j $MAKEJ V=0
         make install
         cd ../$OPENSSL
         if [[ "$MACHINE_TYPE" =~ ppc64 ]]; then
@@ -436,13 +1082,13 @@ case $PLATFORM in
         else
           ./Configure linux-ppc64le -fPIC no-shared --cross-compile-prefix=powerpc64le-linux-gnu- --prefix=$INSTALL_PATH
         fi
-        make # fails with -j > 1
+        make -s -j $MAKEJ
         make install_sw
         cd ../openh264-$OPENH264_VERSION
         if [[ "$MACHINE_TYPE" =~ ppc64 ]]; then
-          make -j $MAKEJ DESTDIR=./ PREFIX=.. AR=ar ARCH=ppc64le USE_ASM=No libraries install-static
+          make -j $MAKEJ DESTDIR=./ PREFIX=.. AR=ar ARCH=ppc64le USE_ASM=No install-static
         else
-          make -j $MAKEJ DESTDIR=./ PREFIX=.. AR=powerpc64le-linux-gnu-ar ARCH=ppc64le USE_ASM=No libraries install-static CC=powerpc64le-linux-gnu-gcc CXX=powerpc64le-linux-gnu-g++
+          make -j $MAKEJ DESTDIR=./ PREFIX=.. AR=powerpc64le-linux-gnu-ar ARCH=ppc64le USE_ASM=No install-static CC=powerpc64le-linux-gnu-gcc CXX=powerpc64le-linux-gnu-g++
         fi
         cd ../$X264
         if [[ "$MACHINE_TYPE" =~ ppc64 ]]; then
@@ -450,16 +1096,54 @@ case $PLATFORM in
         else
           CC="powerpc64le-linux-gnu-gcc -m64" CXX="powerpc64le-linux-gnu-g++ -m64" ./configure --prefix=$INSTALL_PATH --enable-static --enable-pic --disable-opencl --build=ppc64le-linux --host=ppc64le-linux
         fi
-        make -j $MAKEJ
+        make -j $MAKEJ V=0
         make install
-        cd ../x265-$X265
+
+        cd ../x265-$X265/build/linux
+        # from x265 multilib.sh
+        mkdir -p 8bit 10bit 12bit
+
+        cd 12bit
         if [[ "$MACHINE_TYPE" =~ ppc64 ]]; then
-          CC="gcc -m64" CXX="g++ -m64" $CMAKE -DENABLE_SHARED=OFF -DENABLE_LIBNUMA=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=.. source
+          CC="gcc -m64" CXX="g++ -m64" $CMAKE ../../../source -DENABLE_ALTIVEC=OFF -DHIGH_BIT_DEPTH=ON -DEXPORT_C_API=OFF -DENABLE_SHARED=OFF -DENABLE_CLI=OFF -DMAIN12=ON -DENABLE_LIBNUMA=OFF -DCMAKE_BUILD_TYPE=Release -DENABLE_ASSEMBLY=OFF
+          make -j $MAKEJ
+
+          cd ../10bit
+          CC="gcc -m64" CXX="g++ -m64" $CMAKE ../../../source -DENABLE_ALTIVEC=OFF -DHIGH_BIT_DEPTH=ON -DEXPORT_C_API=OFF -DENABLE_SHARED=OFF -DENABLE_CLI=OFF -DENABLE_LIBNUMA=OFF -DCMAKE_BUILD_TYPE=Release -DENABLE_ASSEMBLY=OFF
+          make -j $MAKEJ
+
+          cd ../8bit
+          ln -sf ../10bit/libx265.a libx265_main10.a
+          ln -sf ../12bit/libx265.a libx265_main12.a
+          CC="gcc -m64" CXX="g++ -m64" $CMAKE ../../../source -DEXTRA_LIB="x265_main10.a;x265_main12.a" -DEXTRA_LINK_FLAGS=-L. -DLINKED_10BIT=ON -DLINKED_12BIT=ON -DCMAKE_INSTALL_PREFIX=$INSTALL_PATH -DENABLE_SHARED:BOOL=OFF -DENABLE_LIBNUMA=OFF -DCMAKE_BUILD_TYPE=Release -DENABLE_ASSEMBLY=OFF -DENABLE_CLI=OFF
         else
-          $CMAKE -DENABLE_CLI=OFF -DENABLE_SHARED=OFF -DENABLE_LIBNUMA=OFF -DCMAKE_SYSTEM_NAME=Linux -DCMAKE_SYSTEM_VERSION=1 -DCMAKE_SYSTEM_PROCESSOR=ppc64le -DCMAKE_CXX_FLAGS="-m64" -DCMAKE_C_FLAGS="-m64" -DCMAKE_C_COMPILER=powerpc64le-linux-gnu-gcc -DCMAKE_CXX_COMPILER=powerpc64le-linux-gnu-g++ -DCMAKE_CXX_FLAGS=-fPIC -DCMAKE_STRIP=powerpc64le-linux-gnu-strip -DCMAKE_FIND_ROOT_PATH=powerpc64le-linux-gnu -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=.. source
+          $CMAKE ../../../source -DENABLE_ALTIVEC=OFF -DHIGH_BIT_DEPTH=ON -DEXPORT_C_API=OFF -DENABLE_SHARED=OFF -DENABLE_CLI=OFF -DMAIN12=ON -DENABLE_LIBNUMA=OFF -DCMAKE_SYSTEM_NAME=Linux -DCMAKE_SYSTEM_VERSION=1 -DCMAKE_SYSTEM_PROCESSOR=ppc64le -DCMAKE_CXX_FLAGS="-m64" -DCMAKE_C_FLAGS="-m64" -DCMAKE_C_COMPILER=powerpc64le-linux-gnu-gcc -DCMAKE_CXX_COMPILER=powerpc64le-linux-gnu-g++ -DCMAKE_CXX_FLAGS=-fPIC -DCMAKE_STRIP=powerpc64le-linux-gnu-strip -DCMAKE_FIND_ROOT_PATH=powerpc64le-linux-gnu -DCMAKE_BUILD_TYPE=Release -DENABLE_ASSEMBLY=OFF
+          make -j $MAKEJ
+
+          cd ../10bit
+          $CMAKE ../../../source -DENABLE_ALTIVEC=OFF -DHIGH_BIT_DEPTH=ON -DEXPORT_C_API=OFF -DENABLE_SHARED=OFF -DENABLE_CLI=OFF -DENABLE_LIBNUMA=OFF -DCMAKE_SYSTEM_NAME=Linux -DCMAKE_SYSTEM_VERSION=1 -DCMAKE_SYSTEM_PROCESSOR=ppc64le -DCMAKE_CXX_FLAGS="-m64" -DCMAKE_C_FLAGS="-m64" -DCMAKE_C_COMPILER=powerpc64le-linux-gnu-gcc -DCMAKE_CXX_COMPILER=powerpc64le-linux-gnu-g++ -DCMAKE_CXX_FLAGS=-fPIC -DCMAKE_STRIP=powerpc64le-linux-gnu-strip -DCMAKE_FIND_ROOT_PATH=powerpc64le-linux-gnu -DCMAKE_BUILD_TYPE=Release -DENABLE_ASSEMBLY=OFF
+          make -j $MAKEJ
+
+          cd ../8bit
+          ln -sf ../10bit/libx265.a libx265_main10.a
+          ln -sf ../12bit/libx265.a libx265_main12.a
+          $CMAKE ../../../source -DEXTRA_LIB="x265_main10.a;x265_main12.a" -DEXTRA_LINK_FLAGS=-L. -DLINKED_10BIT=ON -DLINKED_12BIT=ON -DCMAKE_INSTALL_PREFIX=$INSTALL_PATH -DENABLE_SHARED:BOOL=OFF -DENABLE_LIBNUMA=OFF -DCMAKE_SYSTEM_NAME=Linux -DCMAKE_SYSTEM_VERSION=1 -DCMAKE_SYSTEM_PROCESSOR=ppc64le -DCMAKE_CXX_FLAGS="-m64" -DCMAKE_C_FLAGS="-m64" -DCMAKE_C_COMPILER=powerpc64le-linux-gnu-gcc -DCMAKE_CXX_COMPILER=powerpc64le-linux-gnu-g++ -DCMAKE_CXX_FLAGS=-fPIC -DCMAKE_STRIP=powerpc64le-linux-gnu-strip -DCMAKE_FIND_ROOT_PATH=powerpc64le-linux-gnu -DCMAKE_BUILD_TYPE=Release -DENABLE_ASSEMBLY=OFF -DENABLE_CLI=OFF
         fi
         make -j $MAKEJ
+
+        # rename the 8bit library, then combine all three into libx265.a
+        mv libx265.a libx265_main.a
+ar -M <<EOF
+CREATE libx265.a
+ADDLIB libx265_main.a
+ADDLIB libx265_main10.a
+ADDLIB libx265_main12.a
+SAVE
+END
+EOF
         make install
+        # ----
+        cd ../../../
         cd ../libvpx-$VPX_VERSION
         if [[ "$MACHINE_TYPE" =~ ppc64 ]]; then
           ./configure --prefix=$INSTALL_PATH --enable-static --enable-pic --disable-examples --disable-unit-tests --target=generic-gnu
@@ -477,55 +1161,97 @@ case $PLATFORM in
         make -j $MAKEJ
         make install 
         cd ../ffmpeg-$FFMPEG_VERSION
-        patch -Np1 < ../../../ffmpeg-linux.patch
         if [[ "$MACHINE_TYPE" =~ ppc64 ]]; then
-          PKG_CONFIG_PATH=../lib/pkgconfig/ ./configure --prefix=.. $DISABLE $ENABLE --enable-libxcb --cc="gcc -m64" --extra-cflags="-I../include/" --extra-ldflags="-L../lib/" --extra-libs="-lstdc++ -ldl"
+          LDEXEFLAGS='-Wl,-rpath,\$$ORIGIN/' PKG_CONFIG_PATH=../lib/pkgconfig/ ./configure --prefix=.. $DISABLE $ENABLE --enable-pthreads --enable-libxcb --cc="gcc -m64" --extra-cflags="-I../include/" --extra-ldflags="-L../lib/" --extra-libs="-lstdc++ -ldl -lz -lm" --disable-altivec
         else
           echo "configure ffmpeg cross compile"
-          PKG_CONFIG_PATH=../lib/pkgconfig/ ./configure --prefix=.. $DISABLE $ENABLE --enable-libxcb --cc="powerpc64le-linux-gnu-gcc -m64" --extra-cflags="-I../include/" --extra-ldflags="-L../lib/" --enable-cross-compile --target-os=linux --arch=ppc64le-linux --extra-libs="-lstdc++ -ldl"
+          LDEXEFLAGS='-Wl,-rpath,\$$ORIGIN/' PKG_CONFIG_PATH=../lib/pkgconfig/:/usr/lib/powerpc64le-linux-gnu/pkgconfig/ ./configure --prefix=.. $DISABLE $ENABLE --enable-pthreads --enable-libxcb --cc="powerpc64le-linux-gnu-gcc -m64" --extra-cflags="-I../include/" --extra-ldflags="-L../lib/" --enable-cross-compile --target-os=linux --arch=ppc64le-linux --extra-libs="-lstdc++ -lpthread -ldl -lz -lm" --disable-altivec
         fi
         make -j $MAKEJ
         make install
         ;;
 
     macosx-*)
+        export AS="nasm"
+        echo ""
+        echo "--------------------"
+        echo "Building zlib"
+        echo "--------------------"
+        echo ""
         cd $ZLIB
         CC="clang -fPIC" ./configure --prefix=$INSTALL_PATH --static
-        make -j $MAKEJ
+        make -j $MAKEJ V=0
         make install
+        echo ""
+        echo "--------------------"
+        echo "Building LAME"
+        echo "--------------------"
+        echo ""
         cd ../$LAME
         ./configure --prefix=$INSTALL_PATH --disable-shared --with-pic
-        make -j $MAKEJ
+        make -j $MAKEJ V=0
         make install
+        echo ""
+        echo "--------------------"
+        echo "Building speex"
+        echo "--------------------"
+        echo ""
         cd ../$SPEEX
         ./configure --prefix=$INSTALL_PATH --disable-shared --with-pic
-        make -j $MAKEJ
+        make -j $MAKEJ V=0
         make install
         cd ../$OPUS
         ./configure --prefix=$INSTALL_PATH --disable-shared --with-pic
-        make -j $MAKEJ
+        make -j $MAKEJ V=0
         make install
         cd ../$OPENCORE_AMR
         ./configure --prefix=$INSTALL_PATH --disable-shared --with-pic
-        make -j $MAKEJ
+        make -j $MAKEJ V=0
+        make install
+        cd ../$VO_AMRWBENC
+        ./configure --prefix=$INSTALL_PATH --disable-shared --with-pic
+        make -j $MAKEJ V=0
         make install
         cd ../$OPENSSL
         ./Configure darwin64-x86_64-cc -fPIC no-shared --prefix=$INSTALL_PATH
-        make # fails with -j > 1
+        make -s -j $MAKEJ
         make install_sw
         cd ../openh264-$OPENH264_VERSION
-        make -j $MAKEJ DESTDIR=./ PREFIX=.. AR=ar USE_ASM=No libraries install-static
+        make -j $MAKEJ DESTDIR=./ PREFIX=.. AR=ar USE_ASM=No install-static
         cd ../$X264
         ./configure --prefix=$INSTALL_PATH --enable-static --enable-pic --disable-opencl
-        make -j $MAKEJ
+        make -j $MAKEJ V=0
         make install
-        cd ../x265-$X265
-        CC="clang" CXX="clang++" $CMAKE -DENABLE_SHARED=OFF -DENABLE_LIBNUMA=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=.. source
+        cd ../x265-$X265/build/linux
+        # from x265 multilib.sh
+        mkdir -p 8bit 10bit 12bit
+
+        cd 12bit
+        $CMAKE ../../../source -DHIGH_BIT_DEPTH=ON -DEXPORT_C_API=OFF -DENABLE_SHARED=OFF -DENABLE_CLI=OFF -DMAIN12=ON -DNASM_EXECUTABLE:FILEPATH=$INSTALL_PATH/bin/nasm
         make -j $MAKEJ
+
+        cd ../10bit
+        $CMAKE ../../../source -DHIGH_BIT_DEPTH=ON -DEXPORT_C_API=OFF -DENABLE_SHARED=OFF -DENABLE_CLI=OFF -DNASM_EXECUTABLE:FILEPATH=$INSTALL_PATH/bin/nasm
+        make -j $MAKEJ
+
+        cd ../8bit
+        ln -sf ../10bit/libx265.a libx265_main10.a
+        ln -sf ../12bit/libx265.a libx265_main12.a
+        $CMAKE ../../../source -DEXTRA_LIB="x265_main10.a;x265_main12.a" -DEXTRA_LINK_FLAGS=-L. -DLINKED_10BIT=ON -DLINKED_12BIT=ON -DCMAKE_INSTALL_PREFIX=$INSTALL_PATH -DENABLE_SHARED:BOOL=OFF -DNASM_EXECUTABLE:FILEPATH=$INSTALL_PATH/bin/nasm
+        make -j $MAKEJ
+
+        # rename the 8bit library, then combine all three into libx265.a
+        mv libx265.a libx265_main.a
+        /usr/bin/libtool -static -o libx265.a libx265_main.a libx265_main10.a libx265_main12.a 2>/dev/null
+
         make install
+        # ----
+        cd ../../../
         cd ../libvpx-$VPX_VERSION
+        sedinplace '/avx512/d' configure
         ./configure --prefix=$INSTALL_PATH --enable-static --enable-pic --disable-examples --disable-unit-tests
         make -j $MAKEJ
+        sedinplace '/HAS_AVX512/d' vpx_dsp_rtcd.h
         make install
         cd ../freetype-$FREETYPE_VERSION
         ./configure --prefix=$INSTALL_PATH --with-bzip2=no --with-harfbuzz=no --with-png=no --enable-static --disable-shared --with-pic
@@ -533,113 +1259,207 @@ case $PLATFORM in
         make install
         cd ../ffmpeg-$FFMPEG_VERSION
         patch -Np1 < ../../../ffmpeg-macosx.patch
-        PKG_CONFIG_PATH=../lib/pkgconfig/ ./configure --prefix=.. $DISABLE $ENABLE --enable-indev=avfoundation --extra-cflags="-I../include/" --extra-ldflags="-L../lib/" --extra-libs="-lstdc++ -ldl" --disable-doc --disable-programs
+        LDEXEFLAGS='-Wl,-rpath,@loader_path/' PKG_CONFIG_PATH=../lib/pkgconfig/ ./configure --prefix=.. $DISABLE $ENABLE --enable-pthreads --enable-indev=avfoundation --extra-cflags="-I../include/" --extra-ldflags="-L../lib/" --extra-libs="-lstdc++ -ldl -lz -lm"
         make -j $MAKEJ
         make install
         ;;
 
     windows-x86)
+        echo ""
+        echo "--------------------"
+        echo "Building zlib"
+        echo "--------------------"
+        echo ""
         cd $ZLIB
         make -j $MAKEJ install -fwin32/Makefile.gcc BINARY_PATH=$INSTALL_PATH/bin/ INCLUDE_PATH=$INSTALL_PATH/include/ LIBRARY_PATH=$INSTALL_PATH/lib/
+        echo ""
+        echo "--------------------"
+        echo "Building LAME"
+        echo "--------------------"
+        echo ""
         cd ../$LAME
         ./configure --prefix=$INSTALL_PATH --disable-shared --with-pic --build=i686-w64-mingw32 CFLAGS="-m32 -msse2"
-        make -j $MAKEJ
+        make -j $MAKEJ V=0
         make install
+        echo ""
+        echo "--------------------"
+        echo "Building speex"
+        echo "--------------------"
+        echo ""
         cd ../$SPEEX
         ./configure --prefix=$INSTALL_PATH --disable-shared --with-pic --build=i686-w64-mingw32 CFLAGS="-m32"
-        make -j $MAKEJ
+        make -j $MAKEJ V=0
         make install
         cd ../$OPUS
         ./configure --prefix=$INSTALL_PATH --disable-shared --with-pic --build=i686-w64-mingw32 CFLAGS="-m32"
-        make -j $MAKEJ
+        make -j $MAKEJ V=0
         make install
         cd ../$OPENCORE_AMR
         ./configure --prefix=$INSTALL_PATH --disable-shared --with-pic --build=i686-w64-mingw32 CFLAGS="-m32" CXXFLAGS="-m32"
-        make -j $MAKEJ
+        make -j $MAKEJ V=0
+        make install
+        cd ../$VO_AMRWBENC
+        ./configure --prefix=$INSTALL_PATH --disable-shared --with-pic --build=i686-w64-mingw32 CFLAGS="-m32" CXXFLAGS="-m32"
+        make -j $MAKEJ V=0
         make install
         cd ../$OPENSSL
         ./Configure mingw -fPIC no-shared --prefix=$INSTALL_PATH
-        make # fails with -j > 1
+        make -s -j $MAKEJ
         make install_sw
         cd ../openh264-$OPENH264_VERSION
-        make -j $MAKEJ DESTDIR=./ PREFIX=.. AR=ar ARCH=x86 USE_ASM=No libraries install-static
+        make -j $MAKEJ DESTDIR=./ PREFIX=.. AR=ar ARCH=x86 USE_ASM=No install-static
         cd ../$X264
         ./configure --prefix=$INSTALL_PATH --enable-static --enable-pic --disable-opencl --host=i686-w64-mingw32
-        make -j $MAKEJ
+        make -j $MAKEJ V=0
         make install
-        cd ../x265-$X265
-        CC="gcc -m32" CXX="g++ -m32" $CMAKE -G "MSYS Makefiles" -DENABLE_SHARED=OFF -DENABLE_LIBNUMA=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=.. source
+        cd ../x265-$X265/build/linux
+        # from x265 multilib.sh
+        mkdir -p 8bit 10bit 12bit
+
+        cd 12bit
+        CC="gcc -m32" CXX="g++ -m32" $CMAKE -G "MSYS Makefiles" ../../../source -DHIGH_BIT_DEPTH=ON -DEXPORT_C_API=OFF -DENABLE_SHARED=OFF -DENABLE_CLI=OFF -DENABLE_ASSEMBLY=OFF -DMAIN12=ON -DENABLE_LIBNUMA=OFF -DCMAKE_BUILD_TYPE=Release -DNASM_EXECUTABLE:FILEPATH=$INSTALL_PATH/bin/nasm.exe
         make -j $MAKEJ
+
+        cd ../10bit
+        CC="gcc -m32" CXX="g++ -m32" $CMAKE -G "MSYS Makefiles" ../../../source -DHIGH_BIT_DEPTH=ON -DEXPORT_C_API=OFF -DENABLE_SHARED=OFF -DENABLE_CLI=OFF -DENABLE_ASSEMBLY=OFF -DENABLE_LIBNUMA=OFF -DCMAKE_BUILD_TYPE=Release -DNASM_EXECUTABLE:FILEPATH=$INSTALL_PATH/bin/nasm.exe
+        make -j $MAKEJ
+
+        cd ../8bit
+        ln -sf ../10bit/libx265.a libx265_main10.a
+        ln -sf ../12bit/libx265.a libx265_main12.a
+        CC="gcc -m32" CXX="g++ -m32" $CMAKE -G "MSYS Makefiles" ../../../source -DEXTRA_LIB="x265_main10.a;x265_main12.a" -DEXTRA_LINK_FLAGS=-L. -DLINKED_10BIT=ON -DLINKED_12BIT=ON -DCMAKE_INSTALL_PREFIX=$INSTALL_PATH -DENABLE_SHARED:BOOL=OFF -DENABLE_LIBNUMA=OFF -DCMAKE_BUILD_TYPE=Release -DNASM_EXECUTABLE:FILEPATH=$INSTALL_PATH/bin/nasm.exe -DENABLE_CLI=OFF
+        make -j $MAKEJ
+
+        # rename the 8bit library, then combine all three into libx265.a
+        mv libx265.a libx265_main.a
+ar -M <<EOF
+CREATE libx265.a
+ADDLIB libx265_main.a
+ADDLIB libx265_main10.a
+ADDLIB libx265_main12.a
+SAVE
+END
+EOF
         make install
+        # ----
+        cd ../../../
         cd ../libvpx-$VPX_VERSION
-        ./configure --prefix=$INSTALL_PATH --enable-static --enable-pic --disable-examples --disable-unit-tests --target=x86-win32-gcc
+        ./configure --prefix=$INSTALL_PATH --enable-static --enable-pic --disable-examples --disable-unit-tests --target=x86-win32-gcc --disable-avx512
         make -j $MAKEJ
         make install
         cd ../freetype-$FREETYPE_VERSION
-        ./configure --prefix=$INSTALL_PATH --with-bzip2=no --with-harfbuzz=no --with-png=no --enable-static --disable-shared --with-pic --target=x86_64-win64-gcc
+        ./configure --prefix=$INSTALL_PATH --with-bzip2=no --with-harfbuzz=no --with-png=no --enable-static --disable-shared --with-pic --host=i686-w64-mingw32 CFLAGS="-m32"
         make -j $MAKEJ
         make install
         cd ../mfx_dispatch-$MFX_VERSION
         autoreconf -fiv
-        PKG_CONFIG_PATH="../lib/pkgconfig" ./configure --prefix="`pwd`/.." --disable-shared --enable-static --enable-fast-install
-        make
+        PKG_CONFIG_PATH="../lib/pkgconfig" ./configure --prefix=$INSTALL_PATH --disable-shared --enable-static --enable-fast-install --with-pic --host=i686-w64-mingw32 # CFLAGS="-m32" CXXFLAGS="-m32"
+        make -j $MAKEJ
         make install
+        cd ../nv-codec-headers-n$NVCODEC_VERSION
+        make install PREFIX=$INSTALL_PATH
         cd ../ffmpeg-$FFMPEG_VERSION
-        patch -Np1 < ../../../ffmpeg-windows.patch
-        PKG_CONFIG_PATH=../lib/pkgconfig/ ./configure --prefix=.. $DISABLE $ENABLE --enable-indev=dshow --target-os=mingw32 --cc="gcc -m32" --extra-cflags="-I../include/" --extra-ldflags="-L../lib/" --extra-libs="-static-libgcc -static-libstdc++ -Wl,-Bstatic -lstdc++ -lgcc -lgcc_eh -lWs2_32 -lcrypt32 -lpthread -Wl,-Bdynamic"
+        PKG_CONFIG_PATH=../lib/pkgconfig/ ./configure --prefix=.. $DISABLE $ENABLE --enable-cuda --enable-cuvid --enable-nvenc --enable-libmfx --enable-w32threads --enable-indev=dshow --target-os=mingw32 --cc="gcc -m32" --extra-cflags="-I../include/" --extra-ldflags="-L../lib/" --extra-libs="-static-libgcc -static-libstdc++ -Wl,-Bstatic -lstdc++ -lgcc_eh -lWs2_32 -lcrypt32 -lpthread -lz -lm -Wl,-Bdynamic"
         make -j $MAKEJ
         make install
         ;;
 
     windows-x86_64)
+        echo ""
+        echo "--------------------"
+        echo "Building zlib"
+        echo "--------------------"
+        echo ""
         cd $ZLIB
         make -j $MAKEJ install -fwin32/Makefile.gcc BINARY_PATH=$INSTALL_PATH/bin/ INCLUDE_PATH=$INSTALL_PATH/include/ LIBRARY_PATH=$INSTALL_PATH/lib/
+        echo ""
+        echo "--------------------"
+        echo "Building LAME"
+        echo "--------------------"
+        echo ""
         cd ../$LAME
         ./configure --prefix=$INSTALL_PATH --disable-shared --with-pic --build=x86_64-w64-mingw32 CFLAGS="-m64"
-        make -j $MAKEJ
+        make -j $MAKEJ V=0
         make install
+        echo ""
+        echo "--------------------"
+        echo "Building speex"
+        echo "--------------------"
+        echo ""
         cd ../$SPEEX
         ./configure --prefix=$INSTALL_PATH --disable-shared --with-pic --build=x86_64-w64-mingw32 CFLAGS="-m64"
-        make -j $MAKEJ
+        make -j $MAKEJ V=0
         make install
         cd ../$OPUS
         ./configure --prefix=$INSTALL_PATH --disable-shared --with-pic --build=x86_64-w64-mingw32 CFLAGS="-m64"
-        make -j $MAKEJ
+        make -j $MAKEJ V=0
         make install
         cd ../$OPENCORE_AMR
         ./configure --prefix=$INSTALL_PATH --disable-shared --with-pic --build=x86_64-w64-mingw32 CFLAGS="-m64" CXXFLAGS="-m64"
-        make -j $MAKEJ
+        make -j $MAKEJ V=0
+        make install
+        cd ../$VO_AMRWBENC
+        ./configure --prefix=$INSTALL_PATH --disable-shared --with-pic --build=x86_64-w64-mingw32 CFLAGS="-m64" CXXFLAGS="-m64"
+        make -j $MAKEJ V=0
         make install
         cd ../$OPENSSL
         ./Configure mingw64 -fPIC no-shared --prefix=$INSTALL_PATH
-        make # fails with -j > 1
+        make -s -j $MAKEJ
         make install_sw
         cd ../openh264-$OPENH264_VERSION
-        make -j $MAKEJ DESTDIR=./ PREFIX=.. AR=ar ARCH=x86_64 USE_ASM=No libraries install-static
+        make -j $MAKEJ DESTDIR=./ PREFIX=.. AR=ar ARCH=x86_64 USE_ASM=No install-static
         cd ../$X264
         ./configure --prefix=$INSTALL_PATH --enable-static --enable-pic --disable-opencl --host=x86_64-w64-mingw32
-        make -j $MAKEJ
+        make -j $MAKEJ V=0
         make install
-        cd ../x265-$X265
-        CC="gcc -m64" CXX="g++ -m64" $CMAKE -G "MSYS Makefiles" -DENABLE_SHARED=OFF -DENABLE_LIBNUMA=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=.. source
+        cd ../x265-$X265/build/linux
+        # from x265 multilib.sh
+        mkdir -p 8bit 10bit 12bit
+
+        cd 12bit
+        CC="gcc -m64" CXX="g++ -m64" $CMAKE -G "MSYS Makefiles" ../../../source -DHIGH_BIT_DEPTH=ON -DEXPORT_C_API=OFF -DENABLE_SHARED=OFF -DENABLE_CLI=OFF -DMAIN12=ON -DENABLE_LIBNUMA=OFF -DCMAKE_BUILD_TYPE=Release -DNASM_EXECUTABLE:FILEPATH=$INSTALL_PATH/bin/nasm.exe
         make -j $MAKEJ
+
+        cd ../10bit
+        CC="gcc -m64" CXX="g++ -m64" $CMAKE -G "MSYS Makefiles" ../../../source -DHIGH_BIT_DEPTH=ON -DEXPORT_C_API=OFF -DENABLE_SHARED=OFF -DENABLE_CLI=OFF -DENABLE_LIBNUMA=OFF -DCMAKE_BUILD_TYPE=Release -DNASM_EXECUTABLE:FILEPATH=$INSTALL_PATH/bin/nasm.exe
+        make -j $MAKEJ
+
+        cd ../8bit
+        ln -sf ../10bit/libx265.a libx265_main10.a
+        ln -sf ../12bit/libx265.a libx265_main12.a
+        CC="gcc -m64" CXX="g++ -m64" $CMAKE -G "MSYS Makefiles" ../../../source -DEXTRA_LIB="x265_main10.a;x265_main12.a" -DEXTRA_LINK_FLAGS=-L. -DLINKED_10BIT=ON -DLINKED_12BIT=ON -DCMAKE_INSTALL_PREFIX=$INSTALL_PATH -DENABLE_SHARED:BOOL=OFF -DENABLE_LIBNUMA=OFF -DCMAKE_BUILD_TYPE=Release -DNASM_EXECUTABLE:FILEPATH=$INSTALL_PATH/bin/nasm.exe -DENABLE_CLI=OFF
+        make -j $MAKEJ
+
+        # rename the 8bit library, then combine all three into libx265.a
+        mv libx265.a libx265_main.a
+ar -M <<EOF
+CREATE libx265.a
+ADDLIB libx265_main.a
+ADDLIB libx265_main10.a
+ADDLIB libx265_main12.a
+SAVE
+END
+EOF
         make install
+        # ----
+        cd ../../../
         cd ../libvpx-$VPX_VERSION
-        ./configure --prefix=$INSTALL_PATH --enable-static --enable-pic --disable-examples --disable-unit-tests --target=x86_64-win64-gcc
+        ./configure --prefix=$INSTALL_PATH --enable-static --enable-pic --disable-examples --disable-unit-tests --target=x86_64-win64-gcc --disable-avx512
         make -j $MAKEJ
         make install
         cd ../freetype-$FREETYPE_VERSION
-        ./configure --prefix=$INSTALL_PATH --with-bzip2=no --with-harfbuzz=no --with-png=no --enable-static --disable-shared --with-pic --target=x86_64-win64-gcc CFLAGS="-m64"
+        ./configure --prefix=$INSTALL_PATH --with-bzip2=no --with-harfbuzz=no --with-png=no --enable-static --disable-shared --with-pic --host=x86_64-w64-mingw32 CFLAGS="-m64"
         make -j $MAKEJ
         make install
         cd ../mfx_dispatch-$MFX_VERSION
         autoreconf -fiv
-        PKG_CONFIG_PATH="../lib/pkgconfig" ./configure --prefix="`pwd`/.." --disable-shared --enable-static --enable-fast-install
-        make
+        PKG_CONFIG_PATH="../lib/pkgconfig" ./configure --prefix=$INSTALL_PATH --disable-shared --enable-static --enable-fast-install --with-pic --host=x86_64-w64-mingw32 # CFLAGS="-m64" CXXFLAGS="-m64"
+        make -j $MAKEJ
         make install
+        cd ../nv-codec-headers-n$NVCODEC_VERSION
+        make install PREFIX=$INSTALL_PATH
         cd ../ffmpeg-$FFMPEG_VERSION
-        patch -Np1 < ../../../ffmpeg-windows.patch
-        PKG_CONFIG_PATH=../lib/pkgconfig/ ./configure --prefix=.. $DISABLE $ENABLE --enable-indev=dshow --target-os=mingw32 --cc="gcc -m64" --extra-cflags="-I../include/" --extra-ldflags="-L../lib/" --extra-libs="-static-libgcc -static-libstdc++ -Wl,-Bstatic -lstdc++ -lgcc -lgcc_eh -lWs2_32 -lcrypt32 -lpthread -Wl,-Bdynamic"
+        PKG_CONFIG_PATH=../lib/pkgconfig/ ./configure --prefix=.. $DISABLE $ENABLE --enable-cuda --enable-cuvid --enable-nvenc --enable-libmfx --enable-w32threads --enable-indev=dshow --target-os=mingw32 --cc="gcc -m64" --extra-cflags="-I../include/" --extra-ldflags="-L../lib/" --extra-libs="-static-libgcc -static-libstdc++ -Wl,-Bstatic -lstdc++ -lgcc_eh -lWs2_32 -lcrypt32 -lpthread -lz -lm -Wl,-Bdynamic"
         make -j $MAKEJ
         make install
         ;;

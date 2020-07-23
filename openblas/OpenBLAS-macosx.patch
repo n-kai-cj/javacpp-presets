@@ -1,27 +1,29 @@
-diff -ruN OpenBLAS-0.2.19/exports/Makefile OpenBLAS-0.2.19-macosx/exports/Makefile
---- OpenBLAS-0.2.19/exports/Makefile	2016-09-01 12:58:42.000000000 +0900
-+++ OpenBLAS-0.2.19-macosx/exports/Makefile	2016-12-03 22:57:34.271122394 +0900
-@@ -110,9 +110,9 @@
+diff -ruN OpenBLAS-0.3.9/exports/Makefile OpenBLAS-0.3.9-macosx/exports/Makefile
+--- OpenBLAS-0.3.9/exports/Makefile	2020-03-02 08:10:20.000000000 +0900
++++ OpenBLAS-0.3.9-macosx/exports/Makefile	2020-03-10 16:18:55.098795543 +0900
+@@ -116,12 +116,7 @@
+ 	$(OBJCONV) @objconv.def ../$(LIBNAME) ../$(LIBNAME).osx.renamed
+ $(LIBDYNNAME) : ../$(LIBNAME).osx.renamed osx.def
  endif
- ifeq ($(NOFORTRAN), $(filter $(NOFORTRAN),1 2))
- #only build without Fortran
--	$(CC) $(CFLAGS) -all_load -headerpad_max_install_names -install_name "$(CURDIR)/../$(LIBDYNNAME)" -dynamiclib -o ../$(LIBDYNNAME) $< -Wl,-exported_symbols_list,osx.def  $(FEXTRALIB)
-+	$(CC) $(CFLAGS) $(LDFLAGS) -all_load -headerpad_max_install_names -install_name "$(CURDIR)/../$(LIBDYNNAME)" -dynamiclib -o ../$(LIBDYNNAME) $< -Wl,-exported_symbols_list,osx.def 
- else
--	$(FC) $(FFLAGS) -all_load -headerpad_max_install_names -install_name "$(CURDIR)/../$(LIBDYNNAME)" -dynamiclib -o ../$(LIBDYNNAME) $< -Wl,-exported_symbols_list,osx.def  $(FEXTRALIB)
-+	$(FC) $(FFLAGS) $(LDFLAGS) -all_load -headerpad_max_install_names -install_name "$(CURDIR)/../$(LIBDYNNAME)" -dynamiclib -o ../$(LIBDYNNAME) $< -Wl,-exported_symbols_list,osx.def 
- endif
+-ifneq (,$(filter 1 2,$(NOFORTRAN)))
+-#only build without Fortran
+-	$(CC) $(CFLAGS) $(LDFLAGS) -all_load -headerpad_max_install_names -install_name "$(CURDIR)/../$(INTERNALNAME)" -dynamiclib -o ../$(LIBDYNNAME) $< -Wl,-exported_symbols_list,osx.def  $(FEXTRALIB)
+-else
+-	$(FC) $(FFLAGS) $(LDFLAGS) -all_load -headerpad_max_install_names -install_name "$(CURDIR)/../$(INTERNALNAME)" -dynamiclib -o ../$(LIBDYNNAME) $< -Wl,-exported_symbols_list,osx.def  $(FEXTRALIB)
+-endif
++	$(CC) $(CFLAGS) $(LDFLAGS) -all_load -headerpad_max_install_names -install_name "$(CURDIR)/../$(INTERNALNAME)" -dynamiclib -o ../$(LIBDYNNAME) $< -Wl,-exported_symbols_list,osx.def
  
  dllinit.$(SUFFIX) : dllinit.c
-diff -ruN OpenBLAS-0.2.19/Makefile.install OpenBLAS-0.2.19-macosx/Makefile.install
---- OpenBLAS-0.2.19/Makefile.install	2016-09-01 12:58:42.000000000 +0900
-+++ OpenBLAS-0.2.19-macosx/Makefile.install	2016-12-03 21:10:39.206880461 +0900
+ 	$(CC) $(CFLAGS) -c -o $(@F) -s $<
+diff -ruN OpenBLAS-0.3.9/Makefile.install OpenBLAS-0.3.9-macosx/Makefile.install
+--- OpenBLAS-0.3.9/Makefile.install	2020-03-02 08:10:20.000000000 +0900
++++ OpenBLAS-0.3.9-macosx/Makefile.install	2020-03-10 16:22:43.003900956 +0900
 @@ -82,7 +82,7 @@
  endif
  ifeq ($(OSNAME), Darwin)
  	@-cp $(LIBDYNNAME) "$(DESTDIR)$(OPENBLAS_LIBRARY_DIR)"
--	@-install_name_tool -id "$(DESTDIR)$(OPENBLAS_LIBRARY_DIR)/$(LIBDYNNAME)" "$(DESTDIR)$(OPENBLAS_LIBRARY_DIR)/$(LIBDYNNAME)"
-+	@-install_name_tool -id "@rpath/$(LIBPREFIX).dylib" "$(DESTDIR)$(OPENBLAS_LIBRARY_DIR)/$(LIBDYNNAME)"
+-	@-install_name_tool -id "$(OPENBLAS_LIBRARY_DIR)/$(LIBPREFIX).$(MAJOR_VERSION).dylib" "$(DESTDIR)$(OPENBLAS_LIBRARY_DIR)/$(LIBDYNNAME)"
++	@-install_name_tool -id "@rpath/$(LIBPREFIX).$(MAJOR_VERSION).dylib" "$(DESTDIR)$(OPENBLAS_LIBRARY_DIR)/$(LIBDYNNAME)"
  	@cd "$(DESTDIR)$(OPENBLAS_LIBRARY_DIR)" ; \
- 	ln -fs $(LIBDYNNAME) $(LIBPREFIX).dylib
- endif
+ 	ln -fs $(LIBDYNNAME) $(LIBPREFIX).dylib ; \
+ 	ln -fs $(LIBDYNNAME) $(LIBPREFIX).$(MAJOR_VERSION).dylib

@@ -6,17 +6,13 @@
   <parent>
     <groupId>org.bytedeco</groupId>
     <artifactId>javacpp-presets</artifactId>
-    <version>1.3.4-SNAPSHOT</version>
+    <version>1.5.4-SNAPSHOT</version>
   </parent>
 
-  <groupId>org.bytedeco.javacpp-presets</groupId>
+  <groupId>org.bytedeco</groupId>
   <artifactId>cuda</artifactId>
-  <version>9.0-7.0-${project.parent.version}</version>
+  <version>11.0-8.0-${project.parent.version}</version>
   <name>JavaCPP Presets for CUDA</name>
-
-  <properties>
-    <javacpp.platform.oldcompiler>${javacpp.platform.compiler}</javacpp.platform.oldcompiler>
-  </properties>
 
   <dependencies>
     <dependency>
@@ -36,33 +32,68 @@
       <plugin>
         <groupId>org.bytedeco</groupId>
         <artifactId>javacpp</artifactId>
-        <configuration>
-          <propertyKeysAndValues>
-            <property>
-              <name>platform.root</name>
-              <value>${javacpp.platform.root}</value>
-            </property>
-            <property>
-              <name>platform.compiler</name>
-              <value>${javacpp.platform.oldcompiler}</value>
-            </property>
-          </propertyKeysAndValues>
-        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-jar-plugin</artifactId>
         <executions>
           <execution>
-            <id>javacpp.compiler</id>
-            <phase>process-classes</phase>
+            <id>javacpp-${javacpp.platform}</id>
+            <phase>package</phase>
             <goals>
-              <goal>build</goal>
+              <goal>jar</goal>
             </goals>
             <configuration>
-              <copyLibs>false</copyLibs>
+              <classifier>${javacpp.platform}</classifier>
+              <includes>
+                <include>org/bytedeco/cuda/${javacpp.platform}/*jni*</include>
+                <include>META-INF/native-image/${javacpp.platform}/</include>
+              </includes>
+            </configuration>
+          </execution>
+          <execution>
+            <id>javacpp-${javacpp.platform}-redist</id>
+            <phase>package</phase>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+            <configuration>
+              <classifier>${javacpp.platform}-redist</classifier>
+              <classesDirectory>${project.build.directory}/native</classesDirectory>
+              <includes>
+                <include>org/bytedeco/cuda/${javacpp.platform}/</include>
+                <include>META-INF/native-image/${javacpp.platform}/</include>
+              </includes>
+              <excludes>
+                <exclude>org/bytedeco/cuda/${javacpp.platform}/*jni*</exclude>
+              </excludes>
             </configuration>
           </execution>
         </executions>
       </plugin>
       <plugin>
-        <artifactId>maven-jar-plugin</artifactId>
+        <groupId>org.moditect</groupId>
+        <artifactId>moditect-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>add-module-info-redist</id>
+            <phase>package</phase>
+            <goals>
+              <goal>add-module-info</goal>
+            </goals>
+            <configuration>
+              <modules>
+                <module>
+                  <file>${project.build.directory}/${project.artifactId}-${javacpp.platform}-redist.jar</file>
+                  <moduleInfoSource>
+                    open module org.bytedeco.${javacpp.packageName}.${javacpp.platform.module}.redist {
+                      requires transitive org.bytedeco.${javacpp.packageName};
+                    }
+                  </moduleInfoSource>
+                </module>
+              </modules>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
         <artifactId>maven-dependency-plugin</artifactId>

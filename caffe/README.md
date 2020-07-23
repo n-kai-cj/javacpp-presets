@@ -5,7 +5,7 @@ Introduction
 ------------
 This directory contains the JavaCPP Presets module for:
 
- * Caffe  http://caffe.berkeleyvision.org/
+ * Caffe 1.0  http://caffe.berkeleyvision.org/
 
 Please refer to the parent README.md file for more detailed information about the JavaCPP Presets.
 
@@ -23,7 +23,7 @@ Here is the main tool for training of Caffe ported to Java from this C++ source 
 
  * https://github.com/BVLC/caffe/blob/1.0/tools/caffe.cpp
 
-We can use [Maven 3](http://maven.apache.org/) to download and install automatically all the class files as well as the native binaries. To run this sample code, instead of the original `caffe` executable tool, after creating the `pom.xml` and `src/main/java/caffe.java` source files below, simply execute on the command line:
+We can use [Maven 3](http://maven.apache.org/) to download and install automatically all the class files as well as the native binaries. To run this sample code, instead of the original `caffe` executable tool, after creating the `pom.xml` and `caffe.java` source files below, simply execute on the command line:
 ```bash
  $ mvn compile exec:java -Dexec.args="..."
 ```
@@ -32,31 +32,49 @@ We can use [Maven 3](http://maven.apache.org/) to download and install automatic
 ```xml
 <project>
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.bytedeco.javacpp-presets.caffe</groupId>
+    <groupId>org.bytedeco.caffe</groupId>
     <artifactId>caffe</artifactId>
-    <version>1.3.4-SNAPSHOT</version>
+    <version>1.5.4-SNAPSHOT</version>
     <properties>
         <exec.mainClass>caffe</exec.mainClass>
     </properties>
     <dependencies>
         <dependency>
-            <groupId>org.bytedeco.javacpp-presets</groupId>
+            <groupId>org.bytedeco</groupId>
             <artifactId>caffe-platform</artifactId>
-            <version>1.0-1.3.4-SNAPSHOT</version>
+            <version>1.0-1.5.4-SNAPSHOT</version>
         </dependency>
+
+        <!-- Additional dependencies required to use CUDA and cuDNN -->
+        <dependency>
+            <groupId>org.bytedeco</groupId>
+            <artifactId>caffe-platform-gpu</artifactId>
+            <version>1.0-1.5.4-SNAPSHOT</version>
+        </dependency>
+
+        <!-- Additional dependencies to use bundled CUDA and cuDNN -->
+        <dependency>
+            <groupId>org.bytedeco</groupId>
+            <artifactId>cuda-platform-redist</artifactId>
+            <version>11.0-8.0-1.5.4-SNAPSHOT</version>
+        </dependency>
+
     </dependencies>
+    <build>
+        <sourceDirectory>.</sourceDirectory>
+    </build>
 </project>
 ```
 
-### The `src/main/java/caffe.java` source file
+### The `caffe.java` source file
 ```java
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.bytedeco.javacpp.FloatPointer;
-import static org.bytedeco.javacpp.caffe.*;
+import java.util.logging.*;
+import org.bytedeco.javacpp.*;
+import org.bytedeco.caffe.*;
+import static org.bytedeco.caffe.global.caffe.*;
 
 public class caffe {
     static final Logger logger = Logger.getLogger(caffe.class.getSimpleName());

@@ -1,12 +1,27 @@
 JavaCPP Presets for CUDA
 ========================
 
+License Agreements
+------------------
+By downloading these archives, you agree to the terms of the license agreements for NVIDIA software included in the archives.
+
+### CUDA Toolkit
+To view the license for the CUDA Toolkit included in these archives, click [here](http://docs.nvidia.com/cuda/eula/index.html)
+
+### CUDA Deep Neural Network library (cuDNN)
+To view the license for cuDNN included in these archives, click [here](https://developer.nvidia.com/cudnn/license_agreement)
+
+### NVIDIA Collective Communications Library (NCCL)
+To view the license for NCCL included in these archives, click [here](https://github.com/NVIDIA/nccl/blob/master/LICENSE.txt)
+
+
 Introduction
 ------------
 This directory contains the JavaCPP Presets module for:
 
- * CUDA 9.0  https://developer.nvidia.com/cuda-zone
- * cuDNN 7.0  https://developer.nvidia.com/cudnn
+ * CUDA 11.0.2  https://developer.nvidia.com/cuda-zone
+ * cuDNN 8.0.1  https://developer.nvidia.com/cudnn
+ * NCCL 2.7.6  https://developer.nvidia.com/nccl
 
 Please refer to the parent README.md file for more detailed information about the JavaCPP Presets.
 
@@ -19,13 +34,14 @@ Java API documentation is available here:
 
 &lowast; We can also [use Thrust with JavaCPP](https://github.com/bytedeco/javacpp/wiki/Interface-Thrust-and-CUDA).
 
+
 Sample Usage
 ------------
 Here is a simple example of cuDNN ported to Java from the `mnistCUDNN.cpp` sample file included in `cudnn-sample-v2.tgz` available at:
 
  * https://developer.nvidia.com/cudnn
 
-We can use [Maven 3](http://maven.apache.org/) to download and install automatically all the class files as well as the native binaries. To run this sample code, after creating the `pom.xml` and `src/main/java/MNISTCUDNN.java` source files below, simply execute on the command line:
+We can use [Maven 3](http://maven.apache.org/) to download and install automatically all the class files as well as the native binaries. To run this sample code, after creating the `pom.xml` and `MNISTCUDNN.java` source files below, simply execute on the command line:
 ```bash
  $ mvn compile exec:java
 ```
@@ -34,23 +50,34 @@ We can use [Maven 3](http://maven.apache.org/) to download and install automatic
 ```xml
 <project>
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.bytedeco.javacpp-presets.cuda</groupId>
+    <groupId>org.bytedeco.cuda</groupId>
     <artifactId>mnistcudnn</artifactId>
-    <version>1.3</version>
+    <version>1.5.4-SNAPSHOT</version>
     <properties>
         <exec.mainClass>MNISTCUDNN</exec.mainClass>
     </properties>
     <dependencies>
         <dependency>
-            <groupId>org.bytedeco.javacpp-presets</groupId>
+            <groupId>org.bytedeco</groupId>
             <artifactId>cuda-platform</artifactId>
-            <version>9.0-7.0-1.3</version>
+            <version>11.0-8.0-1.5.4-SNAPSHOT</version>
         </dependency>
+
+        <!-- Additional dependencies to use bundled CUDA, cuDNN, and NCCL -->
+        <dependency>
+            <groupId>org.bytedeco</groupId>
+            <artifactId>cuda-platform-redist</artifactId>
+            <version>11.0-8.0-1.5.4-SNAPSHOT</version>
+        </dependency>
+
     </dependencies>
+    <build>
+        <sourceDirectory>.</sourceDirectory>
+    </build>
 </project>
 ```
 
-### The `src/main/java/MNISTCUDNN.java` source file
+### The `MNISTCUDNN.java` source file
 ```java
 /**
 * Copyright 2014 NVIDIA Corporation.  All rights reserved.
@@ -75,10 +102,12 @@ We can use [Maven 3](http://maven.apache.org/) to download and install automatic
 
 import java.io.*;
 import org.bytedeco.javacpp.*;
-
-import static org.bytedeco.javacpp.cublas.*;
-import static org.bytedeco.javacpp.cuda.*;
-import static org.bytedeco.javacpp.cudnn.*;
+import org.bytedeco.cuda.cublas.*;
+import org.bytedeco.cuda.cudart.*;
+import org.bytedeco.cuda.cudnn.*;
+import static org.bytedeco.cuda.global.cublas.*;
+import static org.bytedeco.cuda.global.cudart.*;
+import static org.bytedeco.cuda.global.cudnn.*;
 
 public class MNISTCUDNN {
     static final int IMAGE_H = 28;
@@ -280,6 +309,7 @@ public class MNISTCUDNN {
                               int[] n, int[] c, int[] h, int[] w,
                               FloatPointer srcData, FloatPointer dstData) {
             int[] algo = new int[1];
+            cudnnConvolutionFwdAlgoPerf_t algoPerf = new cudnnConvolutionFwdAlgoPerf_t(1);
 
             checkCUDNN( cudnnSetTensor4dDescriptor(srcTensorDesc,
                                                     tensorFormat,
@@ -314,14 +344,14 @@ public class MNISTCUDNN {
                                                     n[0], c[0],
                                                     h[0],
                                                     w[0]) );
-            checkCUDNN( cudnnGetConvolutionForwardAlgorithm(cudnnHandle,
+            checkCUDNN( cudnnGetConvolutionForwardAlgorithm_v7(cudnnHandle,
                                                     srcTensorDesc,
                                                     filterDesc,
                                                     convDesc,
                                                     dstTensorDesc,
-                                                    CUDNN_CONVOLUTION_FWD_PREFER_FASTEST,
-                                                    0,
-                                                    algo
+                                                    1,
+                                                    algo,
+                                                    algoPerf
                                                     ) );
             resize(n[0]*c[0]*h[0]*w[0], dstData);
             SizeTPointer sizeInBytes=new SizeTPointer(1);
@@ -331,7 +361,7 @@ public class MNISTCUDNN {
                                                     filterDesc,
                                                     convDesc,
                                                     dstTensorDesc,
-                                                    algo[0],
+                                                    algoPerf.algo(),
                                                     sizeInBytes) );
             if (sizeInBytes.get(0)!=0) {
                 checkCudaErrors( cudaMalloc(workSpace,sizeInBytes.get(0)) );

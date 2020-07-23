@@ -1,296 +1,151 @@
 version: '{build}'
 
-os: Visual Studio 2015
+os: Visual Studio 2017
 
 cache:
-  - C:\Downloads 
+  - C:\Users\appveyor\.m2 -> .appveyor.yml
+  - C:\Downloads -> .appveyor.yml
 
 environment:
   matrix:
-    - PLATFORM: x86
-      PROJ: "opencv,chilitags,flandmark,openblas,mxnet,hdf5,caffe"
-      COMPILER: msys2
-      MSYS2_ARCH: x86
-      MSYS2_DIR: msys64
-      MSYSTEM: MINGW32
-      BIT: 32
-    - PLATFORM: x86
-      PROJ: "ffmpeg"
-      COMPILER: msys2
-      MSYS2_ARCH: x86
-      MSYS2_DIR: msys64
-      MSYSTEM: MINGW32
-      BIT: 32
-    - PLATFORM: x86
-      PROJ: "flycapture"
-      COMPILER: msys2
-      MSYS2_ARCH: x86
-      MSYS2_DIR: msys64
-      MSYSTEM: MINGW32
-      BIT: 32
-    - PLATFORM: x86
-      PROJ: "libdc1394"
-      COMPILER: msys2
-      MSYS2_ARCH: x86
-      MSYS2_DIR: msys64
-      MSYSTEM: MINGW32
-      BIT: 32
-    - PLATFORM: x86
-      PROJ: "libfreenect"
-      COMPILER: msys2
-      MSYS2_ARCH: x86
-      MSYS2_DIR: msys64
-      MSYSTEM: MINGW32
-      BIT: 32
-    - PLATFORM: x86
-      PROJ: "libfreenect2"
-      COMPILER: msys2
-      MSYS2_ARCH: x86
-      MSYS2_DIR: msys64
-      MSYSTEM: MINGW32
-      BIT: 32
-    - PLATFORM: x86
-      PROJ: "librealsense"
-      COMPILER: msys2
-      MSYS2_ARCH: x86
-      MSYS2_DIR: msys64
-      MSYSTEM: MINGW32
-      BIT: 32
-    - PLATFORM: x86
-      PROJ: "videoinput"
-      COMPILER: msys2
-      MSYS2_ARCH: x86
-      MSYS2_DIR: msys64
-      MSYSTEM: MINGW32
-      BIT: 32
-    - PLATFORM: x86
-      PROJ: "artoolkitplus"
-      COMPILER: msys2
-      MSYS2_ARCH: x86
-      MSYS2_DIR: msys64
-      MSYSTEM: MINGW32
-      BIT: 32
-    - PLATFORM: x86
-      PROJ: "mkl"
-      COMPILER: msys2
-      MSYS2_ARCH: x86
-      MSYS2_DIR: msys64
-      MSYSTEM: MINGW32
-      BIT: 32
-    - PLATFORM: x86
-      PROJ: "fftw"
-      COMPILER: msys2
-      MSYS2_ARCH: x86
-      MSYS2_DIR: msys64
-      MSYSTEM: MINGW32
-      BIT: 32
-    - PLATFORM: x86
-      PROJ: "gsl"
-      COMPILER: msys2
-      MSYS2_ARCH: x86
-      MSYS2_DIR: msys64
-      MSYSTEM: MINGW32
-      BIT: 32
-    - PLATFORM: x86
-      PROJ: "llvm"
-      COMPILER: msys2
-      MSYS2_ARCH: x86
-      MSYS2_DIR: msys64
-      MSYSTEM: MINGW32
-      BIT: 32
-    - PLATFORM: x86
-      PROJ: "leptonica,tesseract"
-      COMPILER: msys2
-      MSYS2_ARCH: x86
-      MSYS2_DIR: msys64
-      MSYSTEM: MINGW32
-      BIT: 32
-    - PLATFORM: x86
-      PROJ: "cuda"
-      COMPILER: msys2
-      MSYS2_ARCH: x86
-      MSYS2_DIR: msys64
-      MSYSTEM: MINGW32
-      BIT: 32
-    - PLATFORM: x86
-      PROJ: "tensorflow"
-      COMPILER: msys2
-      MSYS2_ARCH: x86
-      MSYS2_DIR: msys64
-      MSYSTEM: MINGW32
-      BIT: 32
-    - PLATFORM: x86
-      PROJ: "ale"
-      COMPILER: msys2
-      MSYS2_ARCH: x86
-      MSYS2_DIR: msys64
-      MSYSTEM: MINGW32
-      BIT: 32
-    - PLATFORM: x86
-      PROJ: "liquidfun"
-      COMPILER: msys2
-      MSYS2_ARCH: x86
-      MSYS2_DIR: msys64
-      MSYSTEM: MINGW32
-      BIT: 32
-    - PLATFORM: x86
-      PROJ: "skia"
-      COMPILER: msys2
-      MSYS2_ARCH: x86
-      MSYS2_DIR: msys64
-      MSYSTEM: MINGW32
-      BIT: 32
+    - PROJ: "opencv,artoolkitplus,chilitags,flandmark,gym"
+      OS: windows-x86
+    - PROJ: "ffmpeg"
+      OS: windows-x86
+    - PROJ: "flycapture,spinnaker,libdc1394,libfreenect,librealsense,librealsense2,videoinput"
+      OS: windows-x86
+    - PROJ: "hdf5"
+      OS: windows-x86
+    - PROJ: "mkl"
+      OS: windows-x86
+    - PROJ: "openblas"
+      OS: windows-x86
+    - PROJ: "arpack-ng,cminpack,fftw,gsl"
+      OS: windows-x86
+    - PROJ: "cpython,numpy,scipy"
+      OS: windows-x86
+    - PROJ: "llvm"
+      OS: windows-x86
+    - PROJ: "leptonica,tesseract"
+      OS: windows-x86
+    - PROJ: "ale"
+      OS: windows-x86
+    - PROJ: "liquidfun"
+      OS: windows-x86
+    - PROJ: "cpu_features,systems"
+      OS: windows-x86
 
-    - PLATFORM: x64
-      PROJ: "opencv,chilitags,flandmark,openblas,mxnet,hdf5,caffe"
-      COMPILER: msys2
-      MSYS2_ARCH: x86_64
-      MSYS2_DIR: msys64
-      MSYSTEM: MINGW64
-      BIT: 64
-    - PLATFORM: x64
-      PROJ: "ffmpeg"
-      COMPILER: msys2
-      MSYS2_ARCH: x86_64
-      MSYS2_DIR: msys64
-      MSYSTEM: MINGW64
-      BIT: 64
-    - PLATFORM: x64
-      PROJ: "flycapture"
-      COMPILER: msys2
-      MSYS2_ARCH: x86_64
-      MSYS2_DIR: msys64
-      MSYSTEM: MINGW64
-      BIT: 64
-    - PLATFORM: x64
-      PROJ: "libdc1394"
-      COMPILER: msys2
-      MSYS2_ARCH: x86_64
-      MSYS2_DIR: msys64
-      MSYSTEM: MINGW64
-      BIT: 64
-    - PLATFORM: x64
-      PROJ: "libfreenect"
-      COMPILER: msys2
-      MSYS2_ARCH: x86_64
-      MSYS2_DIR: msys64
-      MSYSTEM: MINGW64
-      BIT: 64
-    - PLATFORM: x64
-      PROJ: "libfreenect2"
-      COMPILER: msys2
-      MSYS2_ARCH: x86_64
-      MSYS2_DIR: msys64
-      MSYSTEM: MINGW64
-      BIT: 64
-    - PLATFORM: x64
-      PROJ: "librealsense"
-      COMPILER: msys2
-      MSYS2_ARCH: x86_64
-      MSYS2_DIR: msys64
-      MSYSTEM: MINGW64
-      BIT: 64
-    - PLATFORM: x64
-      PROJ: "videoinput"
-      COMPILER: msys2
-      MSYS2_ARCH: x86_64
-      MSYS2_DIR: msys64
-      MSYSTEM: MINGW64
-      BIT: 64
-    - PLATFORM: x64
-      PROJ: "artoolkitplus"
-      COMPILER: msys2
-      MSYS2_ARCH: x86_64
-      MSYS2_DIR: msys64
-      MSYSTEM: MINGW64
-      BIT: 64
-    - PLATFORM: x64
-      PROJ: "mkl"
-      COMPILER: msys2
-      MSYS2_ARCH: x86_64
-      MSYS2_DIR: msys64
-      MSYSTEM: MINGW64
-      BIT: 64
-    - PLATFORM: x64
-      PROJ: "fftw"
-      COMPILER: msys2
-      MSYS2_ARCH: x86_64
-      MSYS2_DIR: msys64
-      MSYSTEM: MINGW64
-      BIT: 64
-    - PLATFORM: x64
-      PROJ: "gsl"
-      COMPILER: msys2
-      MSYS2_ARCH: x86_64
-      MSYS2_DIR: msys64
-      MSYSTEM: MINGW64
-      BIT: 64
-    - PLATFORM: x64
-      PROJ: "llvm"
-      COMPILER: msys2
-      MSYS2_ARCH: x86_64
-      MSYS2_DIR: msys64
-      MSYSTEM: MINGW64
-      BIT: 64
-    - PLATFORM: x64
-      PROJ: "leptonica,tesseract"
-      COMPILER: msys2
-      MSYS2_ARCH: x86_64
-      MSYS2_DIR: msys64
-      MSYSTEM: MINGW64
-      BIT: 64
-    - PLATFORM: x64
-      PROJ: "cuda"
-      COMPILER: msys2
-      MSYS2_ARCH: x86_64
-      MSYS2_DIR: msys64
-      MSYSTEM: MINGW64
-      BIT: 64
-    - PLATFORM: x64
-      PROJ: "tensorflow"
-      COMPILER: msys2
-      MSYS2_ARCH: x86_64
-      MSYS2_DIR: msys64
-      MSYSTEM: MINGW64
-      BIT: 64
-    - PLATFORM: x64
-      PROJ: "ale"
-      COMPILER: msys2
-      MSYS2_ARCH: x86_64
-      MSYS2_DIR: msys64
-      MSYSTEM: MINGW64
-      BIT: 64
-    - PLATFORM: x64
-      PROJ: "liquidfun"
-      COMPILER: msys2
-      MSYS2_ARCH: x86_64
-      MSYS2_DIR: msys64
-      MSYSTEM: MINGW64
-      BIT: 64
-    - PLATFORM: x64
-      PROJ: "skia"
-      COMPILER: msys2
-      MSYS2_ARCH: x86_64
-      MSYS2_DIR: msys64
-      MSYSTEM: MINGW64
-      BIT: 64
+    - PROJ: "opencv,artoolkitplus,chilitags,flandmark,gym"
+      OS: windows-x86_64
+    - PROJ: "ffmpeg"
+      OS: windows-x86_64
+    - PROJ: "flycapture,spinnaker,libdc1394,libfreenect,libfreenect2,librealsense,librealsense2,videoinput"
+      OS: windows-x86_64
+    - PROJ: "arrow"
+      OS: windows-x86_64
+    - PROJ: "hdf5"
+      OS: windows-x86_64
+    - PROJ: "hyperscan"
+      OS: windows-x86_64
+    - PROJ: "mkl"
+      OS: windows-x86_64
+    - PROJ: "mkl-dnn,dnnl"
+      OS: windows-x86_64
+    - PROJ: "openblas"
+      OS: windows-x86_64
+    - PROJ: "arpack-ng,cminpack,fftw,gsl"
+      OS: windows-x86_64
+    - PROJ: "cpython,numpy,scipy"
+      OS: windows-x86_64
+    - PROJ: "llvm"
+      OS: windows-x86_64
+    - PROJ: "libpostal"
+      OS: windows-x86_64
+    - PROJ: "leptonica,tesseract"
+      OS: windows-x86_64
+    - PROJ: "cuda"
+      OS: windows-x86_64
+    - PROJ: "mxnet"
+      OS: windows-x86_64
+      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+    - PROJ: "tensorflow"
+      OS: windows-x86_64
+    - PROJ: "tensorrt"
+      OS: windows-x86_64
+    - PROJ: "ale"
+      OS: windows-x86_64
+    - PROJ: "onnxruntime"
+      OS: windows-x86_64
+    - PROJ: "liquidfun"
+      OS: windows-x86_64
+    - PROJ: "qt"
+      OS: windows-x86_64
+    - PROJ: "cpu_features,systems"
+      OS: windows-x86_64
+
+    - PROJ: "opencv"
+      OS: windows-x86_64
+      EXT: -gpu
+    - PROJ: "mxnet"
+      OS: windows-x86_64
+      EXT: -gpu
+      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+#    - PROJ: "tensorflow"
+#      OS: windows-x86_64
+#      EXT: -gpu
+#      PARTIAL_CPPBUILD: "1"
+    - PROJ: "tensorflow"
+      OS: windows-x86_64
+      EXT: -gpu
+#    - PROJ: "tensorflow"
+#      OS: windows-x86_64
+#      EXT: -python
+#    - PROJ: "tensorflow"
+#      OS: windows-x86_64
+#      EXT: -python-gpu
+    - PROJ: "onnxruntime"
+      OS: windows-x86_64
+      EXT: -gpu
+
+for:
+-
+  matrix:
+    only:
+      - PARTIAL_CPPBUILD: "1"
+  after_build:
+    - appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\%PROJ%-cppbuild.zip"
 
 init:
 # uncomment this if you need to enable RDP for this build run
 #    - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
-      
+    - 'fsutil fsinfo drives'
+    - 'fsutil volume diskfree c:'
+    - wmic computersystem set AutomaticManagedPagefile=False
+    - wmic pagefile list /format:list
+#    - wmic pagefileset create name="C:\pagefile.sys"
+    - wmic pagefileset where name="C:\\pagefile.sys" set InitialSize=8192,MaximumSize=8192
+    - wmic pagefileset list /format:list
+#    - ps: write-host "Restarting..."
+#    - ps: sleep 5
+#    - ps: restart-computer -f
+#    - ps: sleep 5
+#    - ps: write-host "Restarted."
+    - wmic pagefile list /format:list
+
 install:
     - 'echo install section'
 
 build_script:
     - 'echo build step for %PROJ%'
-    - SET PATH=C:\%MSYS2_DIR%\usr\bin\core_perl;C:\%MSYS2_DIR%\%MSYSTEM%\bin;C:\%MSYS2_DIR%\usr\bin;%PATH%
     - '%APPVEYOR_BUILD_FOLDER%\ci\build.cmd "%PROJ%"'
 
 test_script:
     - 'echo no tests'
 
 on_finish:
+    - 'fsutil fsinfo drives'
+    - 'fsutil volume diskfree c:'
+    - wmic pagefile list /format:list
 #    uncomment this for the RDP session to remain active after the build ends
 #    - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 

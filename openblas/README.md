@@ -5,7 +5,7 @@ Introduction
 ------------
 This directory contains the JavaCPP Presets module for:
 
- * OpenBLAS 0.2.20  http://www.openblas.net/
+ * OpenBLAS 0.3.10  http://www.openblas.net/
 
 Please refer to the parent README.md file for more detailed information about the JavaCPP Presets.
 
@@ -16,7 +16,9 @@ Java API documentation is available here:
 
  * http://bytedeco.org/javacpp-presets/openblas/apidocs/
 
-&lowast; The JNI bindings actually link with [Intel MKL](https://software.intel.com/intel-mkl) instead if found on the "java.library.path".
+&lowast; The JNI bindings can instead link with [Intel MKL](https://software.intel.com/intel-mkl), or any other arbitrary library found on the "java.library.path" or on the class path, by specifying it with the "org.bytedeco.openblas.load" system property. For example, to use the BLAS library from the [Accelerate framework](https://developer.apple.com/documentation/accelerate) on Mac OS X, we can pass options such as `-Djava.library.path=/usr/lib/ -Dorg.bytedeco.openblas.load=blas`, while for a default installation of MKL that would be `-Dorg.bytedeco.openblas.load=mkl_rt`.
+
+Intel also offers a stripped-down but free version of MKL named "MKLML" that is bundled with the [JavaCPP Presets for MKL-DNN](../mkl-dnn). After adding the JAR files for MKL-DNN to the class path, it can be accessed with an option like `-Dorg.bytedeco.openblas.load=mklml`. Moreover, it is now possible to do the same with the full version of MKL and the [JavaCPP Presets for MKL](../mkl) with the `-redist` artifacts in the class path and an option like `-Dorg.bytedeco.openblas.load=mkl_rt`.
 
 
 Sample Usage
@@ -25,7 +27,7 @@ Here is a simple example of LAPACK ported to Java from this C source file:
 
  * https://github.com/bitfusionio/OpenBLAS/blob/master/lapack-netlib/lapacke/example/example_DGELS_rowmajor.c
 
-We can use [Maven 3](http://maven.apache.org/) to download and install automatically all the class files as well as the native binaries. To run this sample code, after creating the `pom.xml` and `src/main/java/ExampleDGELSrowmajor.java` source files below, simply execute on the command line:
+We can use [Maven 3](http://maven.apache.org/) to download and install automatically all the class files as well as the native binaries. To run this sample code, after creating the `pom.xml` and `ExampleDGELSrowmajor.java` source files below, simply execute on the command line:
 ```bash
  $ mvn compile exec:java
 ```
@@ -34,23 +36,26 @@ We can use [Maven 3](http://maven.apache.org/) to download and install automatic
 ```xml
 <project>
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.bytedeco.javacpp-presets.openblas</groupId>
+    <groupId>org.bytedeco.openblas</groupId>
     <artifactId>openblas</artifactId>
-    <version>1.3</version>
+    <version>1.5.4-SNAPSHOT</version>
     <properties>
         <exec.mainClass>ExampleDGELSrowmajor</exec.mainClass>
     </properties>
     <dependencies>
         <dependency>
-            <groupId>org.bytedeco.javacpp-presets</groupId>
+            <groupId>org.bytedeco</groupId>
             <artifactId>openblas-platform</artifactId>
-            <version>0.2.20-1.3</version>
+            <version>0.3.10-1.5.4-SNAPSHOT</version>
         </dependency>
     </dependencies>
+    <build>
+        <sourceDirectory>.</sourceDirectory>
+    </build>
 </project>
 ```
 
-### The `src/main/java/ExampleDGELSrowmajor.java` source file
+### The `ExampleDGELSrowmajor.java` source file
 ```java
 /*
    LAPACKE Example : Calling DGELS using row-major order
@@ -112,7 +117,7 @@ We can use [Maven 3](http://maven.apache.org/) to download and install automatic
 /* Calling DGELS using row-major order */
 
 /* Includes */
-import static org.bytedeco.javacpp.openblas.*;
+import static org.bytedeco.openblas.global.openblas.*;
 
 public class ExampleDGELSrowmajor {
     /* Auxiliary routine: printing a matrix */

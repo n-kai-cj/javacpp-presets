@@ -7,8 +7,10 @@ if [[ -z "$PLATFORM" ]]; then
     exit
 fi
 
-HDF5_VERSION=1.10.1
-download https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.10/hdf5-$HDF5_VERSION/src/hdf5-$HDF5_VERSION.tar.bz2 hdf5-$HDF5_VERSION.tar.bz2
+ZLIB=zlib-1.2.11
+HDF5_VERSION=1.12.0
+download "http://zlib.net/$ZLIB.tar.gz" $ZLIB.tar.gz
+download "https://s3.amazonaws.com/hdf-wordpress-1/wp-content/uploads/manual/HDF5/HDF5_${HDF5_VERSION//./_}/source/hdf5-$HDF5_VERSION.tar.bz2" hdf5-$HDF5_VERSION.tar.bz2
 
 mkdir -p $PLATFORM
 cd $PLATFORM
@@ -16,6 +18,10 @@ INSTALL_PATH=`pwd`
 echo "Decompressing archives..."
 tar --totals -xf ../hdf5-$HDF5_VERSION.tar.bz2
 cd hdf5-$HDF5_VERSION
+
+sedinplace '/cmake_minimum_required/d' $(find ./ -iname CMakeLists.txt)
+sedinplace 's/# *cmakedefine/#cmakedefine/g' config/cmake/H5pubconf.h.in
+sedinplace 's/COMPATIBILITY SameMinorVersion/COMPATIBILITY AnyNewerVersion/g' CMakeInstallation.cmake
 
 case $PLATFORM in
 # HDF5 does not currently support cross-compiling:
@@ -32,39 +38,63 @@ case $PLATFORM in
 #        make -j $MAKEJ
 #        make install-strip
 #        ;;
-#    linux-armhf)
-#        ./configure --prefix=$INSTALL_PATH --host="arm-linux-gnueabihf" CC="arm-linux-gnueabihf-gcc" CXX="arm-linux-gnueabihf-g++" --enable-cxx
-#        make -j $MAKEJ
-#        make install-strip
-#        ;;
+    linux-armhf)
+        MACHINE_TYPE=$( uname -m )
+        if [[ "$MACHINE_TYPE" =~ arm ]]; then
+          ./configure --prefix=$INSTALL_PATH CC="gcc" CXX="g++" --enable-cxx
+          make -j $MAKEJ
+          make install-strip
+        else
+          echo "Not native arm so assume cross compiling"
+          patch -Np1 < ../../../hdf5-linux-armhf.patch || true
+          #need this to run twice, first run fails so we fake the exit code too
+          for x in 1 2; do
+              "$CMAKE" -DCMAKE_TOOLCHAIN_FILE=`pwd`/arm.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$INSTALL_PATH -DBUILD_TESTING=false -DHDF5_BUILD_EXAMPLES=false -DHDF5_BUILD_TOOLS=false -DCMAKE_CXX_FLAGS="-D_GNU_SOURCE" -DCMAKE_C_FLAGS="-D_GNU_SOURCE" -DHDF5_ALLOW_EXTERNAL_SUPPORT:STRING="TGZ" -DZLIB_TGZ_NAME:STRING="$ZLIB.tar.gz" -DTGZPATH:STRING="$INSTALL_PATH/.." -DHDF5_ENABLE_Z_LIB_SUPPORT=ON . || true
+          done
+          make -j $MAKEJ
+          make install
+        fi
+        ;;
+    linux-arm64)
+        MACHINE_TYPE=$( uname -m )
+        if [[ "$MACHINE_TYPE" =~ arm ]]; then
+          ./configure --prefix=$INSTALL_PATH CC="gcc -m64" CXX="g++ -m64" --enable-cxx
+          make -j $MAKEJ
+          make install-strip
+        else
+          echo "Not native arm so assume cross compiling"
+          patch -Np1 < ../../../hdf5-linux-arm64.patch || true
+          #need this to run twice, first run fails so we fake the exit code too
+          for x in 1 2; do
+              "$CMAKE" -DCMAKE_TOOLCHAIN_FILE=`pwd`/arm64.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$INSTALL_PATH -DBUILD_TESTING=false -DHDF5_BUILD_EXAMPLES=false -DHDF5_BUILD_TOOLS=false -DCMAKE_CXX_FLAGS="-D_GNU_SOURCE" -DCMAKE_C_FLAGS="-D_GNU_SOURCE" -DHDF5_ALLOW_EXTERNAL_SUPPORT:STRING="TGZ" -DZLIB_TGZ_NAME:STRING="$ZLIB.tar.gz" -DTGZPATH:STRING="$INSTALL_PATH/.." -DHDF5_ENABLE_Z_LIB_SUPPORT=ON . || true
+          done
+          make -j $MAKEJ
+          make install
+        fi
+        ;;
     linux-x86)
-        ./configure --prefix=$INSTALL_PATH CC="$OLDCC -m32" CXX="$OLDCXX -m32" --enable-cxx
+        ./configure --prefix=$INSTALL_PATH CC="gcc -m32" CXX="g++ -m32" --enable-cxx
         make -j $MAKEJ
         make install-strip
         ;;
     linux-x86_64)
-        ./configure --prefix=$INSTALL_PATH CC="$OLDCC -m64" CXX="$OLDCXX -m64" --enable-cxx
+        ./configure --prefix=$INSTALL_PATH CC="gcc -m64" CXX="g++ -m64" --enable-cxx
         make -j $MAKEJ
         make install-strip
         ;;
     linux-ppc64le)
         MACHINE_TYPE=$( uname -m )
         if [[ "$MACHINE_TYPE" =~ ppc64 ]]; then
-          ./configure --prefix=$INSTALL_PATH CC="$OLDCC -m64" CXX="$OLDCXX -m64" --enable-cxx
+          ./configure --prefix=$INSTALL_PATH CC="gcc -m64" CXX="g++ -m64" --enable-cxx
           make -j $MAKEJ
           make install-strip
         else
           echo "Not native ppc so assume cross compiling"
-          patch -Np1 < ../../../hdf5-linux-ppc64le.patch
+          patch -Np1 < ../../../hdf5-linux-ppc64le.patch || true
           #need this to run twice, first run fails so we fake the exit code too
           for x in 1 2; do
-              cmake -DCMAKE_TOOLCHAIN_FILE=ppc.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$INSTALL_PATH -DBUILD_TESTING=false -DHDF5_BUILD_EXAMPLES=false -DHDF5_BUILD_TOOLS=false -DCMAKE_CXX_FLAGS="-D_GNU_SOURCE" -DCMAKE_C_FLAGS="-D_GNU_SOURCE" || true
+              "$CMAKE" -DCMAKE_TOOLCHAIN_FILE=`pwd`/ppc.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$INSTALL_PATH -DBUILD_TESTING=false -DHDF5_BUILD_EXAMPLES=false -DHDF5_BUILD_TOOLS=false -DCMAKE_CXX_FLAGS="-D_GNU_SOURCE" -DCMAKE_C_FLAGS="-D_GNU_SOURCE" -DHDF5_ALLOW_EXTERNAL_SUPPORT:STRING="TGZ" -DZLIB_TGZ_NAME:STRING="$ZLIB.tar.gz" -DTGZPATH:STRING="$INSTALL_PATH/.." -DHDF5_ENABLE_Z_LIB_SUPPORT=ON . || true
           done
-          make -j $MAKEJ || true
-          touch H5Tinit.c
-          touch H5lib_settings.c
-          cp H5Tinit.c shared
-          cp H5lib_settings.c shared
           make -j $MAKEJ
           make install
         fi
@@ -75,20 +105,24 @@ case $PLATFORM in
         make -j $MAKEJ
         make install-strip
         ;;
-# Installers available at: https://www.hdfgroup.org/downloads/hdf5/
     windows-x86)
-        if [[ ! -d "/C/Program Files (x86)/HDF_Group/HDF5/1.10.1/" ]]; then
-            echo "Please install HDF5 under the default installation directory"
-            exit 1
-        fi
+        mkdir -p build
+        cd build
+        "$CMAKE" -G "Visual Studio 15 2017" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$INSTALL_PATH -DBUILD_TESTING=false -DHDF5_BUILD_EXAMPLES=false -DHDF5_BUILD_TOOLS=false -DHDF5_ALLOW_EXTERNAL_SUPPORT:STRING="TGZ" -DZLIB_TGZ_NAME:STRING="$ZLIB.tar.gz" -DTGZPATH:STRING="$INSTALL_PATH/.." -DHDF5_ENABLE_Z_LIB_SUPPORT=ON ..
+        sedinplace 's/libzlib.lib/zlibstatic.lib/g' src/hdf5-shared.vcxproj
+        MSBuild.exe INSTALL.vcxproj //p:Configuration=Release //p:CL_MPCount=$MAKEJ
+        cp bin/Release/zlib* ../../lib/
+        cd ..
         ;;
     windows-x86_64)
-        if [[ ! -d "/C/Program Files/HDF_Group/HDF5/1.10.1/" ]]; then
-            echo "Please install HDF5 under the default installation directory"
-            exit 1
-        fi
+        mkdir -p build
+        cd build
+        "$CMAKE" -G "Visual Studio 15 2017 Win64" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$INSTALL_PATH -DBUILD_TESTING=false -DHDF5_BUILD_EXAMPLES=false -DHDF5_BUILD_TOOLS=false -DHDF5_ALLOW_EXTERNAL_SUPPORT:STRING="TGZ" -DZLIB_TGZ_NAME:STRING="$ZLIB.tar.gz" -DTGZPATH:STRING="$INSTALL_PATH/.." -DHDF5_ENABLE_Z_LIB_SUPPORT=ON ..
+        sedinplace 's/libzlib.lib/zlibstatic.lib/g' src/hdf5-shared.vcxproj
+        MSBuild.exe INSTALL.vcxproj //p:Configuration=Release //p:CL_MPCount=$MAKEJ
+        cp bin/Release/zlib* ../../lib/
+        cd ..
         ;;
-
     *)
         echo "Error: Platform \"$PLATFORM\" is not supported"
         ;;

@@ -5,7 +5,7 @@ Introduction
 ------------
 This directory contains the JavaCPP Presets module for:
 
- * OpenCV 3.3.0  http://opencv.org/
+ * OpenCV 4.3.0  http://opencv.org/
 
 Please refer to the parent README.md file for more detailed information about the JavaCPP Presets.
 
@@ -16,14 +16,17 @@ Java API documentation is available here:
 
  * http://bytedeco.org/javacpp-presets/opencv/apidocs/
 
+&lowast; Call `Loader.load(opencv_java.class)` before using the API in the `org.opencv` namespace.  
+&lowast; Call `Py_AddPath(opencv_python3.cachePackages())` before calling `Py_Initialize()`.
+
 
 Sample Usage
 ------------
 Here is a simple example of OpenCV ported to Java from this C++ source file:
 
- * https://github.com/Itseez/opencv/blob/3.0.0/samples/cpp/stitching.cpp
+ * https://github.com/opencv/opencv/blob/3.0.0/samples/cpp/stitching.cpp
 
-We can use [Maven 3](http://maven.apache.org/) to download and install automatically all the class files as well as the native binaries. To run this sample code, after creating the `pom.xml` and `src/main/java/Stitching.java` source files below, simply execute on the command line:
+We can use [Maven 3](http://maven.apache.org/) to download and install automatically all the class files as well as the native binaries. To run this sample code, after creating the `pom.xml` and `Stitching.java` source files below, simply execute on the command line:
 ```bash
  $ mvn compile exec:java -Dexec.args="img1 img2 [...imgN]"
 ```
@@ -32,23 +35,55 @@ We can use [Maven 3](http://maven.apache.org/) to download and install automatic
 ```xml
 <project>
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.bytedeco.javacpp-presets.opencv</groupId>
+    <groupId>org.bytedeco.opencv</groupId>
     <artifactId>stitching</artifactId>
-    <version>1.3.4-SNAPSHOT</version>
+    <version>1.5.4-SNAPSHOT</version>
     <properties>
         <exec.mainClass>Stitching</exec.mainClass>
     </properties>
     <dependencies>
         <dependency>
-            <groupId>org.bytedeco.javacpp-presets</groupId>
+            <groupId>org.bytedeco</groupId>
             <artifactId>opencv-platform</artifactId>
-            <version>3.3.0-1.3.4-SNAPSHOT</version>
+            <version>4.3.0-1.5.4-SNAPSHOT</version>
         </dependency>
+
+        <!-- Additional dependencies required to use CUDA and cuDNN -->
+        <dependency>
+            <groupId>org.bytedeco</groupId>
+            <artifactId>opencv-platform-gpu</artifactId>
+            <version>4.3.0-1.5.4-SNAPSHOT</version>
+        </dependency>
+
+        <!-- Additional dependencies to use bundled CUDA and cuDNN -->
+        <dependency>
+            <groupId>org.bytedeco</groupId>
+            <artifactId>cuda-platform-redist</artifactId>
+            <version>11.0-8.0-1.5.4-SNAPSHOT</version>
+        </dependency>
+
+        <!-- Additional dependencies to use bundled full version of MKL -->
+        <dependency>
+            <groupId>org.bytedeco</groupId>
+            <artifactId>mkl-platform-redist</artifactId>
+            <version>2020.1-1.5.4-SNAPSHOT</version>
+        </dependency>
+
+        <!-- Optional dependencies to load the Python module -->
+        <dependency>
+            <groupId>org.bytedeco</groupId>
+            <artifactId>numpy-platform</artifactId>
+            <version>1.18.2-1.5.4-SNAPSHOT</version>
+        </dependency>
+
     </dependencies>
+    <build>
+        <sourceDirectory>.</sourceDirectory>
+    </build>
 </project>
 ```
 
-### The `src/main/java/Stitching.java` source file
+### The `Stitching.java` source file
 ```java
 /*M///////////////////////////////////////////////////////////////////////////////////////
 //
@@ -93,9 +128,11 @@ We can use [Maven 3](http://maven.apache.org/) to download and install automatic
 //M*/
 
 import org.bytedeco.javacpp.*;
-import static org.bytedeco.javacpp.opencv_core.*;
-import static org.bytedeco.javacpp.opencv_imgcodecs.*;
-import static org.bytedeco.javacpp.opencv_stitching.*;
+import org.bytedeco.opencv.opencv_core.*;
+import org.bytedeco.opencv.opencv_stitching.*;
+import static org.bytedeco.opencv.global.opencv_core.*;
+import static org.bytedeco.opencv.global.opencv_imgcodecs.*;
+import static org.bytedeco.opencv.global.opencv_stitching.*;
 
 public class Stitching {
     static boolean try_use_gpu = false;
@@ -103,13 +140,16 @@ public class Stitching {
     static String result_name = "result.jpg";
 
     public static void main(String[] args) {
+        /* try to use MKL when available */
+        System.setProperty("org.bytedeco.openblas.load", "mkl");
+
         int retval = parseCmdArgs(args);
         if (retval != 0) {
             System.exit(-1);
         }
 
         Mat pano = new Mat();
-        Stitcher stitcher = Stitcher.createDefault(try_use_gpu);
+        Stitcher stitcher = createStitcher(try_use_gpu);
         int status = stitcher.stitch(imgs, pano);
 
         if (status != Stitcher.OK) {

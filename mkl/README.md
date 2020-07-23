@@ -5,7 +5,7 @@ Introduction
 ------------
 This directory contains the JavaCPP Presets module for:
 
- * MKL 2018.0  https://software.intel.com/intel-mkl
+ * MKL 2020.1  https://software.intel.com/intel-mkl
 
 Please refer to the parent README.md file for more detailed information about the JavaCPP Presets.
 
@@ -16,7 +16,7 @@ Java API documentation is available here:
 
  * http://bytedeco.org/javacpp-presets/mkl/apidocs/
 
-&lowast; MKL also gets used by the [JavaCPP Presets for OpenBLAS](https://github.com/bytedeco/javacpp-presets/tree/master/openblas).
+&lowast; MKL also gets used by the [JavaCPP Presets for OpenBLAS](../openblas), the [JavaCPP Presets for MKL-DNN](../mkl-dnn), or any other library that depends on one of them.
 
 
 Sample Usage
@@ -25,7 +25,7 @@ Here is a simple example of MKL ported to Java from the `dgemm_example.c` sample
 
  * https://software.intel.com/product-code-samples
 
-We can use [Maven 3](http://maven.apache.org/) to download and install automatically all the class files as well as the native binaries. To run this sample code, after creating the `pom.xml` and `src/main/java/DGEMMExample.java` source files below, simply execute on the command line:
+We can use [Maven 3](http://maven.apache.org/) to download and install automatically all the class files as well as the native binaries. To run this sample code, after creating the `pom.xml` and `DGEMMExample.java` source files below, simply execute on the command line:
 ```bash
  $ mvn compile exec:java
 ```
@@ -34,23 +34,34 @@ We can use [Maven 3](http://maven.apache.org/) to download and install automatic
 ```xml
 <project>
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.bytedeco.javacpp-presets.mkl</groupId>
+    <groupId>org.bytedeco.mkl</groupId>
     <artifactId>mkl</artifactId>
-    <version>1.3.4-SNAPSHOT</version>
+    <version>1.5.3</version>
     <properties>
         <exec.mainClass>DGEMMExample</exec.mainClass>
     </properties>
     <dependencies>
         <dependency>
-            <groupId>org.bytedeco.javacpp-presets</groupId>
+            <groupId>org.bytedeco</groupId>
             <artifactId>mkl-platform</artifactId>
-            <version>2018.0-1.3.4-SNAPSHOT</version>
+            <version>2020.1-1.5.3</version>
         </dependency>
+
+        <!-- Additional dependencies to use bundled full version of MKL -->
+        <dependency>
+            <groupId>org.bytedeco</groupId>
+            <artifactId>mkl-platform-redist</artifactId>
+            <version>2020.1-1.5.3</version>
+        </dependency>
+
     </dependencies>
+    <build>
+        <sourceDirectory>.</sourceDirectory>
+    </build>
 </project>
 ```
 
-### The `src/main/java/DGEMMExample.java` source file
+### The `DGEMMExample.java` source file
 ```java
 //==============================================================
 //
@@ -77,7 +88,7 @@ We can use [Maven 3](http://maven.apache.org/) to download and install automatic
 import org.bytedeco.javacpp.*;
 import org.bytedeco.javacpp.indexer.*;
 
-import static org.bytedeco.javacpp.mkl_rt.*;
+import static org.bytedeco.mkl.global.mkl_rt.*;
 
 public class DGEMMExample {
     public static void main(String[] args) throws Exception {
