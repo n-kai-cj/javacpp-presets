@@ -12,14 +12,21 @@ export CUDA_HOME="/usr/local/cuda"
 export CUDNN_HOME="/usr/local/cuda"
 export MAKEFLAGS="-j $MAKEJ"
 export PYTHON_BIN_PATH=$(which python3)
-if [[ $PLATFORM == windows* ]]; then
-    if [[ -n "${CUDA_PATH:-}" ]]; then
-        export CUDACXX="$CUDA_PATH/bin/nvcc"
-        export CUDA_HOME="$CUDA_PATH"
-        export CUDNN_HOME="$CUDA_PATH"
-    fi
-    export PYTHON_BIN_PATH=$(which python.exe)
-fi
+export OPENMP_FLAGS="--use_openmp"
+case $PLATFORM in
+    macosx-*)
+        # disable OpenMP on Mac until it's fixed
+        OPENMP_FLAGS=
+        ;;
+    windows-*)
+        if [[ -n "${CUDA_PATH:-}" ]]; then
+            export CUDACXX="$CUDA_PATH/bin/nvcc"
+            export CUDA_HOME="$CUDA_PATH"
+            export CUDNN_HOME="$CUDA_PATH"
+        fi
+        export PYTHON_BIN_PATH=$(which python.exe)
+        ;;
+esac
 
 export GPU_FLAGS=
 if [[ "$EXTENSION" == *gpu ]]; then
@@ -78,15 +85,22 @@ ortApiHandle = initialiseAPIBase(ORT_API_VERSION_1);\
 ' java/src/main/java/ai/onnxruntime/OnnxRuntime.java
 
 which ctest3 &> /dev/null && CTEST="ctest3" || CTEST="ctest"
-"$PYTHON_BIN_PATH" tools/ci_build/build.py --build_dir ../build --config Release --cmake_path "$CMAKE" --ctest_path "$CTEST" --build_shared_lib --use_dnnl --use_openmp $GPU_FLAGS
+"$PYTHON_BIN_PATH" tools/ci_build/build.py --build_dir ../build --config Release --cmake_path "$CMAKE" --ctest_path "$CTEST" --build_shared_lib --use_dnnl $OPENMP_FLAGS $GPU_FLAGS
 
 # install headers and libraries in standard directories
 cp -r include/* ../include
 cp -r orttraining/orttraining/models/runner/training_runner.h ../include
 cp -r orttraining/orttraining/models/runner/training_util.h ../include
 cp -r java/src/main/java/* ../java
-cp ../build/Release/lib* ../lib || true
+cp -a ../build/Release/lib* ../lib || true
 cp ../build/Release/Release/onnxruntime.dll ../bin || true
 cp ../build/Release/Release/onnxruntime.lib ../lib || true
+
+# fix library with the same name for OpenMP as MKL on Mac
+case $PLATFORM in
+    macosx-*)
+        install_name_tool -change @rpath/libomp.dylib @rpath/libiomp5.dylib ../lib/libonnxruntime.dylib
+        ;;
+esac
 
 cd ../..

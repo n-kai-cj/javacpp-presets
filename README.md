@@ -106,7 +106,7 @@ The JavaCPP Presets depend on Maven, a powerful build system for Java, so before
 
 Each child module in turn relies by default on the included [`cppbuild.sh` scripts](#the-cppbuildsh-scripts), explained below, to install its corresponding native libraries in the `cppbuild` subdirectory. To use native libraries already installed somewhere else on the system, other installation directories than `cppbuild` can also be specified either in the `pom.xml` files or in the `.java` configuration files. The following versions are supported:
 
- * OpenCV 4.3.0  https://opencv.org/releases.html
+ * OpenCV 4.4.0  https://opencv.org/releases.html
  * FFmpeg 4.3.x  http://ffmpeg.org/download.html
  * FlyCapture 2.13.x  https://www.flir.com/products/flycapture-sdk
  * Spinnaker 1.27.x https://www.flir.com/products/spinnaker-sdk
@@ -119,12 +119,12 @@ Each child module in turn relies by default on the included [`cppbuild.sh` scrip
  * ARToolKitPlus 2.3.1  https://launchpad.net/artoolkitplus
  * Chilitags  https://github.com/chili-epfl/chilitags
  * flandmark 1.07  http://cmp.felk.cvut.cz/~uricamic/flandmark/#download
- * Arrow 0.17.x  https://arrow.apache.org/install/
+ * Arrow 1.0.0  https://arrow.apache.org/install/
  * HDF5 1.12.0  https://www.hdfgroup.org/downloads/
  * Hyperscan 5.3.x  https://github.com/intel/hyperscan
  * MKL 2020.x  https://software.intel.com/intel-mkl
  * MKL-DNN 0.21.x  https://github.com/oneapi-src/oneDNN
- * DNNL 1.5.x  https://github.com/oneapi-src/oneDNN
+ * DNNL 1.6.x  https://github.com/oneapi-src/oneDNN
  * OpenBLAS 0.3.10  http://www.openblas.net/
  * ARPACK-NG 3.7.0  https://github.com/opencollab/arpack-ng
  * CMINPACK 1.3.6  https://github.com/devernay/cminpack
@@ -136,7 +136,7 @@ Each child module in turn relies by default on the included [`cppbuild.sh` scrip
  * Gym 0.17.x  https://github.com/openai/gym
  * LLVM 10.0.x  http://llvm.org/releases/download.html
  * libpostal 1.1-alpha  https://github.com/openvenues/libpostal
- * Leptonica 1.79.0  http://www.leptonica.org/download.html
+ * Leptonica 1.80.0  http://www.leptonica.org/download.html
  * Tesseract 4.1.1  https://github.com/tesseract-ocr/tesseract
  * Caffe 1.0  https://github.com/BVLC/caffe
  * OpenPose 1.6.0  https://github.com/CMU-Perceptual-Computing-Lab/openpose
@@ -149,7 +149,7 @@ Each child module in turn relies by default on the included [`cppbuild.sh` scrip
  * The Arcade Learning Environment 0.6.x  https://github.com/mgbellemare/Arcade-Learning-Environment
  * ONNX 1.7.0  https://github.com/onnx/onnx
  * nGraph 0.26.0  https://github.com/NervanaSystems/ngraph
- * ONNX Runtime 1.3.x  https://github.com/microsoft/onnxruntime
+ * ONNX Runtime 1.4.x  https://github.com/microsoft/onnxruntime
  * LiquidFun  http://google.github.io/liquidfun/
  * Qt 5.15.x  https://download.qt.io/archive/qt/
  * Mono/Skia 2.80.x  https://github.com/mono/skia
