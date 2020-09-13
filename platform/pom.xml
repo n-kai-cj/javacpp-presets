@@ -6,7 +6,7 @@
   <parent>
     <groupId>org.bytedeco</groupId>
     <artifactId>javacpp-presets</artifactId>
-    <version>1.5.4-SNAPSHOT</version>
+    <version>1.5.5-SNAPSHOT</version>
   </parent>
 
   <groupId>org.bytedeco</groupId>
@@ -139,7 +139,7 @@
     <dependency>
       <groupId>org.bytedeco</groupId>
       <artifactId>arrow-platform</artifactId>
-      <version>1.0.0-${project.version}</version>
+      <version>1.0.1-${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.bytedeco</groupId>
@@ -154,7 +154,7 @@
     <dependency>
       <groupId>org.bytedeco</groupId>
       <artifactId>mkl-platform</artifactId>
-      <version>2020.2-${project.version}</version>
+      <version>2020.3-${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.bytedeco</groupId>
@@ -164,7 +164,7 @@
     <dependency>
       <groupId>org.bytedeco</groupId>
       <artifactId>dnnl-platform</artifactId>
-      <version>1.6-${project.version}</version>
+      <version>1.6.2-${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.bytedeco</groupId>
@@ -194,7 +194,7 @@
     <dependency>
       <groupId>org.bytedeco</groupId>
       <artifactId>cpython-platform</artifactId>
-      <version>3.7.8-${project.version}</version>
+      <version>3.7.9-${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.bytedeco</groupId>
@@ -249,7 +249,7 @@
     <dependency>
       <groupId>org.bytedeco</groupId>
       <artifactId>mxnet-platform</artifactId>
-      <version>1.7.0.rc1-${project.version}</version>
+      <version>1.7.0-${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.bytedeco</groupId>

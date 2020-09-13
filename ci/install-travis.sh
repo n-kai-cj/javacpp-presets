@@ -62,7 +62,7 @@ if [[ "$OS" == "linux-x86" ]] || [[ "$OS" == "linux-x86_64" ]] || [[ "$OS" =~ an
   echo "Container id is $DOCKER_CONTAINER_ID please wait while updates applied"
   docker exec -ti $DOCKER_CONTAINER_ID /bin/bash -xec "yum -q -y install centos-release-scl-rh epel-release"
   docker exec -ti $DOCKER_CONTAINER_ID /bin/bash -xec "yum -y repolist"
-  docker exec -ti $DOCKER_CONTAINER_ID /bin/bash -xec "yum -q -y install rh-java-common-ant $SCL_ENABLE boost-devel ccache clang gcc-c++ gcc-gfortran java-1.8.0-openjdk-devel ant python python36-devel python36-pip swig file which wget unzip tar bzip2 gzip xz patch make autoconf-archive libtool bison flex perl nasm yasm alsa-lib-devel freeglut-devel gtk2-devel libusb-devel libusb1-devel curl-devel expat-devel gettext-devel openssl-devel zlib-devel SDL-devel libva-devel libxkbcommon-devel libxkbcommon-x11-devel xcb-util* fontconfig-devel libffi-devel ragel"
+  docker exec -ti $DOCKER_CONTAINER_ID /bin/bash -xec "yum -q -y install rh-java-common-ant $SCL_ENABLE boost-devel ccache clang gcc-c++ gcc-gfortran java-1.8.0-openjdk-devel ant python python36-devel python36-pip swig file which wget unzip tar bzip2 gzip xz patch make autoconf-archive libtool bison flex perl nasm yasm alsa-lib-devel freeglut-devel gtk2-devel libusb-devel libusb1-devel curl-devel expat-devel gettext-devel openssl-devel zlib-devel SDL-devel libva-devel libxkbcommon-devel libxkbcommon-x11-devel xcb-util* fontconfig-devel libffi-devel ragel ocl-icd-devel"
   docker exec -ti $DOCKER_CONTAINER_ID /bin/bash -xec "yum -y update"
   if [ "$OS" == "linux-x86" ]; then
     docker exec -ti $DOCKER_CONTAINER_ID /bin/bash -xec "rpm -qa | sed s/.x86_64$/.i686/ | xargs yum -q -y install"
@@ -139,10 +139,10 @@ if [[ "$OS" == "linux-x86" ]] || [[ "$OS" == "linux-x86_64" ]] || [[ "$OS" =~ an
   fi
   if [[ "$PROJ" == "mkl" ]] && [[ "$OS" =~ linux ]]; then
          #don't put in download dir as will be cached and we can use direct url instead
-         curl -L http://registrationcenter-download.intel.com/akdlm/irc_nas/tec/16849/l_mkl_2020.2.254.tgz -o $HOME/mkl.tgz
+         curl -L http://registrationcenter-download.intel.com/akdlm/irc_nas/tec/16903/l_mkl_2020.3.279.tgz -o $HOME/mkl.tgz
          tar xzvf $HOME/mkl.tgz -C $TRAVIS_BUILD_DIR/../
-         sed -i -e 's/decline/accept/g' $TRAVIS_BUILD_DIR/../l_mkl_2020.2.254/silent.cfg
-         docker exec -ti $DOCKER_CONTAINER_ID /bin/bash -xec "$HOME/build/l_mkl_2020.2.254/install.sh -s $HOME/build/l_mkl_2020.2.254/silent.cfg"
+         sed -i -e 's/decline/accept/g' $TRAVIS_BUILD_DIR/../l_mkl_2020.3.279/silent.cfg
+         docker exec -ti $DOCKER_CONTAINER_ID /bin/bash -xec "$HOME/build/l_mkl_2020.3.279/install.sh -s $HOME/build/l_mkl_2020.3.279/silent.cfg"
   fi
   if [ "$PROJ" == "tensorflow" ]; then
         echo "adding bazel for tensorflow"
@@ -157,15 +157,15 @@ if [[ "$OS" == "linux-x86" ]] || [[ "$OS" == "linux-x86_64" ]] || [[ "$OS" =~ an
   fi
   if [[ "$PROJ" =~ cuda ]] || [[ "$PROJ" == "tensorrt" ]] || [[ "$EXT" =~ gpu ]]; then
         echo "installing cuda, cudnn, and nccl.."
-        curl -L http://developer.download.nvidia.com/compute/cuda/11.0.2/local_installers/cuda-repo-rhel7-11-0-local-11.0.2_450.51.05-1.x86_64.rpm -o $HOME/cuda-repo-rhel7-11-0-local-11.0.2_450.51.05-1.x86_64.rpm
-        curl -L https://developer.download.nvidia.com/compute/redist/cudnn/v8.0.1/cudnn-11.0-linux-x64-v8.0.1.13.tgz -o $HOME/cudnn-11.0-linux-x64-v8.0.1.13.tgz
-        curl -L https://developer.download.nvidia.com/compute/redist/nccl/v2.7/nccl_2.7.6-1+cuda11.0_x86_64.txz -o $HOME/nccl_x86_64.txz
+        curl -L https://developer.download.nvidia.com/compute/cuda/11.0.3/local_installers/cuda-repo-rhel7-11-0-local-11.0.3_450.51.06-1.x86_64.rpm -o $HOME/cuda-repo-rhel7-11-0-local-11.0.3_450.51.06-1.x86_64.rpm
+        curl -L https://developer.download.nvidia.com/compute/redist/cudnn/v8.0.3/cudnn-11.0-linux-x64-v8.0.3.33.tgz -o $HOME/cudnn-11.0-linux-x64-v8.0.3.33.tgz
+        curl -L https://developer.download.nvidia.com/compute/redist/nccl/v2.7/nccl_2.7.8-1+cuda11.0_x86_64.txz -o $HOME/nccl_x86_64.txz
 
-        docker exec -ti $DOCKER_CONTAINER_ID /bin/bash -xec "rpm -i $HOME/cuda-repo-rhel7-11-0-local-11.0.2_450.51.05-1.x86_64.rpm"
+        docker exec -ti $DOCKER_CONTAINER_ID /bin/bash -xec "rpm -i $HOME/cuda-repo-rhel7-11-0-local-11.0.3_450.51.06-1.x86_64.rpm"
         docker exec -ti $DOCKER_CONTAINER_ID /bin/bash -xec "cd /var/cuda-repo-rhel7-11-0-local/; rpm -i --nodeps cuda*.rpm libc*.rpm libn*.rpm"
         docker exec -ti $DOCKER_CONTAINER_ID /bin/bash -xec "ln -sf /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/libcuda.so"
         docker exec -ti $DOCKER_CONTAINER_ID /bin/bash -xec "ln -sf /usr/local/cuda/lib64/stubs/libnvidia-ml.so /usr/local/cuda/lib64/libnvidia-ml.so"
-        docker exec -ti $DOCKER_CONTAINER_ID /bin/bash -xec "tar hxvf $HOME/cudnn-11.0-linux-x64-v8.0.1.13.tgz  -C /usr/local/"
+        docker exec -ti $DOCKER_CONTAINER_ID /bin/bash -xec "tar hxvf $HOME/cudnn-11.0-linux-x64-v8.0.3.33.tgz -C /usr/local/"
         docker exec -ti $DOCKER_CONTAINER_ID /bin/bash -xec "tar hxvf $HOME/nccl_x86_64.txz --strip-components=1 -C /usr/local/cuda/"
         docker exec -ti $DOCKER_CONTAINER_ID /bin/bash -xec "mv /usr/local/cuda/lib/* /usr/local/cuda/lib64/"
         # work around issues with CUDA 10.2/11.0
@@ -227,6 +227,10 @@ if [ "$TRAVIS_OS_NAME" == "osx" ]; then
    brew update
    brew upgrade cmake
    brew install ccache curl swig autoconf-archive libomp libtool libusb xz sdl gpg1 bison flex perl nasm yasm ragel
+
+   brew tap AdoptOpenJDK/openjdk
+   brew cask install adoptopenjdk8
+   export JAVA_HOME=$(/usr/libexec/java_home -v1.8)
 
    # Try to use ccache to speed up the build and work around issue with Sectigo CA root certificate
    export PATH=/usr/local/opt/ccache/libexec/:/usr/local/opt/curl/bin/:/usr/local/opt/gpg1/libexec/gpgbin/:/usr/local/opt/bison/bin/:/usr/local/opt/flex/bin/:$PATH
@@ -293,13 +297,13 @@ if [ "$TRAVIS_OS_NAME" == "osx" ]; then
 
       if [ "$PROJ" == "mkl" ]; then
         #don't put in download dir as will be cached and we can use direct url instead
-        curl -L http://registrationcenter-download.intel.com/akdlm/irc_nas/tec/16851/m_mkl_2020.2.258.dmg -o $HOME/mkl.dmg
+        curl -L http://registrationcenter-download.intel.com/akdlm/irc_nas/tec/16902/m_mkl_2020.3.279.dmg -o $HOME/mkl.dmg
         echo "Mount mkl dmg"
         hdiutil mount $HOME/mkl.dmg
         sleep 10
-        cp /Volumes/m_mkl_2020.2.258/m_mkl_2020.2.258.app/Contents/MacOS/silent.cfg $HOME/silent.cfg
+        cp /Volumes/m_mkl_2020.3.279/m_mkl_2020.3.279.app/Contents/MacOS/silent.cfg $HOME/silent.cfg
         sed -i -e 's/decline/accept/g' $HOME/silent.cfg
-        sudo /Volumes/m_mkl_2020.2.258/m_mkl_2020.2.258.app/Contents/MacOS/install.sh -s $HOME/silent.cfg; export BREW_STATUS=$?
+        sudo /Volumes/m_mkl_2020.3.279/m_mkl_2020.3.279.app/Contents/MacOS/install.sh -s $HOME/silent.cfg; export BREW_STATUS=$?
         echo "mkl status $BREW_STATUS"
         if [ $BREW_STATUS -ne 0 ]; then
           echo "mkl Failed"

@@ -57,7 +57,7 @@ sedinplace 's/cudnnSetRNNDescriptor(/cudnnSetRNNDescriptor_v6(/g' onnxruntime/co
 sedinplace 's/HOST_NAME_MAX/sysconf(_SC_HOST_NAME_MAX)/g' onnxruntime/core/providers/cuda/cuda_call.cc
 
 # use PTX instead of compiling for all CUDA archs to reduce library size
-sedinplace 's/-gencode=arch=compute_35,code=sm_35/-arch=sm_35/g' cmake/CMakeLists.txt
+sedinplace 's/-gencode=arch=compute_52,code=sm_52/-arch=sm_35/g' cmake/CMakeLists.txt
 sedinplace '/-gencode=arch=compute_..,code=sm_../d' cmake/CMakeLists.txt
 
 # provide a default constructor to Ort::Value to make it more usable with std::vector
@@ -93,8 +93,8 @@ cp -r orttraining/orttraining/models/runner/training_runner.h ../include
 cp -r orttraining/orttraining/models/runner/training_util.h ../include
 cp -r java/src/main/java/* ../java
 cp -a ../build/Release/lib* ../lib || true
-cp ../build/Release/Release/onnxruntime.dll ../bin || true
-cp ../build/Release/Release/onnxruntime.lib ../lib || true
+cp ../build/Release/Release/onnxruntime*.dll ../bin || true
+cp ../build/Release/Release/onnxruntime*.lib ../lib || true
 
 # fix library with the same name for OpenMP as MKL on Mac
 case $PLATFORM in

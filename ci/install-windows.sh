@@ -107,7 +107,7 @@ fi
 
 if [ "$PROJ" == "mkl" ]; then
        echo Installing mkl 
-       curl -L  -o mkl.exe "http://registrationcenter-download.intel.com/akdlm/irc_nas/tec/16850/w_mkl_2020.2.254.exe"
+       curl -L  -o mkl.exe "http://registrationcenter-download.intel.com/akdlm/irc_nas/tec/16896/w_mkl_2020.3.279.exe"
        ./mkl.exe --s --x --f .
        ./install.exe install --output=mkllog.txt -eula=accept
        sleep 60
@@ -117,11 +117,11 @@ fi
 
 if [ "$PROJ" == "cuda" ] || [ "$PROJ" == "tensorrt" ] || [ "$EXT" == "-gpu" ]; then
        echo Installing cuda 
-       curl -L -o cuda_11.0.2_451.48_win10.exe "http://developer.download.nvidia.com/compute/cuda/11.0.2/local_installers/cuda_11.0.2_451.48_win10.exe"
-       curl -L -o cudnn-11.0-windows-x64-v8.0.1.13.zip "https://developer.download.nvidia.com/compute/redist/cudnn/v8.0.1/cudnn-11.0-windows-x64-v8.0.1.13.zip"
-       ./cuda_11.0.2_451.48_win10.exe -s
+       curl -L -o cuda_11.0.3_451.82_win10.exe "https://developer.download.nvidia.com/compute/cuda/11.0.3/local_installers/cuda_11.0.3_451.82_win10.exe"
+       curl -L -o cudnn-11.0-windows-x64-v8.0.3.33.zip "https://developer.download.nvidia.com/compute/redist/cudnn/v8.0.3/cudnn-11.0-windows-x64-v8.0.3.33.zip"
+       ./cuda_11.0.3_451.82_win10.exe -s
        sleep 60
-       unzip ./cudnn-11.0-windows-x64-v8.0.1.13.zip
+       unzip ./cudnn-11.0-windows-x64-v8.0.3.33.zip
        mv ./cuda/bin/*.dll /c/Program\ Files/NVIDIA\ GPU\ Computing\ Toolkit/CUDA/v11.0/bin
        mv ./cuda/include/*.h /c/Program\ Files/NVIDIA\ GPU\ Computing\ Toolkit/CUDA/v11.0/include
        mv ./cuda/lib/x64/*.lib /c/Program\ Files/NVIDIA\ GPU\ Computing\ Toolkit/CUDA/v11.0/lib/x64

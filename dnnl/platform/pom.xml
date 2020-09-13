@@ -6,13 +6,13 @@
   <parent>
     <groupId>org.bytedeco</groupId>
     <artifactId>javacpp-presets</artifactId>
-    <version>1.5.4-SNAPSHOT</version>
+    <version>1.5.5-SNAPSHOT</version>
     <relativePath>../../</relativePath>
   </parent>
 
   <groupId>org.bytedeco</groupId>
   <artifactId>dnnl-platform</artifactId>
-  <version>1.6-${project.parent.version}</version>
+  <version>1.6.2-${project.parent.version}</version>
   <name>JavaCPP Presets Platform for DNNL</name>
 
   <properties>
