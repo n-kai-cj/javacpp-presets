@@ -1,0 +1,13 @@
+// Place your key bindings in this file to override the defaultsauto[]
+[
+    {
+        "key": "ctrl+shift+2",
+        "command": "emacs-mcx.setMarkCommand",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "ctrl+space",
+        "command": "-emacs-mcx.setMarkCommand",
+        "when": "editorTextFocus"
+    }
+]

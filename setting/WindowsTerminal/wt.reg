@@ -1,0 +1,8 @@
+Windows Registry Editor Version 5.00
+
+[HKEY_CLASSES_ROOT\Directory\Background\shell\wt]
+@="Windows Terminal here (&w)"
+"Icon"="%USERPROFILE%\\AppData\\Local\\Microsoft\\WindowsApps\\wt_32.ico"
+
+[HKEY_CLASSES_ROOT\Directory\Background\shell\wt\command]
+@="C:\\Users\\USER\\AppData\\Local\\Microsoft\\WindowsApps\\wt.exe"
