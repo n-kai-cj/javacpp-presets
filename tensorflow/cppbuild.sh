@@ -29,11 +29,11 @@ export TF_NEED_MPI=0
 export TF_NEED_ROCM=0
 export TF_ENABLE_XLA=0
 export TF_CUDA_CLANG=0
-export TF_CUDA_VERSION=11.0
+export TF_CUDA_VERSION=11.1
 export TF_CUDNN_VERSION=8
 export TF_DOWNLOAD_CLANG=0
 export TF_NCCL_VERSION=2.7
-export TF_TENSORRT_VERSION=7.1
+export TF_TENSORRT_VERSION=7.2
 export GCC_HOST_COMPILER_PATH=$(which gcc)
 export ACTUAL_GCC_HOST_COMPILER_PATH=$(which -a gcc | grep -v /ccache/ | head -1) # skip ccache
 export CUDA_TOOLKIT_PATH=/usr/local/cuda
@@ -44,7 +44,7 @@ export TF_CUDA_COMPUTE_CAPABILITIES=3.5
 export TF_SET_ANDROID_WORKSPACE=0
 #export TF_IGNORE_MAX_BAZEL_VERSION=1
 
-TENSORFLOW_VERSION=1.15.3
+TENSORFLOW_VERSION=1.15.4
 
 download https://github.com/tensorflow/tensorflow/archive/v$TENSORFLOW_VERSION.tar.gz tensorflow-$TENSORFLOW_VERSION.tar.gz
 
@@ -129,7 +129,7 @@ sedinplace 's/std::vector<TensorShape> value/std::vector<TensorShape>* value/g' 
 sedinplace 's/NvInferRTSafe.h/NvInferRuntimeCommon.h/g' third_party/tensorrt/tensorrt_configure.bzl
 sedinplace 's/NvInferRTExt.h/NvInferRuntime.h/g' third_party/tensorrt/tensorrt_configure.bzl
 
-# Fix support for CUDA 11.0
+# Fix support for CUDA 11.x
 sedinplace 's/cudnn.h/cudnn_version.h/g' third_party/gpus/find_cuda_config.py
 sedinplace 's/if check_soname/if False/g' third_party/gpus/cuda_configure.bzl
 patch -Np1 < ../../../tensorflow-cuda11.patch
@@ -236,9 +236,11 @@ case $PLATFORM in
         patch -Np1 < ../../../tensorflow-java.patch
         # https://github.com/tensorflow/tensorflow/issues/25213
         patch -Np1 < ../../../tensorflow-windows.patch
+        sedinplace 's/"10"/"64_10"/g' tensorflow/stream_executor/platform/default/dso_loader.cc
+        sedinplace 's/"11.0"/"64_110"/g' tensorflow/stream_executor/platform/default/dso_loader.cc
         sedinplace 's/{diff_dst_index}, diff_src_index/{(int)diff_dst_index}, (int)diff_src_index/g' tensorflow/core/kernels/mkl_relu_op.cc
         if [[ ! -f $PYTHON_BIN_PATH ]]; then
-            export PYTHON_BIN_PATH="C:/Program Files/Python36/python.exe"
+            export PYTHON_BIN_PATH="$(which python.exe)"
         fi
         export BAZEL_VC="${VCINSTALLDIR:-}"
         export BAZEL_VC_FULL_VERSION="${VCToolsVersion:-}"
@@ -300,12 +302,34 @@ fi
 
 # prevent Bazel from exceeding maximum command line length on Windows
 while read -r l; do
-    if [[ $l == ANDROID_* ]] || [[ $l == APPVEYOR_* ]] || [[ $l == BUILD_* ]] || [[ $l == MAVEN_* ]] || [[ $l == ORIGINAL_* ]] || [[ $l == PLATFORM_* ]]; then
+    if [[ $l == ANDROID_* ]] || [[ $l == APPVEYOR_* ]] || [[ $l == BUILD_* ]] || [[ $l == CI_DEPLOY_* ]] || [[ $l == GITHUB_* ]] || [[ $l == GOROOT* ]] || [[ $l == JAVA_HOME_* ]] || [[ $l == MAVEN_* ]] || [[ $l == ORIGINAL_* ]] || [[ $l == PG* ]] || [[ $l == PLATFORM_* ]] || [[ $l == RUNNER_* ]]; then
         unset ${l%%=*}
     fi
 done < <(env)
+unset AZURE_EXTENSION_DIR
+unset MonAgentClientLocation
 unset PSModulePath
 unset __VSCMD_PREINIT_PATH
+
+echo Reducing PATH size by removing duplicates and truncating to satisfy Bazel
+PREVIFS="$IFS"
+NEWPATH="${PATH%%:*}"
+IFS=":"
+for P in $PATH; do
+    FOUND=0
+    for P2 in $NEWPATH; do
+        if [[ "$P" == "$P2" ]]; then
+            FOUND=1
+        fi
+    done
+    if [[ "$FOUND" == "0" ]] && [[ ${#NEWPATH} -lt 3000 ]]; then
+        NEWPATH=$NEWPATH:$P
+    fi
+done
+IFS="$PREVIFS"
+echo ${#PATH}
+echo ${#NEWPATH}
+export PATH=$NEWPATH
 
 bash configure
 bazel build -c opt $BUILDTARGETS --config=monolithic $BUILDFLAGS --spawn_strategy=standalone --genrule_strategy=standalone --output_filter=DONT_MATCH_ANYTHING --verbose_failures

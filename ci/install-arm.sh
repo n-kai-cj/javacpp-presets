@@ -78,31 +78,32 @@ docker exec -ti $DOCKER_CONTAINER_ID /bin/bash -xec "update-ca-certificates -f"
 if [[ "$PROJ" =~ cuda ]]; then
    echo "Setting up for cuda build"
    cd $HOME/
-   curl -L http://developer.download.nvidia.com/compute/cuda/11.0.1/local_installers/cuda-repo-cross-sbsa-ubuntu1804-11-0-local_11.0.1-1_all.deb -o $HOME/cuda-repo-cross-sbsa-ubuntu1804-11-0-local_11.0.1-1_all.deb
-   curl -L https://developer.download.nvidia.com/compute/redist/cudnn/v8.0.1/cudnn-11.0-linux-arm64-v8.0.1.13.tgz -o $HOME/cudnn-11.0-linux-arm64-v8.0.1.13.tgz
-   curl -L https://developer.download.nvidia.com/compute/redist/nccl/v2.7/nccl_2.7.3-1+cuda11.0_arm64.txz -o $HOME/nccl_arm64.txz
-   ar vx $HOME/cuda-repo-cross-sbsa-ubuntu1804-11-0-local_11.0.1-1_all.deb
+   curl -L https://developer.download.nvidia.com/compute/cuda/11.1.1/local_installers/cuda-repo-ubuntu1804-11-1-local_11.1.1-455.32.00-1_arm64.deb -o $HOME/cuda-repo-ubuntu1804-11-1-local_11.1.1-455.32.00-1_arm64.deb
+   curl -L https://developer.download.nvidia.com/compute/redist/cudnn/v8.0.4/cudnn-11.1-linux-arm64-v8.0.4.30.tgz -o $HOME/cudnn-11.1-linux-arm64-v8.0.4.30.tgz
+   curl -L https://developer.download.nvidia.com/compute/redist/nccl/v2.7/nccl_2.7.8-1+cuda11.1_arm64.txz -o $HOME/nccl_arm64.txz
+   ar vx $HOME/cuda-repo-ubuntu1804-11-1-local_11.1.1-455.32.00-1_arm64.deb
    tar xvf data.tar.xz
    mkdir $HOME/cudaFS
    cd var; find . -name *.deb | while read line; do ar vx $line; tar --totals -xf data.tar.xz -C $HOME/cudaFS; done
    cd ..
    rm -Rf var
    docker exec -ti $DOCKER_CONTAINER_ID /bin/bash -xec "cd /; cp -R $HOME/cudaFS/* ."
-   docker exec -ti $DOCKER_CONTAINER_ID /bin/bash -xec "ln -sf /usr/local/cuda-11.0 /usr/local/cuda"
+   docker exec -ti $DOCKER_CONTAINER_ID /bin/bash -xec "ln -sf /usr/local/cuda-11.1 /usr/local/cuda"
    docker exec -ti $DOCKER_CONTAINER_ID /bin/bash -xec "ln -sf /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/libcuda.so"
    docker exec -ti $DOCKER_CONTAINER_ID /bin/bash -xec "ln -sf /usr/local/cuda/lib64/stubs/libnvidia-ml.so /usr/local/cuda/lib64/libnvidia-ml.so"
-   docker exec -ti $DOCKER_CONTAINER_ID /bin/bash -xec "tar hxvf $HOME/cudnn-11.0-linux-arm64-v8.0.1.13.tgz -C /usr/local/"
+   docker exec -ti $DOCKER_CONTAINER_ID /bin/bash -xec "tar hxvf $HOME/cudnn-11.1-linux-arm64-v8.0.4.30.tgz -C /usr/local/"
    docker exec -ti $DOCKER_CONTAINER_ID /bin/bash -xec "tar hxvf $HOME/nccl_arm64.txz --strip-components=1 -C /usr/local/cuda/"
    docker exec -ti $DOCKER_CONTAINER_ID /bin/bash -xec "mv /usr/local/cuda/lib/* /usr/local/cuda/lib64/"
-   # work around issues with CUDA 10.2/11.0
+   # work around issues with CUDA 10.2/11.x
    docker exec -ti $DOCKER_CONTAINER_ID /bin/bash -xec "mv /usr/include/cublas* /usr/include/nvblas* /usr/local/cuda/include/"
    docker exec -ti $DOCKER_CONTAINER_ID /bin/bash -xec "mv /usr/lib/powerpc64le-linux-gnu/libcublas* /usr/lib/powerpc64le-linux-gnu/libnvblas* /usr/local/cuda/lib64/"
    docker exec -ti $DOCKER_CONTAINER_ID /bin/bash -xec "for f in /usr/local/cuda/lib64/*.so.10; do ln -s \$f \$f.2; done"
    docker exec -ti $DOCKER_CONTAINER_ID /bin/bash -xec "for f in /usr/local/cuda/lib64/*.so.10; do ln -s \$f \${f:0:-1}1; done"
+   docker exec -ti $DOCKER_CONTAINER_ID /bin/bash -xec "ln -s libcudart.so.11.0 /usr/local/cuda/lib64/libcudart.so.11.1"
 fi
 
-if [ "$OS" == "linux-arm64" ]; then
-    if [[ "$PROJ" =~ flycapture ]]; then
+if [[ "$PROJ" =~ flycapture ]]; then
+    if [ "$OS" == "linux-arm64" ]; then
       if [[ $(find $HOME/downloads/flycapture.2.13.3.31_arm64.tar.gz -type f -size +1000000c 2>/dev/null) ]]; then
         echo "Found flycap-arm64 in cache and size seems ok"
       else
@@ -110,6 +111,14 @@ if [ "$OS" == "linux-arm64" ]; then
         python $TRAVIS_BUILD_DIR/ci/gDownload.py 1LhnuRMT3urYsApCcuBEcaotGRK8h4kJv $HOME/downloads/flycapture.2.13.3.31_arm64.tar.gz
       fi
       cp $HOME/downloads/flycapture.2.13.3.31_arm64.tar.gz $TRAVIS_BUILD_DIR/downloads/
+   elif [ "$OS" == "linux-armhf" ]; then
+      if [[ $(find $HOME/downloads/flycapture.2.13.3.31_armhf.tar.gz -type f -size +1000000c 2>/dev/null) ]]; then
+          echo "Found flycap-armhf in cache and size seems ok" 
+      else
+          echo "Downloading flycap-armhf as not found in cache or too small" 
+          python $TRAVIS_BUILD_DIR/ci/gDownload.py 16NuUBs2MXQpVYqzDCEr9KdMng-6rHuDI $HOME/downloads/flycapture.2.13.3.31_armhf.tar.gz
+      fi
+      cp $HOME/downloads/flycapture.2.13.3.31_armhf.tar.gz $TRAVIS_BUILD_DIR/downloads/
    fi
 fi
 
@@ -129,12 +138,12 @@ echo "Running install for $PROJ"
 echo "container id is $DOCKER_CONTAINER_ID"
  if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
      echo "Not a pull request so attempting to deploy using docker"
-     docker exec -ti $DOCKER_CONTAINER_ID /bin/bash -xec ". $HOME/vars.list; cd $HOME/build/javacpp-presets; mvn clean deploy -B -U -Dmaven.repo.local=$HOME/.m2/repository --settings ./ci/settings.xml -Dmaven.test.skip=true $MAVEN_RELEASE $BUILD_COMPILER $BUILD_OPTIONS $BUILD_ROOT -Djavacpp.platform=$OS -pl .,$PROJ"; export BUILD_STATUS=$?
+     docker exec -ti $DOCKER_CONTAINER_ID /bin/bash -xec ". $HOME/vars.list; cd $HOME/build/javacpp-presets; mvn clean deploy -B -U -Dmaven.repo.local=$HOME/.m2/repository --settings ./ci/settings.xml -Dmaven.test.skip=true $MAVEN_RELEASE $BUILD_COMPILER $BUILD_OPTIONS $BUILD_ROOT -Djavacpp.platform=$OS -Djavacpp.platform.extension=$EXT -pl .,$PROJ"; export BUILD_STATUS=$?
      if [ $BUILD_STATUS -eq 0 ]; then
        echo "Deploying platform"
        for i in ${PROJ//,/ }
        do
-        docker exec -ti $DOCKER_CONTAINER_ID /bin/bash -xec "cd $HOME/build/javacpp-presets/$i; mvn clean deploy -B -U -Dmaven.repo.local=$HOME/.m2/repository --settings ../ci/settings.xml -f platform/pom.xml -Dmaven.test.skip=true $MAVEN_RELEASE -Djavacpp.platform=$OS"; export BUILD_STATUS=$?
+        docker exec -ti $DOCKER_CONTAINER_ID /bin/bash -xec "cd $HOME/build/javacpp-presets/$i; mvn clean deploy -B -U -Dmaven.repo.local=$HOME/.m2/repository --settings ../ci/settings.xml -f platform/${EXT:1}/pom.xml -Dmaven.test.skip=true $MAVEN_RELEASE -Djavacpp.platform=$OS -Djavacpp.platform.extension=$EXT"; export BUILD_STATUS=$?
         if [ $BUILD_STATUS -ne 0 ]; then
          echo "Build Failed"
          exit $BUILD_STATUS
@@ -144,7 +153,7 @@ echo "container id is $DOCKER_CONTAINER_ID"
 
    else
      echo "Pull request so install using docker"
-     docker exec -ti $DOCKER_CONTAINER_ID /bin/bash -xec ". $HOME/vars.list; cd $HOME/build/javacpp-presets;mvn clean install -B -U -Dmaven.repo.local=$HOME/.m2/repository --settings ./ci/settings.xml -Dmaven.test.skip=true $MAVEN_RELEASE $BUILD_COMPILER $BUILD_OPTIONS $BUILD_ROOT -Djavacpp.platform=$OS -pl .,$PROJ"; export BUILD_STATUS=$?
+     docker exec -ti $DOCKER_CONTAINER_ID /bin/bash -xec ". $HOME/vars.list; cd $HOME/build/javacpp-presets;mvn clean install -B -U -Dmaven.repo.local=$HOME/.m2/repository --settings ./ci/settings.xml -Dmaven.test.skip=true $MAVEN_RELEASE $BUILD_COMPILER $BUILD_OPTIONS $BUILD_ROOT -Djavacpp.platform=$OS -Djavacpp.platform.extension=$EXT -pl .,$PROJ"; export BUILD_STATUS=$?
  fi
 
  echo "Build status $BUILD_STATUS"

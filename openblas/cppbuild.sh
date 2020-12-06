@@ -7,7 +7,7 @@ if [[ -z "$PLATFORM" ]]; then
     exit
 fi
 
-OPENBLAS_VERSION=0.3.10
+OPENBLAS_VERSION=0.3.12
 
 download https://github.com/xianyi/OpenBLAS/archive/v$OPENBLAS_VERSION.tar.gz OpenBLAS-$OPENBLAS_VERSION.tar.gz
 
@@ -33,6 +33,7 @@ export HOSTCC=gcc
 export NO_LAPACK=0
 export NUM_THREADS=64
 export NO_AFFINITY=1
+export NO_AVX512=1
 case $PLATFORM in
     android-arm)
         patch -Np1 < ../../../OpenBLAS-android.patch
@@ -154,6 +155,7 @@ case $PLATFORM in
         export BINARY=64
         export DYNAMIC_ARCH=1
         export TARGET=NEHALEM
+        export NO_AVX512=0
         ;;
     linux-ppc64le)
         # patch to use less buggy generic kernels
@@ -229,12 +231,12 @@ case $PLATFORM in
         ;;
 esac
 
-make -s -j $MAKEJ libs netlib shared "CROSS_SUFFIX=$CROSS_SUFFIX" "CC=$CC" "FC=$FC" "HOSTCC=$HOSTCC" BINARY=$BINARY COMMON_PROF= F_COMPILER=GFORTRAN "FEXTRALIB=$FEXTRALIB" USE_OPENMP=0 NUM_THREADS=$NUM_THREADS
+make -s -j $MAKEJ libs netlib shared "CROSS_SUFFIX=$CROSS_SUFFIX" "CC=$CC" "FC=$FC" "HOSTCC=$HOSTCC" BINARY=$BINARY COMMON_PROF= F_COMPILER=GFORTRAN "FEXTRALIB=$FEXTRALIB" USE_OPENMP=0 NUM_THREADS=$NUM_THREADS NO_AVX512=$NO_AVX512
 make install "PREFIX=$INSTALL_PATH"
 
 unset DYNAMIC_ARCH
 cd ../OpenBLAS-$OPENBLAS_VERSION-nolapack/
-make -s -j $MAKEJ libs netlib shared "CROSS_SUFFIX=$CROSS_SUFFIX" "CC=$CC" "FC=$FC" "HOSTCC=$HOSTCC" BINARY=$BINARY COMMON_PROF= F_COMPILER=GFORTRAN "FEXTRALIB=$FEXTRALIB" USE_OPENMP=0 NUM_THREADS=$NUM_THREADS NO_LAPACK=1 LIBNAMESUFFIX=nolapack
+make -s -j $MAKEJ libs netlib shared "CROSS_SUFFIX=$CROSS_SUFFIX" "CC=$CC" "FC=$FC" "HOSTCC=$HOSTCC" BINARY=$BINARY COMMON_PROF= F_COMPILER=GFORTRAN "FEXTRALIB=$FEXTRALIB" USE_OPENMP=0 NUM_THREADS=$NUM_THREADS NO_AVX512=$NO_AVX512 NO_LAPACK=1 LIBNAMESUFFIX=nolapack
 make install "PREFIX=$INSTALL_PATH" NO_LAPACK=1 LIBNAMESUFFIX=nolapack
 
 unset CC

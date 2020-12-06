@@ -16,7 +16,7 @@ export OPENMP_FLAGS="--use_openmp"
 case $PLATFORM in
     macosx-*)
         # disable OpenMP on Mac until it's fixed
-        OPENMP_FLAGS=
+        export OPENMP_FLAGS=
         ;;
     windows-*)
         if [[ -n "${CUDA_PATH:-}" ]]; then
@@ -24,6 +24,8 @@ case $PLATFORM in
             export CUDA_HOME="$CUDA_PATH"
             export CUDNN_HOME="$CUDA_PATH"
         fi
+        export CC="cl.exe"
+        export CXX="cl.exe"
         export PYTHON_BIN_PATH=$(which python.exe)
         ;;
 esac
@@ -33,7 +35,7 @@ if [[ "$EXTENSION" == *gpu ]]; then
     GPU_FLAGS="--use_cuda"
 fi
 
-ONNXRUNTIME=1.4.0
+ONNXRUNTIME=1.5.3
 
 mkdir -p "$PLATFORM$EXTENSION"
 cd "$PLATFORM$EXTENSION"
@@ -51,10 +53,14 @@ git submodule foreach --recursive 'git reset --hard'
 
 # work around toolchain issues on Mac and Windows
 patch -p1 < ../../../onnxruntime.patch
+sedinplace "s/default='Visual Studio 15 2017'/default='Ninja'/g" tools/ci_build/build.py
+sedinplace 's:/Yucuda_pch.h /FIcuda_pch.h::g' cmake/onnxruntime_providers.cmake
 sedinplace 's/${PROJECT_SOURCE_DIR}\/external\/cub//g' cmake/onnxruntime_providers.cmake
 sedinplace 's/CMAKE_ARGS/CMAKE_ARGS -DMKLDNN_BUILD_EXAMPLES=OFF -DMKLDNN_BUILD_TESTS=OFF/g' cmake/external/dnnl.cmake
 sedinplace 's/cudnnSetRNNDescriptor(/cudnnSetRNNDescriptor_v6(/g' onnxruntime/core/providers/cuda/rnn/cudnn_rnn_base.h
 sedinplace 's/HOST_NAME_MAX/sysconf(_SC_HOST_NAME_MAX)/g' onnxruntime/core/providers/cuda/cuda_call.cc
+sedinplace 's/#define NO_EXCEPTION noexcept/#define NO_EXCEPTION/g' include/onnxruntime/core/session/onnxruntime_c_api.h
+sedinplace 's/Provider_/_Provider_/g' onnxruntime/core/providers/shared/exported_symbols.lst
 
 # use PTX instead of compiling for all CUDA archs to reduce library size
 sedinplace 's/-gencode=arch=compute_52,code=sm_52/-arch=sm_35/g' cmake/CMakeLists.txt
@@ -93,8 +99,8 @@ cp -r orttraining/orttraining/models/runner/training_runner.h ../include
 cp -r orttraining/orttraining/models/runner/training_util.h ../include
 cp -r java/src/main/java/* ../java
 cp -a ../build/Release/lib* ../lib || true
-cp ../build/Release/Release/onnxruntime*.dll ../bin || true
-cp ../build/Release/Release/onnxruntime*.lib ../lib || true
+cp ../build/Release/onnxruntime*.dll ../bin || true
+cp ../build/Release/onnxruntime*.lib ../lib || true
 
 # fix library with the same name for OpenMP as MKL on Mac
 case $PLATFORM in

@@ -7,7 +7,7 @@ if [[ -z "$PLATFORM" ]]; then
     exit
 fi
 
-LLVM_VERSION=10.0.1
+LLVM_VERSION=11.0.0
 download https://github.com/llvm/llvm-project/releases/download/llvmorg-$LLVM_VERSION/llvm-$LLVM_VERSION.src.tar.xz llvm-$LLVM_VERSION.src.tar.xz
 download https://github.com/llvm/llvm-project/releases/download/llvmorg-$LLVM_VERSION/clang-$LLVM_VERSION.src.tar.xz clang-$LLVM_VERSION.src.tar.xz
 download https://github.com/llvm/llvm-project/releases/download/llvmorg-$LLVM_VERSION/polly-$LLVM_VERSION.src.tar.xz polly-$LLVM_VERSION.src.tar.xz
@@ -18,6 +18,7 @@ INSTALL_PATH=`pwd`
 echo "Decompressing archives... (ignore any symlink errors)"
 tar --totals -xf ../llvm-$LLVM_VERSION.src.tar.xz || tar --totals -xf ../llvm-$LLVM_VERSION.src.tar.xz
 cd llvm-$LLVM_VERSION.src
+sedinplace '/find_package(Git/d' cmake/modules/AddLLVM.cmake cmake/modules/VersionFromVCS.cmake
 mkdir -p build tools
 cd tools
 tar --totals -xf ../../../clang-$LLVM_VERSION.src.tar.xz || tar --totals -xf ../../../clang-$LLVM_VERSION.src.tar.xz
@@ -91,17 +92,17 @@ case $PLATFORM in
     windows-x86)
         export CC="cl.exe"
         export CXX="cl.exe"
-        $CMAKE -G "Ninja" -DLLVM_BUILD_LLVM_C_DYLIB=OFF -DCMAKE_EXE_LINKER_FLAGS="/FORCE:MULTIPLE" -DCMAKE_SHARED_LINKER_FLAGS="/FORCE:MULTIPLE" -DLLVM_TEMPORARILY_ALLOW_OLD_TOOLCHAIN=ON -DLLVM_USE_CRT_RELEASE=MD -DCMAKE_INSTALL_PREFIX=../.. -DCMAKE_BUILD_TYPE=Release -DLLVM_TARGETS_TO_BUILD=all -DLLVM_ENABLE_DIA_SDK=OFF -DLLVM_ENABLE_LIBXML2=OFF -DLLVM_INCLUDE_TESTS=OFF -DPYTHON_EXECUTABLE="C:/Python27/python.exe" -DLLVM_POLLY_LINK_INTO_TOOLS=ON ..
+        $CMAKE -G "Ninja" -DLLVM_BUILD_LLVM_C_DYLIB=OFF -DCMAKE_EXE_LINKER_FLAGS="/FORCE:MULTIPLE" -DCMAKE_SHARED_LINKER_FLAGS="/FORCE:MULTIPLE" -DLLVM_TEMPORARILY_ALLOW_OLD_TOOLCHAIN=ON -DLLVM_USE_CRT_RELEASE=MD -DCMAKE_INSTALL_PREFIX=../.. -DCMAKE_BUILD_TYPE=Release -DLLVM_TARGETS_TO_BUILD=all -DLLVM_ENABLE_DIA_SDK=OFF -DLLVM_ENABLE_LIBXML2=OFF -DLLVM_INCLUDE_TESTS=OFF -DPYTHON_EXECUTABLE="$(where python.exe | head -1)" -DLLVM_POLLY_LINK_INTO_TOOLS=ON ..
         ninja -j $MAKEJ
         cd lib/
-        [ -f LLVM.lib ] || lib.exe /OUT:LLVM.lib LLVM*.lib
+        [ -f LLVM.lib ] || lib.exe /OUT:LLVM.lib LLVM*.lib Polly*.lib
         [ -f clang.lib ] || lib.exe /OUT:clang.lib clang*.lib
         cd ..
-        $CMAKE -G "Ninja" -DLLVM_USE_CRT_RELEASE=MD -DCMAKE_INSTALL_PREFIX=../.. -DLLVM_BUILD_LLVM_C_DYLIB=OFF -DLLVM_BUILD_LLVM_DYLIB=ON -DLLVM_LINK_LLVM_DYLIB=ON -DCMAKE_BUILD_TYPE=Release -DLLVM_TARGETS_TO_BUILD=all -DLLVM_ENABLE_DIA_SDK=OFF -DLLVM_ENABLE_LIBXML2=OFF -DLLVM_INCLUDE_TESTS=OFF -DPYTHON_EXECUTABLE="C:/Python27/python.exe" -DLLVM_POLLY_LINK_INTO_TOOLS=ON ..
+        $CMAKE -G "Ninja" -DLLVM_USE_CRT_RELEASE=MD -DCMAKE_INSTALL_PREFIX=../.. -DLLVM_BUILD_LLVM_C_DYLIB=OFF -DLLVM_BUILD_LLVM_DYLIB=ON -DLLVM_LINK_LLVM_DYLIB=ON -DCMAKE_BUILD_TYPE=Release -DLLVM_TARGETS_TO_BUILD=all -DLLVM_ENABLE_DIA_SDK=OFF -DLLVM_ENABLE_LIBXML2=OFF -DLLVM_INCLUDE_TESTS=OFF -DPYTHON_EXECUTABLE="$(where python.exe | head -1)" -DLLVM_POLLY_LINK_INTO_TOOLS=ON ..
         ninja -j $MAKEJ
         ninja install
         cd ../../lib
-        [ -f LLVM.lib ] || lib.exe /OUT:LLVM.lib LLVM*.lib
+        [ -f LLVM.lib ] || lib.exe /OUT:LLVM.lib LLVM*.lib Polly*.lib
         [ -f clang.lib ] || lib.exe /OUT:clang.lib clang*.lib
         [ -f LTO.lib ] || cp ../llvm-$LLVM_VERSION.src/build/lib/LTO.lib .
         cd ../llvm-$LLVM_VERSION.src/build
@@ -109,17 +110,17 @@ case $PLATFORM in
     windows-x86_64)
         export CC="cl.exe"
         export CXX="cl.exe"
-        $CMAKE -G "Ninja" -DLLVM_BUILD_LLVM_C_DYLIB=OFF -DCMAKE_EXE_LINKER_FLAGS="/FORCE:MULTIPLE" -DCMAKE_SHARED_LINKER_FLAGS="/FORCE:MULTIPLE" -DLLVM_TEMPORARILY_ALLOW_OLD_TOOLCHAIN=ON -DLLVM_USE_CRT_RELEASE=MD -DCMAKE_INSTALL_PREFIX=../.. -DCMAKE_BUILD_TYPE=Release -DLLVM_TARGETS_TO_BUILD=all -DLLVM_ENABLE_DIA_SDK=OFF -DLLVM_ENABLE_LIBXML2=OFF -DLLVM_INCLUDE_TESTS=OFF -DPYTHON_EXECUTABLE="C:/Python27/python.exe" -DLLVM_POLLY_LINK_INTO_TOOLS=ON ..
+        $CMAKE -G "Ninja" -DLLVM_BUILD_LLVM_C_DYLIB=OFF -DCMAKE_EXE_LINKER_FLAGS="/FORCE:MULTIPLE" -DCMAKE_SHARED_LINKER_FLAGS="/FORCE:MULTIPLE" -DLLVM_TEMPORARILY_ALLOW_OLD_TOOLCHAIN=ON -DLLVM_USE_CRT_RELEASE=MD -DCMAKE_INSTALL_PREFIX=../.. -DCMAKE_BUILD_TYPE=Release -DLLVM_TARGETS_TO_BUILD=all -DLLVM_ENABLE_DIA_SDK=OFF -DLLVM_ENABLE_LIBXML2=OFF -DLLVM_INCLUDE_TESTS=OFF -DPYTHON_EXECUTABLE="$(where python.exe | head -1)" -DLLVM_POLLY_LINK_INTO_TOOLS=ON ..
         ninja -j $MAKEJ
         cd lib/
-        [ -f LLVM.lib ] || lib.exe /OUT:LLVM.lib LLVM*.lib
+        [ -f LLVM.lib ] || lib.exe /OUT:LLVM.lib LLVM*.lib Polly*.lib
         [ -f clang.lib ] || lib.exe /OUT:clang.lib clang*.lib
         cd ..
-        $CMAKE -G "Ninja" -DLLVM_USE_CRT_RELEASE=MD -DCMAKE_INSTALL_PREFIX=../.. -DLLVM_BUILD_LLVM_C_DYLIB=OFF -DLLVM_BUILD_LLVM_DYLIB=ON -DLLVM_LINK_LLVM_DYLIB=ON -DCMAKE_BUILD_TYPE=Release -DLLVM_TARGETS_TO_BUILD=all -DLLVM_ENABLE_DIA_SDK=OFF -DLLVM_ENABLE_LIBXML2=OFF -DLLVM_INCLUDE_TESTS=OFF -DPYTHON_EXECUTABLE="C:/Python27/python.exe" -DLLVM_POLLY_LINK_INTO_TOOLS=ON ..
+        $CMAKE -G "Ninja" -DLLVM_USE_CRT_RELEASE=MD -DCMAKE_INSTALL_PREFIX=../.. -DLLVM_BUILD_LLVM_C_DYLIB=OFF -DLLVM_BUILD_LLVM_DYLIB=ON -DLLVM_LINK_LLVM_DYLIB=ON -DCMAKE_BUILD_TYPE=Release -DLLVM_TARGETS_TO_BUILD=all -DLLVM_ENABLE_DIA_SDK=OFF -DLLVM_ENABLE_LIBXML2=OFF -DLLVM_INCLUDE_TESTS=OFF -DPYTHON_EXECUTABLE="$(where python.exe | head -1)" -DLLVM_POLLY_LINK_INTO_TOOLS=ON ..
         ninja -j $MAKEJ
         ninja install
         cd ../../lib
-        [ -f LLVM.lib ] || lib.exe /OUT:LLVM.lib LLVM*.lib
+        [ -f LLVM.lib ] || lib.exe /OUT:LLVM.lib LLVM*.lib Polly*.lib
         [ -f clang.lib ] || lib.exe /OUT:clang.lib clang*.lib
         [ -f LTO.lib ] || cp ../llvm-$LLVM_VERSION.src/build/lib/LTO.lib .
         cd ../llvm-$LLVM_VERSION.src/build

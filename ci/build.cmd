@@ -32,16 +32,16 @@ if "%APPVEYOR_PULL_REQUEST_NUMBER%" == "" if "%APPVEYOR_REPO_BRANCH%" == "releas
 
 rem C:\msys64\usr\bin\bash -lc "pacman -Syu --noconfirm"
 rem C:\msys64\usr\bin\bash -lc "pacman -Su --noconfirm"
-C:\msys64\usr\bin\bash -lc "pacman -S --needed --noconfirm base-devel git tar nasm pkg-config unzip p7zip zip autoconf autoconf-archive automake libtool make patch gnupg"
-C:\msys64\usr\bin\bash -lc "pacman -S --needed --noconfirm mingw-w64-x86_64-toolchain mingw-w64-x86_64-libtool mingw-w64-x86_64-gcc mingw-w64-i686-gcc mingw-w64-x86_64-gcc-fortran mingw-w64-i686-gcc-fortran mingw-w64-x86_64-libwinpthread-git mingw-w64-i686-libwinpthread-git mingw-w64-x86_64-SDL mingw-w64-i686-SDL mingw-w64-x86_64-ragel"
+C:\msys64\usr\bin\bash -lc "pacman -S --needed --noconfirm base-devel git tar pkg-config unzip p7zip zip autoconf autoconf-archive automake make patch gnupg"
+C:\msys64\usr\bin\bash -lc "pacman -S --needed --noconfirm mingw-w64-x86_64-nasm mingw-w64-x86_64-toolchain mingw-w64-x86_64-gcc mingw-w64-i686-gcc mingw-w64-x86_64-gcc-fortran mingw-w64-i686-gcc-fortran mingw-w64-x86_64-libwinpthread-git mingw-w64-i686-libwinpthread-git mingw-w64-x86_64-SDL mingw-w64-i686-SDL mingw-w64-x86_64-ragel"
 
 SET "PATH=C:\Program Files\Python37;C:\Program Files (x86)\CMake\bin;C:\msys64\usr\bin\core_perl;C:\msys64\%MSYSTEM%\bin;C:\msys64\usr\bin;%PATH%"
 C:\msys64\usr\bin\bash -c "ci/install-windows.sh %PROJ%"
 if exist "%ProgramFiles%\NVIDIA GPU Computing Toolkit" (
-    SET "CUDA_PATH=%ProgramFiles%\NVIDIA GPU Computing Toolkit\CUDA\v11.0"
-    SET "CUDA_PATH_V11_0=%ProgramFiles%\NVIDIA GPU Computing Toolkit\CUDA\v11.0"
-    SET "PATH=%ProgramFiles%\NVIDIA GPU Computing Toolkit\CUDA\v11.0\bin;%ProgramFiles%\NVIDIA GPU Computing Toolkit\CUDA\v11.0\libnvvp;%PATH%"
-    echo CUDA Version 11.0.182>"%ProgramFiles%\NVIDIA GPU Computing Toolkit\CUDA\v11.0\version.txt"
+    SET "CUDA_PATH=%ProgramFiles%\NVIDIA GPU Computing Toolkit\CUDA\v11.1"
+    SET "CUDA_PATH_V11_1=%ProgramFiles%\NVIDIA GPU Computing Toolkit\CUDA\v11.1"
+    SET "PATH=%ProgramFiles%\NVIDIA GPU Computing Toolkit\CUDA\v11.1\bin;%ProgramFiles%\NVIDIA GPU Computing Toolkit\CUDA\v11.1\libnvvp;%PATH%"
+    echo CUDA Version 11.1.182>"%ProgramFiles%\NVIDIA GPU Computing Toolkit\CUDA\v11.1\version.txt"
 )
 
 echo Building for "%APPVEYOR_REPO_BRANCH%"

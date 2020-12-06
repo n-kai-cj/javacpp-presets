@@ -1,6 +1,6 @@
 version: '{build}'
 
-os: Visual Studio 2017
+os: Visual Studio 2019
 
 cache:
   - C:\Users\appveyor\.m2 -> .appveyor.yml
@@ -73,7 +73,6 @@ environment:
       OS: windows-x86_64
     - PROJ: "mxnet"
       OS: windows-x86_64
-      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
     - PROJ: "tensorflow"
       OS: windows-x86_64
     - PROJ: "tensorrt"
@@ -81,6 +80,8 @@ environment:
     - PROJ: "ale"
       OS: windows-x86_64
     - PROJ: "onnxruntime"
+      OS: windows-x86_64
+    - PROJ: "tvm"
       OS: windows-x86_64
     - PROJ: "liquidfun"
       OS: windows-x86_64
@@ -95,7 +96,6 @@ environment:
     - PROJ: "mxnet"
       OS: windows-x86_64
       EXT: -gpu
-      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
 #    - PROJ: "tensorflow"
 #      OS: windows-x86_64
 #      EXT: -gpu
@@ -110,6 +110,9 @@ environment:
 #      OS: windows-x86_64
 #      EXT: -python-gpu
     - PROJ: "onnxruntime"
+      OS: windows-x86_64
+      EXT: -gpu
+    - PROJ: "tvm"
       OS: windows-x86_64
       EXT: -gpu
 
