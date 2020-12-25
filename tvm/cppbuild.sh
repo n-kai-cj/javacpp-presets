@@ -24,6 +24,7 @@ OPENBLAS_PATH="$INSTALL_PATH/../../../openblas/cppbuild/$PLATFORM/"
 NUMPY_PATH="$INSTALL_PATH/../../../numpy/cppbuild/$PLATFORM/"
 SCIPY_PATH="$INSTALL_PATH/../../../scipy/cppbuild/$PLATFORM/"
 LLVM_PATH="$INSTALL_PATH/../../../llvm/cppbuild/$PLATFORM/"
+MKL_PATH="$INSTALL_PATH/../../../mkl/cppbuild/$PLATFORM/"
 MKLDNN_PATH="$INSTALL_PATH/../../../dnnl/cppbuild/$PLATFORM/"
 
 if [[ -n "${BUILD_PATH:-}" ]]; then
@@ -40,6 +41,8 @@ if [[ -n "${BUILD_PATH:-}" ]]; then
             SCIPY_PATH="$P"
         elif [[ -f "$P/include/llvm-c/Core.h" ]]; then
             LLVM_PATH="$P"
+        elif [[ -f "$P/include/mkl.h" ]]; then
+            MKL_PATH="$P"
         elif [[ -f "$P/include/dnnl.h" ]]; then
             MKLDNN_PATH="$P"
         fi
@@ -52,6 +55,7 @@ OPENBLAS_PATH="${OPENBLAS_PATH//\\//}"
 NUMPY_PATH="${NUMPY_PATH//\\//}"
 SCIPY_PATH="${SCIPY_PATH//\\//}"
 LLVM_PATH="${LLVM_PATH//\\//}"
+MKL_PATH="${MKL_PATH//\\//}"
 MKLDNN_PATH="${MKLDNN_PATH//\\//}"
 
 echo "Decompressing archives..."
@@ -63,6 +67,9 @@ export TVM_LIBRARY_PATH=`pwd`
 # Fix compiler errors
 sedinplace 's/uint32_t _type_child_slots_can_overflow/bool _type_child_slots_can_overflow/g' include/tvm/runtime/ndarray.h
 sedinplace 's/-Werror//g' src/runtime/crt/Makefile
+
+# https://github.com/apache/tvm/pull/6752
+patch -Np1 < ../../../tvm.patch
 
 # Work around issues with llvm-config
 f=($LLVM_PATH/llvm-config*)
@@ -106,7 +113,7 @@ $PYTHON_BIN_PATH -m pip install --target=$PYTHON_LIB_PATH setuptools
 
 case $PLATFORM in
     linux-x86_64)
-        $CMAKE -DCMAKE_INSTALL_PREFIX="$INSTALL_PATH" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INCLUDE_PATH=$OPENBLAS_PATH/include -DCMAKE_LIBRARY_PATH=$OPENBLAS_PATH/lib -DUSE_BLAS=openblas -DUSE_LLVM=$LLVM_PATH/bin/llvm-config -DUSE_MKLDNN=$MKLDNN_PATH -DUSE_MICRO=ON $GPU_FLAGS -DUSE_OPENMP=gnu .
+        $CMAKE -DCMAKE_INSTALL_PREFIX="$INSTALL_PATH" -DCMAKE_BUILD_TYPE=Release -DUSE_MKL=$MKL_PATH -DUSE_LLVM=$LLVM_PATH/bin/llvm-config -DUSE_MKLDNN=$MKLDNN_PATH -DUSE_MICRO=ON $GPU_FLAGS -DUSE_OPENMP=intel -DOMP_LIBRARY=$MKL_PATH/lib/libiomp5.so .
         make -j $MAKEJ
         make install/strip
         cd python
@@ -119,7 +126,7 @@ case $PLATFORM in
         cp /usr/local/lib/libomp.dylib ../lib/libiomp5.dylib
         chmod +w ../lib/libiomp5.dylib
         install_name_tool -id @rpath/libiomp5.dylib ../lib/libiomp5.dylib
-        $CMAKE -DCMAKE_INSTALL_PREFIX="$INSTALL_PATH" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INCLUDE_PATH=$OPENBLAS_PATH/include -DCMAKE_LIBRARY_PATH=$OPENBLAS_PATH/lib -DUSE_BLAS=openblas -DUSE_LLVM=$LLVM_PATH/bin/llvm-config -DUSE_MKLDNN=$MKLDNN_PATH -DUSE_MICRO=ON $GPU_FLAGS -DUSE_OPENMP=intel -DOpenMP_C_FLAGS="-Xclang -fopenmp" -DOpenMP_CXX_FLAGS="-Xclang -fopenmp" -DCMAKE_C_FLAGS="-I/usr/local/include -L$INSTALL_PATH/lib -liomp5" -DCMAKE_CXX_FLAGS="-I/usr/local/include -L$INSTALL_PATH/lib -liomp5" .
+        $CMAKE -DCMAKE_INSTALL_PREFIX="$INSTALL_PATH" -DCMAKE_BUILD_TYPE=Release -DUSE_MKL=$MKL_PATH -DUSE_LLVM=$LLVM_PATH/bin/llvm-config -DUSE_MKLDNN=$MKLDNN_PATH -DUSE_MICRO=ON $GPU_FLAGS -DUSE_OPENMP=intel -DOpenMP_C_FLAGS="-Xclang -fopenmp" -DOpenMP_CXX_FLAGS="-Xclang -fopenmp" -DCMAKE_C_FLAGS="-I/usr/local/include -L$INSTALL_PATH/lib -liomp5" -DCMAKE_CXX_FLAGS="-I/usr/local/include -L$INSTALL_PATH/lib -liomp5" .
         make -j $MAKEJ
         make install/strip
         cd python
@@ -131,7 +138,7 @@ case $PLATFORM in
     windows-x86_64)
         export CC="cl.exe"
         export CXX="cl.exe"
-        $CMAKE -G "Ninja" -DCMAKE_INSTALL_PREFIX="$INSTALL_PATH" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INCLUDE_PATH=$OPENBLAS_PATH/include -DCMAKE_LIBRARY_PATH=$OPENBLAS_PATH/lib -DUSE_BLAS=openblas -DUSE_LLVM=$LLVM_PATH/bin/llvm-config -DUSE_MKLDNN=$MKLDNN_PATH $GPU_FLAGS -DUSE_OPENMP=intel -DOMP_LIBRARY= .
+        $CMAKE -G "Ninja" -DCMAKE_INSTALL_PREFIX="$INSTALL_PATH" -DCMAKE_BUILD_TYPE=Release -DUSE_MKL=$MKL_PATH -DUSE_LLVM=$LLVM_PATH/bin/llvm-config -DUSE_MKLDNN=$MKLDNN_PATH $GPU_FLAGS -DUSE_OPENMP=intel -DOMP_LIBRARY= .
         ninja -j $MAKEJ
         ninja install
         cd python
@@ -153,9 +160,22 @@ mkdir -p ../python
 export MODULES=(attr decorator psutil typed_ast tvm)
 for MODULE in ${MODULES[@]}; do
     mkdir -p ../python/$MODULE.egg-info
-    cp -r $PYTHON_INSTALL_PATH/$MODULE*/$MODULE* ../python/
-    cp -r $PYTHON_INSTALL_PATH/$MODULE*/EGG-INFO/* ../python/$MODULE.egg-info/
+    cp -r $PYTHON_INSTALL_PATH/$MODULE*/$MODULE* ../python/ || true
+    cp -r $PYTHON_INSTALL_PATH/$MODULE*/EGG-INFO/* ../python/$MODULE.egg-info/ || true
 done
 rm -Rf $(find ../ -iname __pycache__)
+
+# Copy/adjust Java source files
+mkdir -p ../java
+cp -r jvm/core/src/main/java/* ../java
+cp -r jvm/native/src/main/native/* ../include
+sedinplace '/dlfcn.h/d' ../include/org_apache_tvm_native_c_api.cc
+sedinplace '/org_apache_tvm_native_c_api.h/d' ../include/org_apache_tvm_native_c_api.cc
+sedinplace '/if (_tvmHandle/,/^  }/d' ../include/org_apache_tvm_native_c_api.cc
+sedinplace 's/reinterpret_cast<int>/static_cast<int>/g' ../include/org_apache_tvm_native_c_api.cc
+sedinplace '/#include "jni_helper_func.h"/i\
+extern "C" {
+' ../include/org_apache_tvm_native_c_api.cc
+echo "}" >> ../include/org_apache_tvm_native_c_api.cc
 
 cd ../..
