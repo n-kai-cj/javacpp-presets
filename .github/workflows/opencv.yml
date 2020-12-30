@@ -80,9 +80,9 @@ jobs:
   #     - uses: bytedeco/javacpp-presets/.github/actions/deploy-windows@actions
   windows-x86_64:
     runs-on: windows-2019
-    strategy:
-      matrix:
-        ext: ["", -gpu]
+    # strategy:
+    #   matrix:
+    #     ext: ["", -gpu]
     steps:
       - uses: n-kai-cj/javacpp-presets/.github/actions/deploy-windows@githubtest1
   redeploy:
