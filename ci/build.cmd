@@ -48,7 +48,7 @@ echo Building for "%APPVEYOR_REPO_BRANCH%"
 echo PR Number "%APPVEYOR_PULL_REQUEST_NUMBER%"
 
 IF "%PARTIAL_CPPBUILD%"=="1" (
-   C:\msys64\usr\bin\bash -c "bash cppbuild.sh install %PROJ% -platform=%OS% -extension=%EXT%"
+   NOOPENBLAS=yes C:\msys64\usr\bin\bash -c "bash cppbuild.sh install %PROJ% -platform=%OS% -extension=%EXT%"
    C:\msys64\usr\bin\bash -c "zip -r %PROJ%-cppbuild.zip %PROJ%/cppbuild"
    IF ERRORLEVEL 1 (
      echo Quitting with error  
