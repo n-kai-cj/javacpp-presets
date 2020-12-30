@@ -126,6 +126,7 @@ if [[ "$EXTENSION" == *gpu ]]; then
 fi
 
 # exclude openblas dependencies
+
 echo "+++++@@@@@ opencv/cppbuild.sh platform=${PLATFORM}, NOOPENBLAS=${NOOPENBLAS}"
 if [[ "${NOOPENBLAS:-no}" == "yes" ]]; then
     # arguments: <file name> <exclude key word>
