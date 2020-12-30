@@ -126,7 +126,7 @@ if [[ "$EXTENSION" == *gpu ]]; then
 fi
 
 # exclude openblas dependencies
-echo "+++++@@@@@ test6 opencv/cppbuild.sh platform=${PLATFORM}, NOOPENBLAS=${NOOPENBLAS}"
+echo "+++++@@@@@ test7 opencv/cppbuild.sh platform=${PLATFORM}, NOOPENBLAS=${NOOPENBLAS}"
 if [[ "${NOOPENBLAS:-no}" == "yes" ]]; then
     # arguments: <file name> <exclude key word>
     function del_keyword_line {
