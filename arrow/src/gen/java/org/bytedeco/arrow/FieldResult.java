@@ -22,7 +22,7 @@ public class FieldResult extends Pointer {
         return (FieldResult)super.position(position);
     }
     @Override public FieldResult getPointer(long i) {
-        return new FieldResult(this).position(position + i);
+        return new FieldResult((Pointer)this).position(position + i);
     }
 
   
@@ -216,6 +216,13 @@ public class FieldResult extends Pointer {
 
   /** Apply a function to the internally stored value to produce a new result or propagate
    *  the stored error. */
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
+  
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
 
   public native @SharedPtr @ByRef Field ValueUnsafe();
 

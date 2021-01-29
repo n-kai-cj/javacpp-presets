@@ -22,7 +22,7 @@ public class StringViewResult extends Pointer {
         return (StringViewResult)super.position(position);
     }
     @Override public StringViewResult getPointer(long i) {
-        return new StringViewResult(this).position(position + i);
+        return new StringViewResult((Pointer)this).position(position + i);
     }
 
   
@@ -206,6 +206,13 @@ public class StringViewResult extends Pointer {
 
   /** Apply a function to the internally stored value to produce a new result or propagate
    *  the stored error. */
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
+  
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
 
   
 }

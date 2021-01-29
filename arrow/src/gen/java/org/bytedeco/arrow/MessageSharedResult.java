@@ -22,7 +22,7 @@ public class MessageSharedResult extends Pointer {
         return (MessageSharedResult)super.position(position);
     }
     @Override public MessageSharedResult getPointer(long i) {
-        return new MessageSharedResult(this).position(position + i);
+        return new MessageSharedResult((Pointer)this).position(position + i);
     }
 
   
@@ -216,6 +216,13 @@ public class MessageSharedResult extends Pointer {
 
   /** Apply a function to the internally stored value to produce a new result or propagate
    *  the stored error. */
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
+  
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
 
   public native @SharedPtr Message ValueUnsafe();
 

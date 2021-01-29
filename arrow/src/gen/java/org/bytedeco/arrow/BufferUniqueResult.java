@@ -22,7 +22,7 @@ public class BufferUniqueResult extends Pointer {
         return (BufferUniqueResult)super.position(position);
     }
     @Override public BufferUniqueResult getPointer(long i) {
-        return new BufferUniqueResult(this).position(position + i);
+        return new BufferUniqueResult((Pointer)this).position(position + i);
     }
 
   
@@ -210,6 +210,13 @@ public class BufferUniqueResult extends Pointer {
 
   /** Apply a function to the internally stored value to produce a new result or propagate
    *  the stored error. */
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
+  
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
 
   public native @UniquePtr ArrowBuffer ValueUnsafe();
 

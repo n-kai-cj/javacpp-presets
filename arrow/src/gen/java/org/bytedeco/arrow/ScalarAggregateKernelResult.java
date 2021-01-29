@@ -22,7 +22,7 @@ public class ScalarAggregateKernelResult extends Pointer {
         return (ScalarAggregateKernelResult)super.position(position);
     }
     @Override public ScalarAggregateKernelResult getPointer(long i) {
-        return new ScalarAggregateKernelResult(this).position(position + i);
+        return new ScalarAggregateKernelResult((Pointer)this).position(position + i);
     }
 
   
@@ -216,6 +216,13 @@ public class ScalarAggregateKernelResult extends Pointer {
 
   /** Apply a function to the internally stored value to produce a new result or propagate
    *  the stored error. */
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
+  
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
 
   public native @ByPtrRef ScalarAggregateKernel ValueUnsafe();
 

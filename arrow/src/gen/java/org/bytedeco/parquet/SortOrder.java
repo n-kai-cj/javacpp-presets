@@ -22,7 +22,7 @@ import static org.bytedeco.arrow.global.parquet.*;
 // order used to aggregate stats is always SIGNED and is not stored in the
 // Parquet file. These stats are discarded for types that need unsigned.
 // See PARQUET-686.
-@Namespace("parquet") @Properties(inherit = org.bytedeco.arrow.presets.parquet.class)
+@Name("parquet::SortOrder") @Properties(inherit = org.bytedeco.arrow.presets.parquet.class)
 public class SortOrder extends Pointer {
     static { Loader.load(); }
     /** Default native constructor. */
@@ -37,7 +37,7 @@ public class SortOrder extends Pointer {
         return (SortOrder)super.position(position);
     }
     @Override public SortOrder getPointer(long i) {
-        return new SortOrder(this).position(position + i);
+        return new SortOrder((Pointer)this).position(position + i);
     }
 
   public enum type { SIGNED(0), UNSIGNED(1), UNKNOWN(2);

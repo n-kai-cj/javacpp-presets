@@ -22,7 +22,7 @@ public class TableReaderResult extends Pointer {
         return (TableReaderResult)super.position(position);
     }
     @Override public TableReaderResult getPointer(long i) {
-        return new TableReaderResult(this).position(position + i);
+        return new TableReaderResult((Pointer)this).position(position + i);
     }
 
   
@@ -216,6 +216,13 @@ public class TableReaderResult extends Pointer {
 
   /** Apply a function to the internally stored value to produce a new result or propagate
    *  the stored error. */
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
+  
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
 
   public native @SharedPtr TableReader ValueUnsafe();
 

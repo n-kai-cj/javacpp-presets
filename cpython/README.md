@@ -14,7 +14,7 @@ Introduction
 ------------
 This directory contains the JavaCPP Presets module for:
 
- * CPython 3.7.9  https://www.python.org/
+ * CPython 3.8.7  https://www.python.org/
 
 Please refer to the parent README.md file for more detailed information about the JavaCPP Presets.
 
@@ -26,6 +26,7 @@ Java API documentation is available here:
  * http://bytedeco.org/javacpp-presets/cpython/apidocs/
 
 &lowast; Call `Py_AddPath(cachePackages())` before calling `Py_Initialize()`.
+&lowast; To satisfy OpenSSL, we might need to set the `SSL_CERT_FILE` environment variable to the full path of `cacert.pem` extracted by default under `~/.javacpp/cache/`.
 
 
 Sample Usage
@@ -45,7 +46,7 @@ We can use [Maven 3](http://maven.apache.org/) to download and install automatic
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.bytedeco.cpython</groupId>
     <artifactId>simple</artifactId>
-    <version>1.5.4</version>
+    <version>1.5.5-SNAPSHOT</version>
     <properties>
         <exec.mainClass>Simple</exec.mainClass>
     </properties>
@@ -53,7 +54,7 @@ We can use [Maven 3](http://maven.apache.org/) to download and install automatic
         <dependency>
             <groupId>org.bytedeco</groupId>
             <artifactId>cpython-platform</artifactId>
-            <version>3.7.9-1.5.4</version>
+            <version>3.8.7-1.5.5-SNAPSHOT</version>
         </dependency>
     </dependencies>
     <build>

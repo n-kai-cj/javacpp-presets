@@ -22,7 +22,7 @@ public class SchemaVectorResult extends Pointer {
         return (SchemaVectorResult)super.position(position);
     }
     @Override public SchemaVectorResult getPointer(long i) {
-        return new SchemaVectorResult(this).position(position + i);
+        return new SchemaVectorResult((Pointer)this).position(position + i);
     }
 
   
@@ -216,6 +216,13 @@ public class SchemaVectorResult extends Pointer {
 
   /** Apply a function to the internally stored value to produce a new result or propagate
    *  the stored error. */
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
+  
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
 
   public native @ByRef SchemaVector ValueUnsafe();
 

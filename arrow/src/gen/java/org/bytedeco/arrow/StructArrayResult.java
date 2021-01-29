@@ -22,7 +22,7 @@ public class StructArrayResult extends Pointer {
         return (StructArrayResult)super.position(position);
     }
     @Override public StructArrayResult getPointer(long i) {
-        return new StructArrayResult(this).position(position + i);
+        return new StructArrayResult((Pointer)this).position(position + i);
     }
 
   
@@ -216,6 +216,13 @@ public class StructArrayResult extends Pointer {
 
   /** Apply a function to the internally stored value to produce a new result or propagate
    *  the stored error. */
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
+  
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
 
   public native @SharedPtr @ByRef StructArray ValueUnsafe();
 

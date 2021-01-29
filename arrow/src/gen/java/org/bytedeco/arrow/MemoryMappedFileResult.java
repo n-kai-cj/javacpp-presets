@@ -22,7 +22,7 @@ public class MemoryMappedFileResult extends Pointer {
         return (MemoryMappedFileResult)super.position(position);
     }
     @Override public MemoryMappedFileResult getPointer(long i) {
-        return new MemoryMappedFileResult(this).position(position + i);
+        return new MemoryMappedFileResult((Pointer)this).position(position + i);
     }
 
   
@@ -216,6 +216,13 @@ public class MemoryMappedFileResult extends Pointer {
 
   /** Apply a function to the internally stored value to produce a new result or propagate
    *  the stored error. */
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
+  
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
 
   public native @SharedPtr MemoryMappedFile ValueUnsafe();
 

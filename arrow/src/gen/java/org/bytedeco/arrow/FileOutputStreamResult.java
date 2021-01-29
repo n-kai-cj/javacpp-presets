@@ -22,7 +22,7 @@ public class FileOutputStreamResult extends Pointer {
         return (FileOutputStreamResult)super.position(position);
     }
     @Override public FileOutputStreamResult getPointer(long i) {
-        return new FileOutputStreamResult(this).position(position + i);
+        return new FileOutputStreamResult((Pointer)this).position(position + i);
     }
 
   
@@ -216,6 +216,13 @@ public class FileOutputStreamResult extends Pointer {
 
   /** Apply a function to the internally stored value to produce a new result or propagate
    *  the stored error. */
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
+  
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
 
   public native @SharedPtr @ByRef @Cast({"", "std::shared_ptr<arrow::io::FileOutputStream>*"}) FileOutputStream ValueUnsafe();
 

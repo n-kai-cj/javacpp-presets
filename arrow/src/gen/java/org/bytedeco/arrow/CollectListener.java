@@ -11,8 +11,7 @@ import static org.bytedeco.javacpp.presets.javacpp.*;
 import static org.bytedeco.arrow.global.arrow.*;
 
 
-/** \class CollectListener
- *  \brief Collect schema and record batches decoded by StreamDecoder.
+/** \brief Collect schema and record batches decoded by StreamDecoder.
  * 
  *  This API is EXPERIMENTAL.
  * 
@@ -29,7 +28,7 @@ public class CollectListener extends Listener {
         return (CollectListener)super.position(position);
     }
     @Override public CollectListener getPointer(long i) {
-        return new CollectListener(this).position(position + i);
+        return new CollectListener((Pointer)this).position(position + i);
     }
 
   public CollectListener() { super((Pointer)null); allocate(); }

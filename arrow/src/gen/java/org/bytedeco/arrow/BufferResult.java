@@ -22,7 +22,7 @@ public class BufferResult extends Pointer {
         return (BufferResult)super.position(position);
     }
     @Override public BufferResult getPointer(long i) {
-        return new BufferResult(this).position(position + i);
+        return new BufferResult((Pointer)this).position(position + i);
     }
 
   
@@ -216,6 +216,13 @@ public class BufferResult extends Pointer {
 
   /** Apply a function to the internally stored value to produce a new result or propagate
    *  the stored error. */
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
+  
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
 
   public native @SharedPtr @ByRef @Cast({"", "std::shared_ptr<arrow::Buffer>*"}) ArrowBuffer ValueUnsafe();
 

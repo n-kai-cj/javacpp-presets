@@ -22,7 +22,7 @@ public class StreamingReaderResult extends Pointer {
         return (StreamingReaderResult)super.position(position);
     }
     @Override public StreamingReaderResult getPointer(long i) {
-        return new StreamingReaderResult(this).position(position + i);
+        return new StreamingReaderResult((Pointer)this).position(position + i);
     }
 
   
@@ -216,6 +216,13 @@ public class StreamingReaderResult extends Pointer {
 
   /** Apply a function to the internally stored value to produce a new result or propagate
    *  the stored error. */
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
+  
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
 
   public native @SharedPtr StreamingReader ValueUnsafe();
 

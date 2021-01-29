@@ -22,7 +22,7 @@ public class DataTypeResult extends Pointer {
         return (DataTypeResult)super.position(position);
     }
     @Override public DataTypeResult getPointer(long i) {
-        return new DataTypeResult(this).position(position + i);
+        return new DataTypeResult((Pointer)this).position(position + i);
     }
 
   
@@ -216,6 +216,13 @@ public class DataTypeResult extends Pointer {
 
   /** Apply a function to the internally stored value to produce a new result or propagate
    *  the stored error. */
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
+  
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
 
   public native @SharedPtr @ByRef @Cast({"", "std::shared_ptr<arrow::DataType>*"}) DataType ValueUnsafe();
 

@@ -22,7 +22,7 @@ public class FileSystemResult extends Pointer {
         return (FileSystemResult)super.position(position);
     }
     @Override public FileSystemResult getPointer(long i) {
-        return new FileSystemResult(this).position(position + i);
+        return new FileSystemResult((Pointer)this).position(position + i);
     }
 
   
@@ -216,6 +216,13 @@ public class FileSystemResult extends Pointer {
 
   /** Apply a function to the internally stored value to produce a new result or propagate
    *  the stored error. */
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
+  
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
 
   public native @SharedPtr FileSystem ValueUnsafe();
 

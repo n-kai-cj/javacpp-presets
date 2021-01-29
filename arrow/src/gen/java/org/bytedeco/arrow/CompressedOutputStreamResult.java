@@ -22,7 +22,7 @@ public class CompressedOutputStreamResult extends Pointer {
         return (CompressedOutputStreamResult)super.position(position);
     }
     @Override public CompressedOutputStreamResult getPointer(long i) {
-        return new CompressedOutputStreamResult(this).position(position + i);
+        return new CompressedOutputStreamResult((Pointer)this).position(position + i);
     }
 
   
@@ -216,6 +216,13 @@ public class CompressedOutputStreamResult extends Pointer {
 
   /** Apply a function to the internally stored value to produce a new result or propagate
    *  the stored error. */
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
+  
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
 
   public native @SharedPtr CompressedOutputStream ValueUnsafe();
 

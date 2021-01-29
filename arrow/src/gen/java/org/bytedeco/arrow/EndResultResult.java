@@ -22,7 +22,7 @@ public class EndResultResult extends Pointer {
         return (EndResultResult)super.position(position);
     }
     @Override public EndResultResult getPointer(long i) {
-        return new EndResultResult(this).position(position + i);
+        return new EndResultResult((Pointer)this).position(position + i);
     }
 
   
@@ -214,6 +214,13 @@ public class EndResultResult extends Pointer {
 
   /** Apply a function to the internally stored value to produce a new result or propagate
    *  the stored error. */
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
+  
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
 
   public native @ByRef Compressor.EndResult ValueUnsafe();
 

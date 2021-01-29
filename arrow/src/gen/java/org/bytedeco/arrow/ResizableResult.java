@@ -22,7 +22,7 @@ public class ResizableResult extends Pointer {
         return (ResizableResult)super.position(position);
     }
     @Override public ResizableResult getPointer(long i) {
-        return new ResizableResult(this).position(position + i);
+        return new ResizableResult((Pointer)this).position(position + i);
     }
 
   
@@ -216,6 +216,13 @@ public class ResizableResult extends Pointer {
 
   /** Apply a function to the internally stored value to produce a new result or propagate
    *  the stored error. */
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
+  
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
 
   public native @SharedPtr @ByRef ResizableBuffer ValueUnsafe();
 

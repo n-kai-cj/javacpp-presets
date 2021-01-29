@@ -22,7 +22,7 @@ public class VectorKernelResult extends Pointer {
         return (VectorKernelResult)super.position(position);
     }
     @Override public VectorKernelResult getPointer(long i) {
-        return new VectorKernelResult(this).position(position + i);
+        return new VectorKernelResult((Pointer)this).position(position + i);
     }
 
   
@@ -216,6 +216,13 @@ public class VectorKernelResult extends Pointer {
 
   /** Apply a function to the internally stored value to produce a new result or propagate
    *  the stored error. */
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
+  
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
 
   public native @ByPtrRef VectorKernel ValueUnsafe();
 

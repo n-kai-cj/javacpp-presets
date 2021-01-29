@@ -141,7 +141,7 @@
     <dependency>
       <groupId>org.bytedeco</groupId>
       <artifactId>arrow-platform</artifactId>
-      <version>2.0.0-${project.version}</version>
+      <version>3.0.0-${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.bytedeco</groupId>
@@ -151,12 +151,12 @@
     <dependency>
       <groupId>org.bytedeco</groupId>
       <artifactId>hyperscan-platform</artifactId>
-      <version>5.3.0-${project.version}</version>
+      <version>5.4.0-${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.bytedeco</groupId>
       <artifactId>mkl-platform</artifactId>
-      <version>2020.4-${project.version}</version>
+      <version>2021.1-${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.bytedeco</groupId>
@@ -166,7 +166,7 @@
     <dependency>
       <groupId>org.bytedeco</groupId>
       <artifactId>dnnl-platform</artifactId>
-      <version>1.7-${project.version}</version>
+      <version>1.8.1-${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.bytedeco</groupId>
@@ -196,17 +196,17 @@
     <dependency>
       <groupId>org.bytedeco</groupId>
       <artifactId>cpython-platform</artifactId>
-      <version>3.7.9-${project.version}</version>
+      <version>3.8.7-${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.bytedeco</groupId>
       <artifactId>numpy-platform</artifactId>
-      <version>1.19.4-${project.version}</version>
+      <version>1.19.5-${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.bytedeco</groupId>
       <artifactId>scipy-platform</artifactId>
-      <version>1.5.4-${project.version}</version>
+      <version>1.6.0-${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.bytedeco</groupId>
@@ -216,7 +216,7 @@
     <dependency>
       <groupId>org.bytedeco</groupId>
       <artifactId>llvm-platform</artifactId>
-      <version>11.0.0-${project.version}</version>
+      <version>11.0.1-${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.bytedeco</groupId>
@@ -261,7 +261,7 @@
     <dependency>
       <groupId>org.bytedeco</groupId>
       <artifactId>tensorflow-platform</artifactId>
-      <version>1.15.4-${project.version}</version>
+      <version>1.15.5-${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.bytedeco</groupId>

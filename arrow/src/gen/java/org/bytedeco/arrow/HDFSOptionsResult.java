@@ -22,7 +22,7 @@ public class HDFSOptionsResult extends Pointer {
         return (HDFSOptionsResult)super.position(position);
     }
     @Override public HDFSOptionsResult getPointer(long i) {
-        return new HDFSOptionsResult(this).position(position + i);
+        return new HDFSOptionsResult((Pointer)this).position(position + i);
     }
 
   
@@ -214,6 +214,13 @@ public class HDFSOptionsResult extends Pointer {
 
   /** Apply a function to the internally stored value to produce a new result or propagate
    *  the stored error. */
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
+  
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
 
   public native @ByRef HdfsOptions ValueUnsafe();
 

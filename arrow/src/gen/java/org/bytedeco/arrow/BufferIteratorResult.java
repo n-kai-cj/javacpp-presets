@@ -22,7 +22,7 @@ public class BufferIteratorResult extends Pointer {
         return (BufferIteratorResult)super.position(position);
     }
     @Override public BufferIteratorResult getPointer(long i) {
-        return new BufferIteratorResult(this).position(position + i);
+        return new BufferIteratorResult((Pointer)this).position(position + i);
     }
 
   
@@ -206,6 +206,13 @@ public class BufferIteratorResult extends Pointer {
 
   /** Apply a function to the internally stored value to produce a new result or propagate
    *  the stored error. */
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
+  
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
 
   public native @ByRef BufferIterator ValueUnsafe();
 

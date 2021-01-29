@@ -22,7 +22,7 @@ public class IpcPayloadWriterResult extends Pointer {
         return (IpcPayloadWriterResult)super.position(position);
     }
     @Override public IpcPayloadWriterResult getPointer(long i) {
-        return new IpcPayloadWriterResult(this).position(position + i);
+        return new IpcPayloadWriterResult((Pointer)this).position(position + i);
     }
 
   
@@ -210,6 +210,13 @@ public class IpcPayloadWriterResult extends Pointer {
 
   /** Apply a function to the internally stored value to produce a new result or propagate
    *  the stored error. */
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
+  
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
 
   public native @UniquePtr IpcPayloadWriter ValueUnsafe();
 

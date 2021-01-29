@@ -22,7 +22,7 @@ public class DecompressorResult extends Pointer {
         return (DecompressorResult)super.position(position);
     }
     @Override public DecompressorResult getPointer(long i) {
-        return new DecompressorResult(this).position(position + i);
+        return new DecompressorResult((Pointer)this).position(position + i);
     }
 
   
@@ -216,6 +216,13 @@ public class DecompressorResult extends Pointer {
 
   /** Apply a function to the internally stored value to produce a new result or propagate
    *  the stored error. */
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
+  
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
 
   public native @SharedPtr Decompressor ValueUnsafe();
 

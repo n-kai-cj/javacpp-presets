@@ -22,7 +22,7 @@ public class LargeListArrayResult extends Pointer {
         return (LargeListArrayResult)super.position(position);
     }
     @Override public LargeListArrayResult getPointer(long i) {
-        return new LargeListArrayResult(this).position(position + i);
+        return new LargeListArrayResult((Pointer)this).position(position + i);
     }
 
   
@@ -216,6 +216,13 @@ public class LargeListArrayResult extends Pointer {
 
   /** Apply a function to the internally stored value to produce a new result or propagate
    *  the stored error. */
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
+  
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
 
   public native @SharedPtr @ByRef LargeListArray ValueUnsafe();
 

@@ -22,7 +22,7 @@ public class SchemaResult extends Pointer {
         return (SchemaResult)super.position(position);
     }
     @Override public SchemaResult getPointer(long i) {
-        return new SchemaResult(this).position(position + i);
+        return new SchemaResult((Pointer)this).position(position + i);
     }
 
   
@@ -216,6 +216,13 @@ public class SchemaResult extends Pointer {
 
   /** Apply a function to the internally stored value to produce a new result or propagate
    *  the stored error. */
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
+  
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
 
   public native @SharedPtr @ByRef Schema ValueUnsafe();
 

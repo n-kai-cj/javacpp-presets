@@ -22,7 +22,7 @@ public class RecordBatchWriterUniqueResult extends Pointer {
         return (RecordBatchWriterUniqueResult)super.position(position);
     }
     @Override public RecordBatchWriterUniqueResult getPointer(long i) {
-        return new RecordBatchWriterUniqueResult(this).position(position + i);
+        return new RecordBatchWriterUniqueResult((Pointer)this).position(position + i);
     }
 
   
@@ -210,6 +210,13 @@ public class RecordBatchWriterUniqueResult extends Pointer {
 
   /** Apply a function to the internally stored value to produce a new result or propagate
    *  the stored error. */
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
+  
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
 
   public native @UniquePtr RecordBatchWriter ValueUnsafe();
 

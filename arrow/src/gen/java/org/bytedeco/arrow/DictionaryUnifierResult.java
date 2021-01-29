@@ -22,7 +22,7 @@ public class DictionaryUnifierResult extends Pointer {
         return (DictionaryUnifierResult)super.position(position);
     }
     @Override public DictionaryUnifierResult getPointer(long i) {
-        return new DictionaryUnifierResult(this).position(position + i);
+        return new DictionaryUnifierResult((Pointer)this).position(position + i);
     }
 
   
@@ -210,6 +210,13 @@ public class DictionaryUnifierResult extends Pointer {
 
   /** Apply a function to the internally stored value to produce a new result or propagate
    *  the stored error. */
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
+  
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
 
   public native @UniquePtr DictionaryUnifier ValueUnsafe();
 

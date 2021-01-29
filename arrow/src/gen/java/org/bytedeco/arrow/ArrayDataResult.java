@@ -22,7 +22,7 @@ public class ArrayDataResult extends Pointer {
         return (ArrayDataResult)super.position(position);
     }
     @Override public ArrayDataResult getPointer(long i) {
-        return new ArrayDataResult(this).position(position + i);
+        return new ArrayDataResult((Pointer)this).position(position + i);
     }
 
   
@@ -216,6 +216,13 @@ public class ArrayDataResult extends Pointer {
 
   /** Apply a function to the internally stored value to produce a new result or propagate
    *  the stored error. */
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
+  
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
 
   public native @SharedPtr @ByRef ArrayData ValueUnsafe();
 

@@ -22,7 +22,7 @@ public class BufferedInputStreamResult extends Pointer {
         return (BufferedInputStreamResult)super.position(position);
     }
     @Override public BufferedInputStreamResult getPointer(long i) {
-        return new BufferedInputStreamResult(this).position(position + i);
+        return new BufferedInputStreamResult((Pointer)this).position(position + i);
     }
 
   
@@ -216,6 +216,13 @@ public class BufferedInputStreamResult extends Pointer {
 
   /** Apply a function to the internally stored value to produce a new result or propagate
    *  the stored error. */
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
+  
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
 
   public native @SharedPtr BufferedInputStream ValueUnsafe();
 

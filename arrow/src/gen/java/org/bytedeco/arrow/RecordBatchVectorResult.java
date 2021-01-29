@@ -22,7 +22,7 @@ public class RecordBatchVectorResult extends Pointer {
         return (RecordBatchVectorResult)super.position(position);
     }
     @Override public RecordBatchVectorResult getPointer(long i) {
-        return new RecordBatchVectorResult(this).position(position + i);
+        return new RecordBatchVectorResult((Pointer)this).position(position + i);
     }
 
   
@@ -216,6 +216,13 @@ public class RecordBatchVectorResult extends Pointer {
 
   /** Apply a function to the internally stored value to produce a new result or propagate
    *  the stored error. */
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
+  
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
 
   public native @ByRef RecordBatchVector ValueUnsafe();
 

@@ -22,7 +22,7 @@ public class BufferVectorResult extends Pointer {
         return (BufferVectorResult)super.position(position);
     }
     @Override public BufferVectorResult getPointer(long i) {
-        return new BufferVectorResult(this).position(position + i);
+        return new BufferVectorResult((Pointer)this).position(position + i);
     }
 
   
@@ -216,6 +216,13 @@ public class BufferVectorResult extends Pointer {
 
   /** Apply a function to the internally stored value to produce a new result or propagate
    *  the stored error. */
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
+  
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
 
   public native @ByRef BufferVector ValueUnsafe();
 

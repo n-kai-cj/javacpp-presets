@@ -22,7 +22,7 @@ public class RecordBatchStreamReaderResult extends Pointer {
         return (RecordBatchStreamReaderResult)super.position(position);
     }
     @Override public RecordBatchStreamReaderResult getPointer(long i) {
-        return new RecordBatchStreamReaderResult(this).position(position + i);
+        return new RecordBatchStreamReaderResult((Pointer)this).position(position + i);
     }
 
   
@@ -216,6 +216,13 @@ public class RecordBatchStreamReaderResult extends Pointer {
 
   /** Apply a function to the internally stored value to produce a new result or propagate
    *  the stored error. */
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
+  
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
 
   public native @SharedPtr RecordBatchStreamReader ValueUnsafe();
 

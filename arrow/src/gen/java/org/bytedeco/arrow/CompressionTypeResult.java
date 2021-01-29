@@ -22,7 +22,7 @@ public class CompressionTypeResult extends Pointer {
         return (CompressionTypeResult)super.position(position);
     }
     @Override public CompressionTypeResult getPointer(long i) {
-        return new CompressionTypeResult(this).position(position + i);
+        return new CompressionTypeResult((Pointer)this).position(position + i);
     }
 
   
@@ -218,6 +218,13 @@ public class CompressionTypeResult extends Pointer {
 
   /** Apply a function to the internally stored value to produce a new result or propagate
    *  the stored error. */
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
+  
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
 
   public native @ByRef @Cast("arrow::Compression::type*") IntPointer ValueUnsafe();
 

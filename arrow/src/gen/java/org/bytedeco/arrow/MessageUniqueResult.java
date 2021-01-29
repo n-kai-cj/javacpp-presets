@@ -22,7 +22,7 @@ public class MessageUniqueResult extends Pointer {
         return (MessageUniqueResult)super.position(position);
     }
     @Override public MessageUniqueResult getPointer(long i) {
-        return new MessageUniqueResult(this).position(position + i);
+        return new MessageUniqueResult((Pointer)this).position(position + i);
     }
 
   
@@ -210,6 +210,13 @@ public class MessageUniqueResult extends Pointer {
 
   /** Apply a function to the internally stored value to produce a new result or propagate
    *  the stored error. */
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
+  
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
 
   public native @UniquePtr Message ValueUnsafe();
 

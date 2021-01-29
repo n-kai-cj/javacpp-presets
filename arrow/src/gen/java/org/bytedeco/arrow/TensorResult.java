@@ -22,7 +22,7 @@ public class TensorResult extends Pointer {
         return (TensorResult)super.position(position);
     }
     @Override public TensorResult getPointer(long i) {
-        return new TensorResult(this).position(position + i);
+        return new TensorResult((Pointer)this).position(position + i);
     }
 
   
@@ -216,6 +216,13 @@ public class TensorResult extends Pointer {
 
   /** Apply a function to the internally stored value to produce a new result or propagate
    *  the stored error. */
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
+  
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
 
   public native @SharedPtr Tensor ValueUnsafe();
 

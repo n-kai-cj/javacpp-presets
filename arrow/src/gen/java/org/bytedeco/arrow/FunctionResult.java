@@ -22,7 +22,7 @@ public class FunctionResult extends Pointer {
         return (FunctionResult)super.position(position);
     }
     @Override public FunctionResult getPointer(long i) {
-        return new FunctionResult(this).position(position + i);
+        return new FunctionResult((Pointer)this).position(position + i);
     }
 
   
@@ -216,6 +216,13 @@ public class FunctionResult extends Pointer {
 
   /** Apply a function to the internally stored value to produce a new result or propagate
    *  the stored error. */
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
+  
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
 
   public native @SharedPtr Function ValueUnsafe();
 

@@ -11,8 +11,7 @@ import static org.bytedeco.javacpp.presets.javacpp.*;
 import static org.bytedeco.arrow.global.arrow.*;
 
 
-/** \class Listener
- *  \brief A general listener class to receive events.
+/** \brief A general listener class to receive events.
  * 
  *  You must implement callback methods for interested events.
  * 
@@ -34,7 +33,7 @@ public class Listener extends Pointer {
         return (Listener)super.position(position);
     }
     @Override public Listener getPointer(long i) {
-        return new Listener(this).position(position + i);
+        return new Listener((Pointer)this).position(position + i);
     }
 
 

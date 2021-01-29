@@ -22,7 +22,7 @@ public class CodecResult extends Pointer {
         return (CodecResult)super.position(position);
     }
     @Override public CodecResult getPointer(long i) {
-        return new CodecResult(this).position(position + i);
+        return new CodecResult((Pointer)this).position(position + i);
     }
 
   
@@ -210,6 +210,13 @@ public class CodecResult extends Pointer {
 
   /** Apply a function to the internally stored value to produce a new result or propagate
    *  the stored error. */
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
+  
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
 
   public native @UniquePtr Codec ValueUnsafe();
 

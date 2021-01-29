@@ -22,7 +22,7 @@ public class LocalFileSystemOptionsResult extends Pointer {
         return (LocalFileSystemOptionsResult)super.position(position);
     }
     @Override public LocalFileSystemOptionsResult getPointer(long i) {
-        return new LocalFileSystemOptionsResult(this).position(position + i);
+        return new LocalFileSystemOptionsResult((Pointer)this).position(position + i);
     }
 
   
@@ -214,6 +214,13 @@ public class LocalFileSystemOptionsResult extends Pointer {
 
   /** Apply a function to the internally stored value to produce a new result or propagate
    *  the stored error. */
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
+  
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
 
   public native @ByRef LocalFileSystemOptions ValueUnsafe();
 

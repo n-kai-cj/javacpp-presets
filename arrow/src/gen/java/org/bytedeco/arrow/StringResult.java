@@ -22,7 +22,7 @@ public class StringResult extends Pointer {
         return (StringResult)super.position(position);
     }
     @Override public StringResult getPointer(long i) {
-        return new StringResult(this).position(position + i);
+        return new StringResult((Pointer)this).position(position + i);
     }
 
   
@@ -218,6 +218,13 @@ public class StringResult extends Pointer {
 
   /** Apply a function to the internally stored value to produce a new result or propagate
    *  the stored error. */
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
+  
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
 
   public native @StdString @ByRef @Cast({"char*", "std::string*"}) BytePointer ValueUnsafe();
 

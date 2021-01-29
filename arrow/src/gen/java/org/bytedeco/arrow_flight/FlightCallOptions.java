@@ -26,7 +26,7 @@ public class FlightCallOptions extends Pointer {
         return (FlightCallOptions)super.position(position);
     }
     @Override public FlightCallOptions getPointer(long i) {
-        return new FlightCallOptions(this).position(position + i);
+        return new FlightCallOptions((Pointer)this).position(position + i);
     }
 
   /** Create a default set of call options. */
@@ -43,4 +43,7 @@ public class FlightCallOptions extends Pointer {
 
   /** \brief IPC writer options, if applicable for the call. */
   public native @ByRef IpcWriteOptions write_options(); public native FlightCallOptions write_options(IpcWriteOptions setter);
+
+  /** \brief Headers for client to add to context. */
+  public native @ByRef StringStringPairVector headers(); public native FlightCallOptions headers(StringStringPairVector setter);
 }

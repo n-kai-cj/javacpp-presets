@@ -22,7 +22,7 @@ public class TableResult extends Pointer {
         return (TableResult)super.position(position);
     }
     @Override public TableResult getPointer(long i) {
-        return new TableResult(this).position(position + i);
+        return new TableResult((Pointer)this).position(position + i);
     }
 
   
@@ -216,6 +216,13 @@ public class TableResult extends Pointer {
 
   /** Apply a function to the internally stored value to produce a new result or propagate
    *  the stored error. */
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
+  
+
+  /** Cast the internally stored value to produce a new result or propagate the stored
+   *  error. */
 
   public native @SharedPtr @ByRef Table ValueUnsafe();
 
