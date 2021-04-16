@@ -10,7 +10,7 @@ runs:
         export MACOSX_DEPLOYMENT_TARGET=10.13
         echo "MACOSX_DEPLOYMENT_TARGET=$MACOSX_DEPLOYMENT_TARGET" >> $GITHUB_ENV
 
-        brew install boost ccache gcc swig autoconf-archive automake cmake libomp libtool libusb ant maven nasm xz pkg-config sdl gpg1 bison flex perl ragel binutils gradle gmp isl libmpc mpfr
+        brew install boost ccache gcc swig autoconf-archive automake cmake libomp libtool libusb ant maven nasm xz pkg-config sdl gpg1 bison flex perl ragel binutils gradle gmp isl libmpc mpfr doxygen geoip pcre ssdeep yajl
 
         if [[ -n ${CI_DEPLOY_NEED_GCC:-} ]]; then
           brew uninstall gcc@8 gcc@9 gcc@10
@@ -38,7 +38,7 @@ runs:
         sudo install_name_tool -add_rpath @loader_path/. -id @rpath/libSDL-1.2.0.dylib /usr/local/opt/sdl/lib/libSDL-1.2.0.dylib
         sudo install_name_tool -add_rpath @loader_path/. -id @rpath/libusb-1.0.0.dylib /usr/local/opt/libusb/lib/libusb-1.0.0.dylib
 
-        python3 -m pip install gdown
+        python3 -m pip install gdown || python3 -m pip install gdown
 
         if [[ -n ${CI_DEPLOY_NEED_BAZEL:-} ]]; then
           echo Installing Bazel
@@ -48,9 +48,9 @@ runs:
 
         if [[ "$CI_DEPLOY_MODULE" == "mkl" ]]; then
           echo Installing MKL
-          curl -LO https://registrationcenter-download.intel.com/akdlm/irc_nas/17408/m_onemkl_p_2021.1.1.50_offline.dmg
-          hdiutil mount m_onemkl_p_2021.1.1.50_offline.dmg
-          sudo /Volumes/m_onemkl_p_2021.1.1.50_offline/bootstrapper.app/Contents/MacOS/install.sh -s -a -s --eula accept
+          curl -LO https://registrationcenter-download.intel.com/akdlm/irc_nas/17578/m_onemkl_p_2021.2.0.269_offline.dmg
+          hdiutil mount m_onemkl_p_2021.2.0.269_offline.dmg
+          sudo /Volumes/m_onemkl_p_2021.2.0.269_offline/bootstrapper.app/Contents/MacOS/install.sh -s -a -s --eula accept
         fi
 
         GRADLE_TASK=publishToMavenLocal
@@ -58,7 +58,7 @@ runs:
         if [[ -n ${CI_DEPLOY_USERNAME:-} ]] && [[ ! "$GITHUB_EVENT_NAME" == "pull_request" ]]; then
           GRADLE_TASK=publish
           MAVEN_PHASE=deploy
-          if [[ "${{ github.event.head_commit.message }}" == Release* ]]; then
+          if [[ "${{ github.event.head_commit.message }}" == Release* ]] || [[ "${GITHUB_REF#refs/heads/}" == "release" ]]; then
             python3 -m gdown.cli -q -O settings.tar.gz https://drive.google.com/uc?id=$CI_DEPLOY_SETTINGS
             tar -xzf settings.tar.gz
             MAVEN_OPTIONS="$MAVEN_OPTIONS -Dgpg.homedir=$(pwd)/.gnupg/ -DperformRelease -DstagingRepositoryId=$STAGING_REPOSITORY"
@@ -109,9 +109,13 @@ runs:
           echo Executing Maven $MAVEN_PHASE on $MAKEJ processors
           export EXT=${{ matrix.ext }}
           export EXT2=${EXT:1}
+          export MAVEN_OPTS="-Xss2m"
           export MAVEN_OPTIONS="clean $MAVEN_PHASE -B -U -e -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.http.retryHandler.count=3 -Djavacpp.platform=$CI_DEPLOY_PLATFORM -Djavacpp.platform.extension=$EXT $MAVEN_OPTIONS"
-          for i in {1..5}; do STATUS=0; mvn $MAVEN_OPTIONS -f $CI_DEPLOY_MODULE && break || STATUS=$? && sleep 60; done; (exit $STATUS)
+          for i in {1..5}; do STATUS=0; mvn $MAVEN_OPTIONS -pl .,$CI_DEPLOY_MODULE && break || STATUS=$? && sleep 60; done; (exit $STATUS)
           for i in {1..5}; do STATUS=0; mvn $MAVEN_OPTIONS -f $CI_DEPLOY_MODULE/platform/$EXT2/pom.xml && break || STATUS=$? && sleep 60; done; (exit $STATUS)
+          if [[ -e $CI_DEPLOY_MODULE/platform/redist/pom.xml ]]; then
+            for i in {1..5}; do STATUS=0; mvn $MAVEN_OPTIONS -f $CI_DEPLOY_MODULE/platform/redist/pom.xml && break || STATUS=$? && sleep 60; done; (exit $STATUS)
+          fi
         fi
         df -h
 

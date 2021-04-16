@@ -7,7 +7,7 @@ if [[ -z "$PLATFORM" ]]; then
     exit
 fi
 
-OPENCV_VERSION=4.5.1
+OPENCV_VERSION=4.5.2
 download https://github.com/opencv/opencv/archive/$OPENCV_VERSION.tar.gz opencv-$OPENCV_VERSION.tar.gz
 download https://github.com/opencv/opencv_contrib/archive/$OPENCV_VERSION.tar.gz opencv_contrib-$OPENCV_VERSION.tar.gz
 
@@ -44,12 +44,12 @@ export PYTHON3_EXECUTABLE=
 export PYTHON3_INCLUDE_DIR=
 export PYTHON3_LIBRARY=
 export PYTHON3_PACKAGES_PATH=
-if [[ -f "$CPYTHON_PATH/include/python3.8/Python.h" ]]; then
+if [[ -f "$CPYTHON_PATH/include/python3.9/Python.h" ]]; then
     export LD_LIBRARY_PATH="$OPENBLAS_PATH/lib/:$CPYTHON_PATH/lib/:$NUMPY_PATH/lib/:${LD_LIBRARY_PATH:-}"
-    export PYTHON3_EXECUTABLE="$CPYTHON_PATH/bin/python3.8"
-    export PYTHON3_INCLUDE_DIR="$CPYTHON_PATH/include/python3.8/"
-    export PYTHON3_LIBRARY="$CPYTHON_PATH/lib/python3.8/"
-    export PYTHON3_PACKAGES_PATH="$INSTALL_PATH/lib/python3.8/site-packages/"
+    export PYTHON3_EXECUTABLE="$CPYTHON_PATH/bin/python3.9"
+    export PYTHON3_INCLUDE_DIR="$CPYTHON_PATH/include/python3.9/"
+    export PYTHON3_LIBRARY="$CPYTHON_PATH/lib/python3.9/"
+    export PYTHON3_PACKAGES_PATH="$INSTALL_PATH/lib/python3.9/site-packages/"
     chmod +x "$PYTHON3_EXECUTABLE"
 elif [[ -f "$CPYTHON_PATH/include/Python.h" ]]; then
     CPYTHON_PATH=$(cygpath $CPYTHON_PATH)
@@ -58,7 +58,7 @@ elif [[ -f "$CPYTHON_PATH/include/Python.h" ]]; then
     export PATH="$OPENBLAS_PATH:$CPYTHON_PATH:$NUMPY_PATH:$PATH"
     export PYTHON3_EXECUTABLE="$CPYTHON_PATH/bin/python.exe"
     export PYTHON3_INCLUDE_DIR="$CPYTHON_PATH/include/"
-    export PYTHON3_LIBRARY="$CPYTHON_PATH/libs/python38.lib"
+    export PYTHON3_LIBRARY="$CPYTHON_PATH/libs/python39.lib"
     export PYTHON3_PACKAGES_PATH="$INSTALL_PATH/lib/site-packages/"
 fi
 export PYTHONPATH="$NUMPY_PATH/python/:${PYTHONPATH:-}"
@@ -97,13 +97,14 @@ fi
 # fixes for CUDA
 sedinplace '/typedef ::/d' modules/core/include/opencv2/core/cvdef.h
 sedinplace 's/__constant__//g' modules/core/include/opencv2/core/cuda/detail/color_detail.hpp
+sedinplace 's/ocv_add_app(model-diagnostics)/#ocv_add_app(model-diagnostics)/g' apps/CMakeLists.txt
 
 # avoid issues when checking version of cross-compiled Python
 sedinplace 's/PythonInterp "${min_version}"/PythonInterp/g' cmake/OpenCVDetectPython.cmake
 sedinplace 's/PythonLibs "${_version_major_minor}.${_version_patch}" EXACT/PythonLibs/g' cmake/OpenCVDetectPython.cmake
 sedinplace '/if(PYTHONINTERP_FOUND)/a\
     if(" ${_python_version_major}" STREQUAL " 3")\
-      set(PYTHON_VERSION_STRING "3.8")\
+      set(PYTHON_VERSION_STRING "3.9")\
       set(PYTHON_VERSION_MAJOR "3")\
       set(PYTHON_VERSION_MINOR "8")\
     endif()\
@@ -113,7 +114,7 @@ sedinplace '/execute_process/{N;N;N;d;}' cmake/OpenCVDetectPython.cmake
 BUILD_X="-DBUILD_ANDROID_EXAMPLES=OFF -DBUILD_ANDROID_PROJECTS=OFF -DBUILD_TESTS=OFF -DBUILD_PERF_TESTS=OFF -DBUILD_JASPER=ON -DBUILD_JPEG=ON -DBUILD_WEBP=ON -DBUILD_OPENEXR=ON -DBUILD_PNG=ON -DBUILD_TIFF=ON -DBUILD_ZLIB=ON -DBUILD_opencv_java=ON -DBUILD_opencv_objc=OFF -DBUILD_opencv_python2=OFF -DBUILD_opencv_python3=ON -DOPENCV_SKIP_PYTHON_LOADER=ON -DPYTHON3_EXECUTABLE=$PYTHON3_EXECUTABLE -DPYTHON3_INCLUDE_DIR=$PYTHON3_INCLUDE_DIR -DPYTHON3_LIBRARY=$PYTHON3_LIBRARY -DPYTHON3_PACKAGES_PATH=$PYTHON3_PACKAGES_PATH -DPYTHON3_NUMPY_INCLUDE_DIRS=$NUMPY_PATH/python/numpy/core/include/ -DBUILD_opencv_gapi=OFF -DBUILD_opencv_hdf=OFF -DBUILD_opencv_img_hash=ON"
 
 # support for OpenMP is NOT thread-safe so make sure to never enable it and use pthreads instead
-WITH_X="-DWITH_1394=OFF -DWITH_FFMPEG=OFF -DWITH_GSTREAMER=OFF -DWITH_IPP=OFF -DWITH_LAPACK=ON -DWITH_OPENCL=ON -DWITH_OPENJPEG=OFF -DWITH_OPENMP=OFF -DOPENCV_ENABLE_NONFREE=ON -DWITH_INF_ENGINE=ON -DENABLE_CXX11=ON"
+WITH_X="-DWITH_1394=OFF -DWITH_FFMPEG=OFF -DWITH_GSTREAMER=OFF -DWITH_IPP=OFF -DWITH_LAPACK=ON -DWITH_OPENCL=ON -DWITH_OPENJPEG=OFF -DWITH_OPENMP=OFF -DOPENCV_ENABLE_NONFREE=ON -DWITH_VA=OFF -DWITH_INF_ENGINE=ON -DENABLE_CXX11=ON"
 
 # support headless
 if [[ "${HEADLESS:-no}" == "yes" ]]; then

@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.bytedeco</groupId>
   <artifactId>javacpp-presets</artifactId>
-  <version>1.5.5-SNAPSHOT</version>
+  <version>1.5.6-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>JavaCPP Presets</name>
@@ -613,8 +613,10 @@
         <module>caffe</module>
         <module>openpose</module>
         <module>cuda</module>
+        <module>nvcodec</module>
         <module>opencl</module>
         <module>mxnet</module>
+        <module>pytorch</module>
         <module>tensorflow</module>
         <module>tensorrt</module>
         <module>ale</module>
@@ -626,6 +628,7 @@
         <module>qt</module>
         <module>skia</module>
         <module>cpu_features</module>
+        <module>modsecurity</module>
         <module>systems</module>
       </modules>
       <properties>
@@ -1154,6 +1157,7 @@
         <module>llvm</module>
         <module>leptonica</module>
         <module>tesseract</module>
+        <module>cuda</module>
         <module>cpu_features</module>
         <module>systems</module>
       </modules>
@@ -1338,8 +1342,10 @@
         <module>caffe</module>
         <module>openpose</module>
         <module>cuda</module>
+        <module>nvcodec</module>
         <module>opencl</module>
         <module>mxnet</module>
+        <module>pytorch</module>
         <module>tensorflow</module>
         <module>tensorrt</module>
         <module>ale</module>
@@ -1351,6 +1357,7 @@
         <module>qt</module>
         <module>skia</module>
         <module>cpu_features</module>
+        <module>modsecurity</module>
         <module>systems</module>
       </modules>
       <properties>
@@ -1416,6 +1423,7 @@
 <!--        <module>cuda</module>-->
         <module>opencl</module>
         <module>mxnet</module>
+        <module>pytorch</module>
         <module>tensorflow</module>
         <module>ale</module>
         <module>onnx</module>
@@ -1426,6 +1434,7 @@
         <module>qt</module>
         <module>skia</module>
         <module>cpu_features</module>
+        <module>modsecurity</module>
         <module>systems</module>
       </modules>
       <properties>
@@ -1551,8 +1560,10 @@
         <module>leptonica</module>
         <module>tesseract</module>
         <module>cuda</module>
+        <module>nvcodec</module>
         <module>opencl</module>
         <module>mxnet</module>
+        <module>pytorch</module>
         <module>tensorflow</module>
         <module>tensorrt</module>
         <module>ale</module>
